@@ -1,24 +1,56 @@
-import React, { useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { setSessionExpiredHandler } from "../services/ApiRequestHandler";
+import { authService } from "../services/authService";
+import { tokenStorage } from "../services/tokenStorage";
 
-const AuthContext = ({children}) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext(null);
 
-    const login = (userData) => {
-        setUser(userData);
-        setLoading(false);
-    };
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  // true until we know whether saved tokens still belong to a valid session
+  const [loading, setLoading] = useState(true);
 
-    const logout = () => {
-        setUser(null);
-        setLoading(false);
-    };
+  useEffect(() => {
+    setSessionExpiredHandler(() => setUser(null));
 
-    return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    if (!tokenStorage.hasTokens()) {
+      setLoading(false);
+      return;
+    }
+
+    authService
+      .getMe()
+      .then(setUser)
+      .catch(() => tokenStorage.clear())
+      .finally(() => setLoading(false));
+  }, []);
+
+  const login = useCallback(async ({ email, password, rememberMe }) => {
+    const data = await authService.login({ email, password, rememberMe });
+    tokenStorage.setTokens(data, rememberMe);
+    setUser(data.user);
+    return data.user;
+  }, []);
+
+  const endSession = useCallback(async (request) => {
+    try {
+      await request();
+    } catch {
+      // still log out locally even if the server call fails
+    } finally {
+      tokenStorage.clear();
+      setUser(null);
+    }
+  }, []);
+
+  const logout = useCallback(() => endSession(authService.logout), [endSession]);
+  const logoutAll = useCallback(() => endSession(authService.logoutAll), [endSession]);
+
+  const value = useMemo(
+    () => ({ user, loading, isAuthenticated: Boolean(user), login, logout, logoutAll }),
+    [user, loading, login, logout, logoutAll]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-export default AuthContext;

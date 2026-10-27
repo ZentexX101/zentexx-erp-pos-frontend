@@ -21,3 +21,10 @@ export const formatDate = (dateString) => {
 
   return `${monthNames[monthIndex]} ${day}, ${year}`;
 };
+
+// 2026-09-29 (local date)
+export const formatShortDate = (dateString) => {
+  const date = new Date(dateString);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+};
