@@ -5,14 +5,14 @@ import Button from "../../components/common/buttons/Button";
 import Input from "../../components/common/forms/Input";
 import { getHomePath, ROUTES } from "../../constants/routes";
 import { useAuth } from "../../hooks/useAuth";
-import { isValid, validateEmail } from "../../utils/validators";
+import { isValid } from "../../utils/validators";
 
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [form, setForm] = useState({ email: "", password: "", rememberMe: false });
+  const [form, setForm] = useState({ identifier: "", password: "", rememberMe: false });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -31,7 +31,7 @@ const Login = () => {
     setServerError("");
 
     const newErrors = {
-      email: validateEmail(form.email),
+      identifier: form.identifier.trim() ? "" : "Enter your phone number or email",
       password: form.password ? "" : "Password is required",
     };
     setErrors(newErrors);
@@ -39,7 +39,7 @@ const Login = () => {
 
     setSubmitting(true);
     try {
-      const user = await login({ email: form.email.trim(), password: form.password, rememberMe: form.rememberMe });
+      const user = await login({ identifier: form.identifier.trim(), password: form.password, rememberMe: form.rememberMe });
       navigate(location.state?.from?.pathname || getHomePath(user), { replace: true });
     } catch (err) {
       setServerError(err.message);
@@ -57,14 +57,14 @@ const Login = () => {
         <Alert>{serverError}</Alert>
 
         <Input
-          label="Email"
-          name="email"
-          type="email"
-          autoComplete="email"
+          label="Phone or Email"
+          name="identifier"
+          autoComplete="username"
           autoFocus
-          value={form.email}
+          placeholder="01712345678 or you@example.com"
+          value={form.identifier}
           onChange={handleChange}
-          error={errors.email}
+          error={errors.identifier}
         />
 
         <Input

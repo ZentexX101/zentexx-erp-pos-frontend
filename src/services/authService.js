@@ -5,8 +5,9 @@ export const authService = {
   register: async ({ name, email, phone, password }) =>
     (await apiRequest("/auth/register", { method: "POST", body: { name, email, phone, password }, auth: false })).data,
 
-  login: async ({ email, password, rememberMe }) =>
-    (await apiRequest("/auth/login", { method: "POST", body: { email, password, rememberMe }, auth: false })).data,
+  // identifier: phone number or email
+  login: async ({ identifier, password, rememberMe }) =>
+    (await apiRequest("/auth/login", { method: "POST", body: { identifier, password, rememberMe }, auth: false })).data,
 
   getMe: async () => (await apiRequest("/auth/me")).data,
 

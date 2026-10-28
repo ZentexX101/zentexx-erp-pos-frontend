@@ -1,15 +1,16 @@
 import { ROLE_LABELS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
 import { formatDate } from "../../utils/formatDate";
+import { formatPhone } from "../../utils/phone";
 
 // Placeholder until the Dashboard Overview module (summary cards, charts) is built
 const DashboardHome = () => {
   const { user } = useAuth();
 
   const details = [
-    ["Email", user.email],
-    ["Role", ROLE_LABELS[user.role] || user.role],
-    ["Phone", user.phone || "—"],
+    ["Phone", formatPhone(user.phone)],
+    ["Email", user.email || "—"],
+    ["Type", ROLE_LABELS[user.role] || user.role],
     ["Last login", user.lastLoginAt ? formatDate(user.lastLoginAt) : "—"],
   ];
 

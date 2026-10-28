@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { BRANCH_STATUS, ZKTECO_DEFAULT_PORT } from "../../constants/branch";
 import { branchService } from "../../services/branchService";
 import { isValid, validateEmail } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
+import FormSection from "../common/forms/FormSection";
 import Button from "../common/buttons/Button";
 import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
@@ -52,6 +53,7 @@ const SERVER_FIELD = { "zkteco.ip": "zktecoIp", "zkteco.port": "zktecoPort", "zk
 // branch: the branch to edit, or null to create one
 const BranchFormModal = ({ branch, onClose, onSaved }) => {
   const isEdit = Boolean(branch);
+  const formId = useId();
   const [form, setForm] = useState(() => toForm(branch));
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
@@ -102,12 +104,27 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
   };
 
   return (
-    <Modal isOpen onClose={onClose} title={isEdit ? "Update Branch" : "Create Branch"} size="xl" footer={false}>
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <Modal
+      isOpen
+      onClose={onClose}
+      title={isEdit ? "Update Branch" : "Create Branch"}
+      subtitle={isEdit ? branch.name : "Add a new shop or outlet"}
+      size="lg"
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={submitting}>
+            Cancel
+          </Button>
+          <Button type="submit" form={formId} loading={submitting} className="min-w-36">
+            {isEdit ? "Update Branch" : "Create Branch"}
+          </Button>
+        </>
+      }
+    >
+      <form id={formId} onSubmit={handleSubmit} noValidate className="space-y-5">
         <Alert>{serverError}</Alert>
 
-        <section className="rounded-lg border border-slate-200 p-4 sm:p-5">
-          <h3 className="mb-4 font-semibold text-slate-900">Branch Information</h3>
+        <FormSection title="Branch Information" icon="settings">
           <div className="grid gap-4 sm:grid-cols-2">
             <Input
               label="Name"
@@ -150,14 +167,14 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
             />
             <Select label="Status" name="status" options={STATUS_OPTIONS} value={form.status} onChange={handleChange} />
           </div>
-        </section>
+        </FormSection>
 
-        <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 sm:p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 className="font-semibold text-slate-900">ZKTeco Biometric Machine</h3>
-              <p className="text-sm text-slate-500">Configure the attendance machine for this branch (optional)</p>
-            </div>
+        <FormSection
+          title="ZKTeco Biometric Machine"
+          description="Configure the attendance machine for this branch (optional)"
+          icon="chip"
+          muted
+          actions={
             <div className="flex items-center gap-2">
               <span className="text-sm text-slate-500">{form.zktecoEnabled ? "Enabled" : "Disabled"}</span>
               <Toggle
@@ -166,10 +183,10 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
                 label="Enable ZKTeco machine"
               />
             </div>
-          </div>
-
+          }
+        >
           {form.zktecoEnabled && (
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3">
               <Input
                 label="IP address"
                 name="zktecoIp"
@@ -197,13 +214,7 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
               />
             </div>
           )}
-        </section>
-
-        <div className="flex justify-center">
-          <Button type="submit" loading={submitting} className="min-w-48">
-            {isEdit ? "Update Branch" : "Create Branch"}
-          </Button>
-        </div>
+        </FormSection>
       </form>
     </Modal>
   );

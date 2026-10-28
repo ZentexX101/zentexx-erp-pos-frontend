@@ -9,6 +9,7 @@ import { BRANCH_STATUS } from "../../constants/branch";
 import { authService } from "../../services/authService";
 import { branchService } from "../../services/branchService";
 import { formatDate } from "../../utils/formatDate";
+import { formatPhone } from "../../utils/phone";
 
 const TABS = [
   { status: USER_STATUS.PENDING, label: "Pending" },
@@ -20,13 +21,12 @@ const REASON_MAX = 300;
 
 const SELECT_CLASS = "rounded-md border bg-white px-2 py-2 text-sm text-slate-700";
 
-// Approve with a role and branch. Only a super admin may grant "admin";
-// manager / staff need a branch, an admin without one becomes a main admin.
+// Approve as a sub admin (needs a branch) or, owner only, as an admin (all branches).
 const ApproveControls = ({ user, branches, canGrantAdmin, busy, onApprove }) => {
-  const [role, setRole] = useState(user.role === ROLES.SUPER_ADMIN ? ROLES.STAFF : user.role);
+  const [role, setRole] = useState(ROLES.SUB_ADMIN);
   const [branchId, setBranchId] = useState("");
   const [branchError, setBranchError] = useState(false);
-  const roles = [canGrantAdmin && ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF].filter(Boolean);
+  const roles = [canGrantAdmin && ROLES.ADMIN, ROLES.SUB_ADMIN].filter(Boolean);
   const branchRequired = role !== ROLES.ADMIN;
 
   const handleApprove = () => {
@@ -73,7 +73,7 @@ const ApproveControls = ({ user, branches, canGrantAdmin, busy, onApprove }) => 
         aria-invalid={branchError}
         className={`${SELECT_CLASS} max-w-48 ${branchError ? "border-red-400" : "border-slate-300"}`}
       >
-        <option value="">{branchRequired ? "Select branch" : "No branch (main admin)"}</option>
+        <option value="">{branchRequired ? "Select branch" : "All branches (main admin)"}</option>
         {branches.map((b) => (
           <option key={b._id} value={b._id}>
             {b.name}
@@ -218,8 +218,8 @@ const Registrations = () => {
                 <div className="min-w-0">
                   <p className="font-medium text-slate-900">{user.name}</p>
                   <p className="truncate text-sm text-slate-500">
-                    {user.email}
-                    {user.phone && ` · ${user.phone}`}
+                    {formatPhone(user.phone)}
+                    {user.email && ` · ${user.email}`}
                   </p>
                   <p className="mt-1 text-xs text-slate-400">
                     Registered {formatDate(user.createdAt)}

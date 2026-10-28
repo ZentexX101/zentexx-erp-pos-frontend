@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ROLE_LABELS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
+import { formatPhone } from "../../utils/phone";
 
 const UserMenu = ({ changePasswordPath }) => {
   const { user, logout, logoutAll } = useAuth();
@@ -60,7 +61,7 @@ const UserMenu = ({ changePasswordPath }) => {
         <div role="menu" className="absolute right-0 z-20 mt-2 w-56 rounded-md bg-white py-1 shadow-lg ring-1 ring-slate-200">
           <div className="border-b border-slate-100 px-4 py-2">
             <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
-            <p className="truncate text-xs text-slate-500">{user.email}</p>
+            <p className="truncate text-xs text-slate-500">{user.email || formatPhone(user.phone)}</p>
           </div>
           <Link
             role="menuitem"

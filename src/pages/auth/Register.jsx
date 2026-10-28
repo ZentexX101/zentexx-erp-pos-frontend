@@ -3,24 +3,26 @@ import { Link } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import Input from "../../components/common/forms/Input";
+import PhoneInput from "../../components/common/forms/PhoneInput";
 import { ROUTES } from "../../constants/routes";
 import { authService } from "../../services/authService";
+import { formatPhone, toE164, validateBdMobile } from "../../utils/phone";
 import { isValid, validateConfirmPassword, validateEmail, validateNewPassword } from "../../utils/validators";
 
-const EMPTY_FORM = { name: "", email: "", phone: "", password: "", confirmPassword: "" };
+const EMPTY_FORM = { name: "", phone: "", email: "", password: "", confirmPassword: "" };
 
 const Register = () => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [registeredPhone, setRegisteredPhone] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const setField = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
+  const handleChange = (e) => setField(e.target.name, e.target.value);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,8 +30,8 @@ const Register = () => {
 
     const newErrors = {
       name: form.name.trim().length >= 2 ? "" : "Name must be at least 2 characters",
-      email: validateEmail(form.email),
-      phone: form.phone.trim().length > 20 ? "Phone number is too long" : "",
+      phone: validateBdMobile(form.phone),
+      email: form.email.trim() ? validateEmail(form.email) : "",
       password: validateNewPassword(form.password),
       confirmPassword: validateConfirmPassword(form.password, form.confirmPassword),
     };
@@ -40,19 +42,20 @@ const Register = () => {
     try {
       const user = await authService.register({
         name: form.name.trim(),
+        phone: toE164(form.phone),
         email: form.email.trim(),
-        phone: form.phone.trim() || undefined,
         password: form.password,
       });
-      setSubmittedEmail(user.email);
+      setRegisteredPhone(user.phone);
     } catch (err) {
+      if (err.details) setErrors(err.details);
       setServerError(err.message);
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (submittedEmail) {
+  if (registeredPhone) {
     return (
       <div className="text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600">
@@ -63,8 +66,8 @@ const Register = () => {
         </div>
         <h2 className="mb-2 text-lg font-semibold text-slate-900">Waiting for approval</h2>
         <p className="mb-6 text-sm text-slate-500">
-          Your account <span className="font-medium text-slate-900">{submittedEmail}</span> has been created. You can sign in
-          once an admin approves it.
+          Your account <span className="font-medium text-slate-900">{formatPhone(registeredPhone)}</span> has been created.
+          You can sign in once an admin approves it.
         </p>
         <Link to={ROUTES.LOGIN} className="font-medium text-blue-600 hover:underline">
           Back to sign in
@@ -84,34 +87,29 @@ const Register = () => {
         <Input
           label="Full name"
           name="name"
+          required
           autoComplete="name"
           autoFocus
           value={form.name}
           onChange={handleChange}
           error={errors.name}
         />
+        <PhoneInput label="Phone" required value={form.phone} onChange={(v) => setField("phone", v)} error={errors.phone} />
         <Input
-          label="Email"
+          label="Email (optional)"
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="Needed only to reset a forgotten password"
           value={form.email}
           onChange={handleChange}
           error={errors.email}
         />
         <Input
-          label="Phone (optional)"
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          value={form.phone}
-          onChange={handleChange}
-          error={errors.phone}
-        />
-        <Input
           label="Password"
           name="password"
           type="password"
+          required
           autoComplete="new-password"
           value={form.password}
           onChange={handleChange}
@@ -121,6 +119,7 @@ const Register = () => {
           label="Confirm password"
           name="confirmPassword"
           type="password"
+          required
           autoComplete="new-password"
           value={form.confirmPassword}
           onChange={handleChange}

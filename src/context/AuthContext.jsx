@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async ({ email, password, rememberMe }) => {
-    const data = await authService.login({ email, password, rememberMe });
+  const login = useCallback(async ({ identifier, password, rememberMe }) => {
+    const data = await authService.login({ identifier, password, rememberMe });
     tokenStorage.setTokens(data, rememberMe);
     setUser(data.user);
     return data.user;
