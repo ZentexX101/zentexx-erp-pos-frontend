@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import Pagination from "../../components/common/data/Pagination";
 import Spinner from "../../components/common/loaders/Spinner";
 import Modal from "../../components/common/modals/Modal";
+import { BRANCH_STATUS } from "../../constants/branch";
 import { ROLE_LABELS, ROLES, USER_STATUS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
-import { usePagedList } from "../../hooks/usePagedList";
-import { BRANCH_STATUS } from "../../constants/branch";
-import { authService } from "../../services/authService";
-import { branchService } from "../../services/branchService";
+import { useBranchOptionsData } from "../../hooks/useBranchApi";
+import { useApproveRegistration, useRegistrationsData, useRejectRegistration } from "../../hooks/useRegistrationApi";
 import { formatDate } from "../../utils/formatDate";
 import { formatPhone } from "../../utils/phone";
 
@@ -95,27 +94,41 @@ const Registrations = () => {
   const { user: currentUser } = useAuth();
   const canGrantAdmin = currentUser.role === ROLES.SUPER_ADMIN;
 
+  // all states
   const [status, setStatus] = useState(USER_STATUS.PENDING);
-  const { rows: users, meta, setPage, setLimit, loading, error: loadError, reload } = usePagedList(authService.getRegistrations, { status });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busyId, setBusyId] = useState(null);
-
-  const [branches, setBranches] = useState([]);
   const [rejecting, setRejecting] = useState(null);
   const [reason, setReason] = useState("");
 
+  // call registration api (paging runs on the backend)
+  const { data, isLoading, error: listError } = useRegistrationsData({ status, page, limit });
   // Only active branches can receive new users
-  useEffect(() => {
-    branchService
-      .getOptions({ status: BRANCH_STATUS.ACTIVE })
-      .then(setBranches)
-      .catch((err) => setError(err.message));
-  }, []);
+  const { data: branches = [], error: branchError } = useBranchOptionsData(BRANCH_STATUS.ACTIVE);
+  const approveRegistration = useApproveRegistration();
+  const rejectRegistration = useRejectRegistration();
+
+  const users = data?.data ?? [];
+  const meta = data?.meta;
+  const loadError = (listError || branchError)?.message;
 
   const changeTab = (next) => {
     setNotice("");
     setStatus(next);
+    setPage(1);
+  };
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    setPage(1);
+  };
+
+  // An approved / rejected user leaves this tab; step back if they were the page's last row
+  const afterReview = () => {
+    if (users.length === 1 && page > 1) setPage(page - 1);
   };
 
   const handleApprove = async (user, role, branchId) => {
@@ -123,8 +136,8 @@ const Registrations = () => {
     setError("");
     setNotice("");
     try {
-      const approved = await authService.approveRegistration(user._id, role, branchId);
-      reload();
+      const approved = await approveRegistration.mutateAsync({ userId: user._id, role, branchId });
+      afterReview();
       const where = approved.branch ? ` at ${approved.branch.name}` : " (main admin)";
       setNotice(`${user.name} approved as ${ROLE_LABELS[role]}${where}. They can sign in now.`);
     } catch (err) {
@@ -145,8 +158,8 @@ const Registrations = () => {
     setError("");
     setNotice("");
     try {
-      await authService.rejectRegistration(user._id, reason.trim());
-      reload();
+      await rejectRegistration.mutateAsync({ userId: user._id, reason: reason.trim() });
+      afterReview();
       setNotice(`${user.name}'s registration was rejected.`);
       closeRejectModal();
     } catch (err) {
@@ -187,7 +200,7 @@ const Registrations = () => {
       </div>
 
       <div className="mt-4">
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center py-16">
             <Spinner className="h-6 w-6 text-blue-600" />
           </div>
@@ -245,7 +258,7 @@ const Registrations = () => {
             ))}
           </ul>
         )}
-        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
+        {!isLoading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={handleLimitChange} />}
       </div>
 
       <Modal

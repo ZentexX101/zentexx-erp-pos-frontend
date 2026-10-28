@@ -5,7 +5,7 @@ import Button from "../../components/common/buttons/Button";
 import Input from "../../components/common/forms/Input";
 import PhoneInput from "../../components/common/forms/PhoneInput";
 import { ROUTES } from "../../constants/routes";
-import { authService } from "../../services/authService";
+import { registerUser } from "../../providers/apiProviders/authApiProvider";
 import { formatPhone, toE164, validateBdMobile } from "../../utils/phone";
 import { isValid, validateConfirmPassword, validateEmail, validateNewPassword } from "../../utils/validators";
 
@@ -40,7 +40,7 @@ const Register = () => {
 
     setSubmitting(true);
     try {
-      const user = await authService.register({
+      const user = await registerUser({
         name: form.name.trim(),
         phone: toE164(form.phone),
         email: form.email.trim(),

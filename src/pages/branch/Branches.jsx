@@ -14,25 +14,40 @@ import ConfirmModal from "../../components/common/modals/ConfirmModal";
 import { BRANCH_STATUS } from "../../constants/branch";
 import { ROUTES } from "../../constants/routes";
 import { useBranch } from "../../hooks/useBranch";
+import { useBranchesData, useDeleteBranch } from "../../hooks/useBranchApi";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { usePagedList } from "../../hooks/usePagedList";
-import { branchService } from "../../services/branchService";
 import { formatShortDate } from "../../utils/formatDate";
+import { rowNumber } from "../../utils/pagination";
 
 const Branches = () => {
   const navigate = useNavigate();
   const { enterBranch } = useBranch();
 
+  // all states
   const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
-
-  // Search and paging run on the backend
-  const { rows: branches, meta, setPage, setLimit, loading, error, reload, rowNumber } = usePagedList(branchService.getBranches, { search });
-
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   // null = closed, { branch: null } = create, { branch } = edit
   const [form, setForm] = useState(null);
   const [deleting, setDeleting] = useState(null);
+
+  // call branch api (search and paging run on the backend)
+  const { data, isLoading, error } = useBranchesData({ search, page, limit });
+  const deleteBranch = useDeleteBranch();
+  const branches = data?.data ?? [];
+  const meta = data?.meta;
+
+  const handleSearch = (value) => {
+    setSearchInput(value);
+    setPage(1);
+  };
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    setPage(1);
+  };
 
   const openForm = (branch) => {
     setNotice("");
@@ -42,7 +57,6 @@ const Branches = () => {
   const handleSaved = (saved, isEdit) => {
     setForm(null);
     setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
-    reload();
   };
 
   const handleLogin = (branch) => {
@@ -51,14 +65,15 @@ const Branches = () => {
   };
 
   const handleDelete = async () => {
-    await branchService.remove(deleting._id);
+    await deleteBranch.mutateAsync(deleting._id);
     setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
-    reload();
+    // The page's last row is gone: go back a page
+    if (branches.length === 1 && page > 1) setPage(page - 1);
   };
 
   const columns = [
-    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(i) },
+    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
     { key: "name", header: "Branch Name", className: "font-medium text-slate-900" },
     { key: "address", header: "Address", className: "text-slate-600" },
     { key: "phone", header: "Phone", className: "whitespace-nowrap text-slate-700" },
@@ -133,22 +148,22 @@ const Branches = () => {
         }
       />
 
-      <SearchInput value={searchInput} onChange={setSearchInput} placeholder="Search branch..." className="mt-6 max-w-sm" />
+      <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search branch..." className="mt-6 max-w-sm" />
 
       <div className="mt-4 space-y-2">
         <Alert type="success">{notice}</Alert>
-        <Alert>{error}</Alert>
+        <Alert>{error?.message}</Alert>
       </div>
 
       <div className="mt-4">
         <DataTable
           columns={columns}
           rows={branches}
-          loading={loading}
+          loading={isLoading}
           minWidth={960}
           emptyMessage={search ? `No branch matches "${search}".` : "No branches yet. Create your first branch."}
         />
-        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={handleLimitChange} />
       </div>
 
       {form && <BranchFormModal branch={form.branch} onClose={() => setForm(null)} onSaved={handleSaved} />}

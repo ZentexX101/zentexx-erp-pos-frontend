@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { CATEGORY_STATUS } from "../../constants/category";
-import { categoryService } from "../../services/categoryService";
+import { useCreateCategory, useUpdateCategory } from "../../hooks/useCategoryApi";
 import { isValid } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
 import Button from "../common/buttons/Button";
@@ -35,7 +35,9 @@ const CategoryFormModal = ({ category, onClose, onSaved }) => {
   const [form, setForm] = useState(() => toForm(category));
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  const submitting = createCategory.isPending || updateCategory.isPending;
 
   const setField = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -58,14 +60,14 @@ const CategoryFormModal = ({ category, onClose, onSaved }) => {
       incentiveAmount: Number(form.incentiveAmount),
     };
 
-    setSubmitting(true);
     try {
-      const saved = isEdit ? await categoryService.update(category._id, payload) : await categoryService.create(payload);
+      const saved = isEdit
+        ? await updateCategory.mutateAsync({ id: category._id, data: payload })
+        : await createCategory.mutateAsync(payload);
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) setErrors(err.details);
       setServerError(err.message);
-      setSubmitting(false);
     }
   };
 

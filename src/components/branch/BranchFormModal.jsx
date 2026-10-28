@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { BRANCH_STATUS, ZKTECO_DEFAULT_PORT } from "../../constants/branch";
-import { branchService } from "../../services/branchService";
+import { useCreateBranch, useUpdateBranch } from "../../hooks/useBranchApi";
 import { isValid, validateEmail } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
 import FormSection from "../common/forms/FormSection";
@@ -57,7 +57,9 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
   const [form, setForm] = useState(() => toForm(branch));
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const createBranch = useCreateBranch();
+  const updateBranch = useUpdateBranch();
+  const submitting = createBranch.isPending || updateBranch.isPending;
 
   const setField = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -88,9 +90,10 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
       },
     };
 
-    setSubmitting(true);
     try {
-      const saved = isEdit ? await branchService.update(branch._id, payload) : await branchService.create(payload);
+      const saved = isEdit
+        ? await updateBranch.mutateAsync({ id: branch._id, data: payload })
+        : await createBranch.mutateAsync(payload);
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) {
@@ -99,7 +102,6 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
         );
       }
       setServerError(err.message);
-      setSubmitting(false);
     }
   };
 

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { isMainAdmin } from "../constants/roles";
 import { useAuth } from "../hooks/useAuth";
-import { branchService } from "../services/branchService";
+import { fetchCurrentBranchData } from "../providers/apiProviders/branchApiProvider";
 import { branchStorage } from "../services/branchStorage";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -30,8 +30,7 @@ export const BranchProvider = ({ children }) => {
     // After a reload, re-fetch the stored branch (it may have been deleted meanwhile)
     if (branchStorage.getId() && !enteredBranch) {
       setChecking(true);
-      branchService
-        .getCurrent()
+      fetchCurrentBranchData()
         .then(setEnteredBranch)
         .catch(() => branchStorage.clear())
         .finally(() => setChecking(false));

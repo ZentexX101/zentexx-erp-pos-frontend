@@ -6,7 +6,7 @@ const groupModules = (modules) =>
     return groups;
   }, {});
 
-// Grid of module × action checkboxes. catalog comes from staffService.getPermissionCatalog();
+// Grid of module × action checkboxes. catalog comes from usePermissionCatalogData();
 // value / onChange use permission keys like "product.view".
 const PermissionPicker = ({ catalog, value, onChange }) => {
   const selected = new Set(value);

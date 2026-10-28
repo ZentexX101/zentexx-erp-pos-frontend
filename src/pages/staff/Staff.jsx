@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import IconButton from "../../components/common/buttons/IconButton";
@@ -13,11 +13,11 @@ import PermissionsViewModal from "../../components/staff/PermissionsViewModal";
 import StaffFormModal from "../../components/staff/StaffFormModal";
 import { canManageUser, ROLE_LABELS, ROLES } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
+import { useBranchOptionsData } from "../../hooks/useBranchApi";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { usePagedList } from "../../hooks/usePagedList";
-import { branchService } from "../../services/branchService";
-import { staffService } from "../../services/staffService";
+import { useDeleteStaff, usePermissionCatalogData, useStaffData } from "../../hooks/useStaffApi";
 import { formatShortDate } from "../../utils/formatDate";
+import { rowNumber } from "../../utils/pagination";
 import { formatPhone } from "../../utils/phone";
 
 const ROLE_TONES = { [ROLES.SUPER_ADMIN]: "purple", [ROLES.ADMIN]: "blue", [ROLES.SUB_ADMIN]: "slate" };
@@ -30,43 +30,45 @@ const formatTaka = (amount) => (amount === null || amount === undefined ? "—" 
 const Staff = () => {
   const { user: actor } = useAuth();
 
-  const [branches, setBranches] = useState([]);
-  const [catalog, setCatalog] = useState(null);
-  const [error, setError] = useState("");
+  // all states
   const [notice, setNotice] = useState("");
-
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [filters, setFilters] = useState({ branch: "", role: "", status: "" });
-
-  // Search, filters and paging run on the backend
-  const {
-    rows: staff,
-    meta,
-    setPage,
-    setLimit,
-    loading,
-    error: loadError,
-    reload,
-    rowNumber,
-  } = usePagedList(staffService.getStaff, { ...filters, search });
-
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   // null = closed, { staff: null } = create, { staff } = edit
   const [form, setForm] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [deleting, setDeleting] = useState(null);
 
-  // Branches (for the filter, form and machine status) and the permission catalog load once
-  useEffect(() => {
-    Promise.all([branchService.getOptions(), staffService.getPermissionCatalog()])
-      .then(([branchList, permissionCatalog]) => {
-        setBranches(branchList);
-        setCatalog(permissionCatalog);
-      })
-      .catch((err) => setError(err.message));
-  }, []);
+  // call staff api (search, filters and paging run on the backend)
+  const { data, isLoading, error: staffError } = useStaffData({ ...filters, search, page, limit });
+  // Branches (for the filter, form and machine status) and the permission catalog
+  const { data: branches = [], error: branchError } = useBranchOptionsData();
+  const { data: catalog = null, error: catalogError } = usePermissionCatalogData();
+  const deleteStaff = useDeleteStaff();
+
+  const staff = data?.data ?? [];
+  const meta = data?.meta;
+  const error = (staffError || branchError || catalogError)?.message;
 
   const branchById = useMemo(() => Object.fromEntries(branches.map((b) => [b._id, b])), [branches]);
+
+  const handleSearch = (value) => {
+    setSearchInput(value);
+    setPage(1);
+  };
+
+  const handleFilter = (name, value) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    setPage(1);
+  };
 
   const openForm = (target) => {
     setNotice("");
@@ -76,18 +78,18 @@ const Staff = () => {
   const handleSaved = (saved, isEdit) => {
     setForm(null);
     setNotice(isEdit ? `${saved.name} updated.` : `${saved.name} created (Staff ID #${saved.staffCode}). They can sign in now.`);
-    reload();
   };
 
   const handleDelete = async () => {
-    await staffService.remove(deleting._id);
+    await deleteStaff.mutateAsync(deleting._id);
     setNotice(`${deleting.name} deleted.`);
     setDeleting(null);
-    reload();
+    // The page's last row is gone: go back a page
+    if (staff.length === 1 && page > 1) setPage(page - 1);
   };
 
   const columns = [
-    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(i) },
+    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
     {
       key: "staffCode",
       header: "Staff ID",
@@ -212,13 +214,13 @@ const Staff = () => {
       <div className="mt-6 flex flex-col gap-3 lg:flex-row">
         <SearchInput
           value={searchInput}
-          onChange={setSearchInput}
+          onChange={handleSearch}
           placeholder="Search name, phone, ID, designation..."
           className="lg:w-80"
         />
         <select
           value={filters.branch}
-          onChange={(e) => setFilters((prev) => ({ ...prev, branch: e.target.value }))}
+          onChange={(e) => handleFilter("branch", e.target.value)}
           aria-label="Filter by branch"
           className={FILTER_CLASS}
         >
@@ -232,7 +234,7 @@ const Staff = () => {
         </select>
         <select
           value={filters.role}
-          onChange={(e) => setFilters((prev) => ({ ...prev, role: e.target.value }))}
+          onChange={(e) => handleFilter("role", e.target.value)}
           aria-label="Filter by type"
           className={FILTER_CLASS}
         >
@@ -245,7 +247,7 @@ const Staff = () => {
         </select>
         <select
           value={filters.status}
-          onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
+          onChange={(e) => handleFilter("status", e.target.value)}
           aria-label="Filter by status"
           className={FILTER_CLASS}
         >
@@ -257,12 +259,12 @@ const Staff = () => {
 
       <div className="mt-4 space-y-2">
         <Alert type="success">{notice}</Alert>
-        <Alert>{error || loadError}</Alert>
+        <Alert>{error}</Alert>
       </div>
 
       <div className="mt-4">
-        <DataTable columns={columns} rows={staff} loading={loading} emptyMessage="No staff found." minWidth={1400} />
-        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
+        <DataTable columns={columns} rows={staff} loading={isLoading} emptyMessage="No staff found." minWidth={1400} />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={handleLimitChange} />
       </div>
 
       {form && (

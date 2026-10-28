@@ -2,7 +2,7 @@ import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import Input from "../../components/common/forms/Input";
-import { authService } from "../../services/authService";
+import { changePassword } from "../../providers/apiProviders/authApiProvider";
 import { isValid, validateConfirmPassword, validateNewPassword } from "../../utils/validators";
 
 const EMPTY_FORM = { currentPassword: "", newPassword: "", confirmPassword: "" };
@@ -37,7 +37,7 @@ const ChangePassword = () => {
 
     setSubmitting(true);
     try {
-      const res = await authService.changePassword(form);
+      const res = await changePassword(form);
       setSuccess(res.message);
       setForm(EMPTY_FORM);
     } catch (err) {

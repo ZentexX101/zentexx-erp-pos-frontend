@@ -1,22 +1,15 @@
-import { useEffect, useState } from "react";
 import Spinner from "../../components/common/loaders/Spinner";
 import { BRANCH_STATUS } from "../../constants/branch";
 import { useBranch } from "../../hooks/useBranch";
-import { branchService } from "../../services/branchService";
+import { useCurrentBranchData } from "../../hooks/useBranchApi";
 
 // Placeholder for the branch dashboard until Stock, Sales, etc. are built
 const BranchHome = () => {
   const { activeBranch } = useBranch();
-  const [branch, setBranch] = useState(null);
-  const [error, setError] = useState("");
 
   // Full details (address, phone, ...) — activeBranch may only have name and status
-  useEffect(() => {
-    branchService
-      .getCurrent()
-      .then(setBranch)
-      .catch((err) => setError(err.message));
-  }, [activeBranch._id]);
+  const { data: branch, error: queryError } = useCurrentBranchData(activeBranch._id);
+  const error = queryError?.message;
 
   const details = branch && [
     ["Address", branch.address],

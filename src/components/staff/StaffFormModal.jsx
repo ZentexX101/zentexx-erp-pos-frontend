@@ -2,7 +2,7 @@ import { useId, useState } from "react";
 import { BRANCH_STATUS } from "../../constants/branch";
 import { getAssignableRoles, ROLE_LABELS, ROLES, WEEK_DAYS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
-import { staffService } from "../../services/staffService";
+import { useCreateStaff, useUpdateStaff } from "../../hooks/useStaffApi";
 import { fromE164, toE164, validateBdMobile } from "../../utils/phone";
 import { isValid, validateConfirmPassword, validateEmail, validateNewPassword } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
@@ -99,7 +99,9 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
   const [form, setForm] = useState(() => toForm(staff));
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const createStaff = useCreateStaff();
+  const updateStaff = useUpdateStaff();
+  const submitting = createStaff.isPending || updateStaff.isPending;
 
   const isSubAdmin = form.role === ROLES.SUB_ADMIN;
   const roleOptions = getAssignableRoles(actor).map((role) => ({ value: role, label: ROLE_LABELS[role] }));
@@ -123,15 +125,15 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
     setErrors(newErrors);
     if (!isValid(newErrors)) return;
 
-    setSubmitting(true);
     try {
       const payload = toPayload(form, isEdit);
-      const saved = isEdit ? await staffService.update(staff._id, payload) : await staffService.create(payload);
+      const saved = isEdit
+        ? await updateStaff.mutateAsync({ id: staff._id, data: payload })
+        : await createStaff.mutateAsync(payload);
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) setErrors(err.details);
       setServerError(err.message);
-      setSubmitting(false);
     }
   };
 

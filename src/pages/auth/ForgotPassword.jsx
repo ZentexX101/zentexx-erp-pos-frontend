@@ -4,7 +4,7 @@ import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import Input from "../../components/common/forms/Input";
 import { ROUTES } from "../../constants/routes";
-import { authService } from "../../services/authService";
+import { forgotPassword, resetPassword, verifyOtp } from "../../providers/apiProviders/authApiProvider";
 import { isValid, validateConfirmPassword, validateEmail, validateNewPassword } from "../../utils/validators";
 
 // Matches OTP_RESEND_COOLDOWN_SECONDS in the backend
@@ -55,7 +55,7 @@ const ForgotPassword = () => {
 
   const sendOtp = () =>
     run(async () => {
-      await authService.forgotPassword({ email: email.trim() });
+      await forgotPassword({ email: email.trim() });
       setStep(STEPS.OTP);
       setCooldown(RESEND_COOLDOWN);
       setInfo("If an account exists for this email, a code has been sent.");
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
     if (!isValid(newErrors)) return;
 
     run(async () => {
-      const data = await authService.verifyOtp({ email: email.trim(), otp });
+      const data = await verifyOtp({ email: email.trim(), otp });
       setResetToken(data.resetToken);
       setStep(STEPS.RESET);
     });
@@ -91,7 +91,7 @@ const ForgotPassword = () => {
     if (!isValid(newErrors)) return;
 
     run(async () => {
-      await authService.resetPassword({ resetToken, newPassword: passwords.newPassword });
+      await resetPassword({ resetToken, newPassword: passwords.newPassword });
       navigate(ROUTES.LOGIN, {
         replace: true,
         state: { notice: "Password reset successfully. Please sign in with your new password." },

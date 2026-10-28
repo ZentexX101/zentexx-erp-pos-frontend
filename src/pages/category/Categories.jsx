@@ -12,11 +12,11 @@ import PageHeader from "../../components/common/layout/PageHeader";
 import ConfirmModal from "../../components/common/modals/ConfirmModal";
 import { CATEGORY_STATUS } from "../../constants/category";
 import { useAuth } from "../../hooks/useAuth";
+import { useCategoriesData, useDeleteCategory } from "../../hooks/useCategoryApi";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { usePagedList } from "../../hooks/usePagedList";
-import { categoryService } from "../../services/categoryService";
 import { hasPermission } from "../../utils/access";
 import { formatShortDate } from "../../utils/formatDate";
+import { rowNumber } from "../../utils/pagination";
 
 const Categories = () => {
   const { user } = useAuth();
@@ -24,18 +24,31 @@ const Categories = () => {
   const canEdit = hasPermission(user, "category.edit");
   const canDelete = hasPermission(user, "category.delete");
 
+  // all states
   const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
-
-  // Search and paging run on the backend
-  const { rows: categories, meta, setPage, setLimit, loading, error, reload, rowNumber } = usePagedList(categoryService.getCategories, {
-    search,
-  });
-
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   // null = closed, { category: null } = create, { category } = edit
   const [form, setForm] = useState(null);
   const [deleting, setDeleting] = useState(null);
+
+  // call category api (search and paging run on the backend)
+  const { data, isLoading, error } = useCategoriesData({ search, page, limit });
+  const deleteCategory = useDeleteCategory();
+  const categories = data?.data ?? [];
+  const meta = data?.meta;
+
+  const handleSearch = (value) => {
+    setSearchInput(value);
+    setPage(1);
+  };
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    setPage(1);
+  };
 
   const openForm = (category) => {
     setNotice("");
@@ -45,18 +58,18 @@ const Categories = () => {
   const handleSaved = (saved, isEdit) => {
     setForm(null);
     setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
-    reload();
   };
 
   const handleDelete = async () => {
-    await categoryService.remove(deleting._id);
+    await deleteCategory.mutateAsync(deleting._id);
     setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
-    reload();
+    // The page's last row is gone: go back a page
+    if (categories.length === 1 && page > 1) setPage(page - 1);
   };
 
   const columns = [
-    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(i) },
+    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
     { key: "name", header: "Category Name", className: "font-medium text-slate-900" },
     {
       key: "incentiveAmount",
@@ -115,22 +128,22 @@ const Categories = () => {
         }
       />
 
-      <SearchInput value={searchInput} onChange={setSearchInput} placeholder="Search category..." className="mt-6 max-w-sm" />
+      <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search category..." className="mt-6 max-w-sm" />
 
       <div className="mt-4 space-y-2">
         <Alert type="success">{notice}</Alert>
-        <Alert>{error}</Alert>
+        <Alert>{error?.message}</Alert>
       </div>
 
       <div className="mt-4">
         <DataTable
           columns={columns}
           rows={categories}
-          loading={loading}
+          loading={isLoading}
           minWidth={720}
           emptyMessage={search ? `No category matches "${search}".` : "No categories yet. Create your first category."}
         />
-        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={handleLimitChange} />
       </div>
 
       {form && <CategoryFormModal category={form.category} onClose={() => setForm(null)} onSaved={handleSaved} />}
