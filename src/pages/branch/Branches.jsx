@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import BranchFormModal from "../../components/branch/BranchFormModal";
 import Alert from "../../components/common/alerts/Alert";
@@ -6,6 +6,7 @@ import Button from "../../components/common/buttons/Button";
 import IconButton from "../../components/common/buttons/IconButton";
 import Badge from "../../components/common/data/Badge";
 import DataTable from "../../components/common/data/DataTable";
+import Pagination from "../../components/common/data/Pagination";
 import SearchInput from "../../components/common/forms/SearchInput";
 import Icon from "../../components/common/icons/Icon";
 import PageHeader from "../../components/common/layout/PageHeader";
@@ -14,6 +15,7 @@ import { BRANCH_STATUS } from "../../constants/branch";
 import { ROUTES } from "../../constants/routes";
 import { useBranch } from "../../hooks/useBranch";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { usePagedList } from "../../hooks/usePagedList";
 import { branchService } from "../../services/branchService";
 import { formatShortDate } from "../../utils/formatDate";
 
@@ -21,33 +23,16 @@ const Branches = () => {
   const navigate = useNavigate();
   const { enterBranch } = useBranch();
 
-  const [branches, setBranches] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
+
+  // Search and paging run on the backend
+  const { rows: branches, meta, setPage, setLimit, loading, error, reload, rowNumber } = usePagedList(branchService.getBranches, { search });
 
   // null = closed, { branch: null } = create, { branch } = edit
   const [form, setForm] = useState(null);
   const [deleting, setDeleting] = useState(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      setBranches(await branchService.getBranches({ search }));
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [search]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
 
   const openForm = (branch) => {
     setNotice("");
@@ -57,7 +42,7 @@ const Branches = () => {
   const handleSaved = (saved, isEdit) => {
     setForm(null);
     setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
-    load();
+    reload();
   };
 
   const handleLogin = (branch) => {
@@ -69,11 +54,11 @@ const Branches = () => {
     await branchService.remove(deleting._id);
     setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
-    load();
+    reload();
   };
 
   const columns = [
-    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => i + 1 },
+    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(i) },
     { key: "name", header: "Branch Name", className: "font-medium text-slate-900" },
     { key: "address", header: "Address", className: "text-slate-600" },
     { key: "phone", header: "Phone", className: "whitespace-nowrap text-slate-700" },
@@ -163,6 +148,7 @@ const Branches = () => {
           minWidth={960}
           emptyMessage={search ? `No branch matches "${search}".` : "No branches yet. Create your first branch."}
         />
+        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
       </div>
 
       {form && <BranchFormModal branch={form.branch} onClose={() => setForm(null)} onSaved={handleSaved} />}

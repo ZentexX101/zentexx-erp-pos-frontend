@@ -1,12 +1,9 @@
+import { toQueryString } from "../utils/queryString";
 import { apiRequest } from "./ApiRequestHandler";
 
 export const staffService = {
-  // { search, role, branch, status } — all optional; branch "none" = no branch (main admins)
-  getStaff: async (filters = {}) => {
-    const params = new URLSearchParams(Object.entries(filters).filter(([, value]) => value));
-    const query = params.toString();
-    return (await apiRequest(`/staff${query ? `?${query}` : ""}`)).data;
-  },
+  // One page: { search, role, branch, status, page, limit } -> { data, meta }; branch "none" = main admins
+  getStaff: (params) => apiRequest(`/staff${toQueryString(params)}`),
 
   // { modules: [{ key, label, group, actions }], actionLabels: { view: "View", ... } }
   getPermissionCatalog: async () => (await apiRequest("/staff/permissions")).data,

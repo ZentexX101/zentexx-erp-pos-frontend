@@ -27,6 +27,7 @@ import { REVIEWER_ROLES } from "../constants/roles";
 import { ROUTES } from "../constants/routes";
 import BranchHome from "../pages/branch/BranchHome";
 import Branches from "../pages/branch/Branches";
+import Categories from "../pages/category/Categories";
 import DashboardHome from "../pages/dashboard/DashboardHome";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
@@ -78,7 +79,7 @@ export const MAIN_PANEL = {
         {
           label: "Category",
           icon: LuTags,
-          children: [{ label: "Category List", path: ROUTES.CATEGORIES, permission: "category.view" }],
+          children: [{ label: "Category List", path: ROUTES.CATEGORIES, page: Categories, permission: "category.view" }],
         },
         {
           label: "Brand",

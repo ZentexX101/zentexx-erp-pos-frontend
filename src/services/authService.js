@@ -1,3 +1,4 @@
+import { toQueryString } from "../utils/queryString";
 import { apiRequest } from "./ApiRequestHandler";
 
 export const authService = {
@@ -29,8 +30,8 @@ export const authService = {
     apiRequest("/auth/reset-password", { method: "POST", body: { resetToken, newPassword }, auth: false }),
 
   // Admin: registration requests by status (pending | approved | rejected)
-  getRegistrations: async (status) =>
-    (await apiRequest(`/auth/registrations?status=${encodeURIComponent(status)}`)).data,
+  // One page: { status, page, limit } -> { data, meta }
+  getRegistrations: (params) => apiRequest(`/auth/registrations${toQueryString(params)}`),
 
   // branchId is required for manager / staff; null makes an admin a main admin
   approveRegistration: async (userId, role, branchId = null) =>

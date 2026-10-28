@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
+import Pagination from "../../components/common/data/Pagination";
 import Spinner from "../../components/common/loaders/Spinner";
 import Modal from "../../components/common/modals/Modal";
 import { ROLE_LABELS, ROLES, USER_STATUS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
+import { usePagedList } from "../../hooks/usePagedList";
 import { BRANCH_STATUS } from "../../constants/branch";
 import { authService } from "../../services/authService";
 import { branchService } from "../../services/branchService";
@@ -94,8 +96,7 @@ const Registrations = () => {
   const canGrantAdmin = currentUser.role === ROLES.SUPER_ADMIN;
 
   const [status, setStatus] = useState(USER_STATUS.PENDING);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { rows: users, meta, setPage, setLimit, loading, error: loadError, reload } = usePagedList(authService.getRegistrations, { status });
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busyId, setBusyId] = useState(null);
@@ -104,27 +105,10 @@ const Registrations = () => {
   const [rejecting, setRejecting] = useState(null);
   const [reason, setReason] = useState("");
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      setUsers(await authService.getRegistrations(status));
-    } catch (err) {
-      setError(err.message);
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [status]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
   // Only active branches can receive new users
   useEffect(() => {
     branchService
-      .getBranches({ status: BRANCH_STATUS.ACTIVE })
+      .getOptions({ status: BRANCH_STATUS.ACTIVE })
       .then(setBranches)
       .catch((err) => setError(err.message));
   }, []);
@@ -140,7 +124,7 @@ const Registrations = () => {
     setNotice("");
     try {
       const approved = await authService.approveRegistration(user._id, role, branchId);
-      setUsers((prev) => prev.filter((u) => u._id !== user._id));
+      reload();
       const where = approved.branch ? ` at ${approved.branch.name}` : " (main admin)";
       setNotice(`${user.name} approved as ${ROLE_LABELS[role]}${where}. They can sign in now.`);
     } catch (err) {
@@ -162,7 +146,7 @@ const Registrations = () => {
     setNotice("");
     try {
       await authService.rejectRegistration(user._id, reason.trim());
-      setUsers((prev) => prev.filter((u) => u._id !== user._id));
+      reload();
       setNotice(`${user.name}'s registration was rejected.`);
       closeRejectModal();
     } catch (err) {
@@ -199,7 +183,7 @@ const Registrations = () => {
 
       <div className="mt-4 space-y-2">
         <Alert type="success">{notice}</Alert>
-        <Alert>{error}</Alert>
+        <Alert>{error || loadError}</Alert>
       </div>
 
       <div className="mt-4">
@@ -261,6 +245,7 @@ const Registrations = () => {
             ))}
           </ul>
         )}
+        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
       </div>
 
       <Modal

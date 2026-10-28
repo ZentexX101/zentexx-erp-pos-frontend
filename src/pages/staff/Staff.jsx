@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import IconButton from "../../components/common/buttons/IconButton";
 import Badge from "../../components/common/data/Badge";
 import DataTable from "../../components/common/data/DataTable";
+import Pagination from "../../components/common/data/Pagination";
 import SearchInput from "../../components/common/forms/SearchInput";
 import Icon from "../../components/common/icons/Icon";
 import PageHeader from "../../components/common/layout/PageHeader";
@@ -13,6 +14,7 @@ import StaffFormModal from "../../components/staff/StaffFormModal";
 import { canManageUser, ROLE_LABELS, ROLES } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { usePagedList } from "../../hooks/usePagedList";
 import { branchService } from "../../services/branchService";
 import { staffService } from "../../services/staffService";
 import { formatShortDate } from "../../utils/formatDate";
@@ -28,10 +30,8 @@ const formatTaka = (amount) => (amount === null || amount === undefined ? "—" 
 const Staff = () => {
   const { user: actor } = useAuth();
 
-  const [staff, setStaff] = useState([]);
   const [branches, setBranches] = useState([]);
   const [catalog, setCatalog] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -39,30 +39,26 @@ const Staff = () => {
   const search = useDebouncedValue(searchInput.trim());
   const [filters, setFilters] = useState({ branch: "", role: "", status: "" });
 
+  // Search, filters and paging run on the backend
+  const {
+    rows: staff,
+    meta,
+    setPage,
+    setLimit,
+    loading,
+    error: loadError,
+    reload,
+    rowNumber,
+  } = usePagedList(staffService.getStaff, { ...filters, search });
+
   // null = closed, { staff: null } = create, { staff } = edit
   const [form, setForm] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [deleting, setDeleting] = useState(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      setStaff(await staffService.getStaff({ ...filters, search }));
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, search]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
   // Branches (for the filter, form and machine status) and the permission catalog load once
   useEffect(() => {
-    Promise.all([branchService.getBranches(), staffService.getPermissionCatalog()])
+    Promise.all([branchService.getOptions(), staffService.getPermissionCatalog()])
       .then(([branchList, permissionCatalog]) => {
         setBranches(branchList);
         setCatalog(permissionCatalog);
@@ -80,18 +76,18 @@ const Staff = () => {
   const handleSaved = (saved, isEdit) => {
     setForm(null);
     setNotice(isEdit ? `${saved.name} updated.` : `${saved.name} created (Staff ID #${saved.staffCode}). They can sign in now.`);
-    load();
+    reload();
   };
 
   const handleDelete = async () => {
     await staffService.remove(deleting._id);
     setNotice(`${deleting.name} deleted.`);
     setDeleting(null);
-    load();
+    reload();
   };
 
   const columns = [
-    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => i + 1 },
+    { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(i) },
     {
       key: "staffCode",
       header: "Staff ID",
@@ -261,11 +257,12 @@ const Staff = () => {
 
       <div className="mt-4 space-y-2">
         <Alert type="success">{notice}</Alert>
-        <Alert>{error}</Alert>
+        <Alert>{error || loadError}</Alert>
       </div>
 
       <div className="mt-4">
         <DataTable columns={columns} rows={staff} loading={loading} emptyMessage="No staff found." minWidth={1400} />
+        {!loading && <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />}
       </div>
 
       {form && (
