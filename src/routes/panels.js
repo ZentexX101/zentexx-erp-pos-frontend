@@ -25,6 +25,7 @@ import {
 } from "react-icons/lu";
 import { REVIEWER_ROLES } from "../constants/roles";
 import { ROUTES } from "../constants/routes";
+import Brands from "../pages/brand/Brands";
 import BranchHome from "../pages/branch/BranchHome";
 import Branches from "../pages/branch/Branches";
 import Categories from "../pages/category/Categories";
@@ -84,7 +85,7 @@ export const MAIN_PANEL = {
         {
           label: "Brand",
           icon: LuGem,
-          children: [{ label: "Brand List", path: ROUTES.BRANDS, permission: "brand.view" }],
+          children: [{ label: "Brand List", path: ROUTES.BRANDS, page: Brands, permission: "brand.view" }],
         },
         {
           label: "Service",
