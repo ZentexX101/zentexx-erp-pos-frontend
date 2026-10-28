@@ -8,6 +8,12 @@ export const fetchBrandsData = async (params) => {
   return response;
 };
 
+// ✅ Fetch Function — active brands for dropdowns (all of them, names only)
+export const fetchBrandOptionsData = async () => {
+  const response = await apiRequest("/brands/options");
+  return response.data;
+};
+
 // ✅ Create brand
 export const createBrand = async (data) => {
   const response = await apiRequest("/brands", { method: "POST", body: data });

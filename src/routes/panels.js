@@ -30,6 +30,7 @@ import BranchHome from "../pages/branch/BranchHome";
 import Branches from "../pages/branch/Branches";
 import Categories from "../pages/category/Categories";
 import DashboardHome from "../pages/dashboard/DashboardHome";
+import Products from "../pages/product/Products";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
 
@@ -92,7 +93,7 @@ export const MAIN_PANEL = {
           icon: LuConciergeBell,
           children: [{ label: "Service List", path: ROUTES.SERVICES, permission: "service.view" }],
         },
-        { label: "All Products", icon: LuPackage, path: ROUTES.PRODUCTS, permission: "product.view" },
+        { label: "All Products", icon: LuPackage, path: ROUTES.PRODUCTS, page: Products, permission: "product.view" },
         { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.TRANSFERS, permission: "transfer.view" },
       ],
     },

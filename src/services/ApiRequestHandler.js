@@ -58,7 +58,9 @@ const refreshTokens = () => {
 };
 
 const send = (path, { method, body, auth }) => {
-  const headers = { "Content-Type": "application/json" };
+  // FormData (file uploads) sets its own multipart Content-Type; everything else is sent as JSON
+  const isFormData = body instanceof FormData;
+  const headers = isFormData ? {} : { "Content-Type": "application/json" };
   const accessToken = tokenStorage.getAccessToken();
   if (auth && accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
@@ -69,7 +71,7 @@ const send = (path, { method, body, auth }) => {
   return fetch(`${API_BASE_URL}${path}`, {
     method,
     headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body === undefined || isFormData ? body : JSON.stringify(body),
   });
 };
 

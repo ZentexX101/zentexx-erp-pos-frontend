@@ -8,6 +8,12 @@ export const fetchCategoriesData = async (params) => {
   return response;
 };
 
+// ✅ Fetch Function — active categories for dropdowns (all of them, names only)
+export const fetchCategoryOptionsData = async () => {
+  const response = await apiRequest("/categories/options");
+  return response.data;
+};
+
 // ✅ Create category
 export const createCategory = async (data) => {
   const response = await apiRequest("/categories", { method: "POST", body: data });
