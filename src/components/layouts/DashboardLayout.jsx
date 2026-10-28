@@ -1,35 +1,61 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
-import { ROUTES } from "../../constants/routes";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { PANELS } from "../../routes/panels";
 import Sidebar from "./Sidebar";
-import UserMenu from "./UserMenu";
+import DashboardNav from "./DashboardNav";
 
-// mode: "main" (main admin panel) or "branch" (inside one branch)
+const COLLAPSED_KEY = "sidebar-collapsed";
+
+// Storage can be blocked (private mode etc.); the sidebar then just starts expanded
+const readCollapsed = () => {
+  try {
+    return localStorage.getItem(COLLAPSED_KEY) === "true";
+  } catch {
+    return false;
+  }
+};
+
+const saveCollapsed = (value) => {
+  try {
+    localStorage.setItem(COLLAPSED_KEY, String(value));
+  } catch {
+    // not saved, fine
+  }
+};
+
+// mode: "main" (main admin panel) or "branch" (inside one branch); the menu comes from routes/panels.js
 const DashboardLayout = ({ mode = "main" }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const panel = PANELS[mode];
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [collapsed, setCollapsed] = useState(readCollapsed);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Collapsing to icons is a desktop thing; on small screens the sidebar is a full drawer
+  const compact = isDesktop && collapsed;
+
+  const setCollapsedSaved = (value) => {
+    setCollapsed(value);
+    saveCollapsed(value);
+  };
+
+  const toggleSidebar = () => (isDesktop ? setCollapsedSaved(!collapsed) : setMobileOpen(true));
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <Sidebar mode={mode} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar
+        panel={panel}
+        mode={mode}
+        compact={compact}
+        mobileOpen={mobileOpen}
+        onExpand={() => setCollapsedSaved(false)}
+        onClose={() => setMobileOpen(false)}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="rounded-md p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
-            aria-label="Open menu"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div className="ml-auto">
-            <UserMenu changePasswordPath={mode === "branch" ? ROUTES.BRANCH_CHANGE_PASSWORD : ROUTES.CHANGE_PASSWORD} />
-          </div>
-        </header>
+        <DashboardNav quickLinks={panel.quickLinks} compact={compact} onToggleSidebar={toggleSidebar} />
 
-        <main className="flex-1 p-4 sm:p-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

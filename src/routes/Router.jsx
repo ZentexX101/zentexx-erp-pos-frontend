@@ -2,25 +2,41 @@ import { Route, Routes } from "react-router";
 import AuthLayout from "../components/layouts/AuthLayout";
 import DashboardLayout from "../components/layouts/DashboardLayout";
 import MainLayout from "../components/layouts/MainLayout";
-import { REVIEWER_ROLES } from "../constants/roles";
+import { ROUTES } from "../constants/routes";
 import ChangePassword from "../pages/auth/ChangePassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import Login from "../pages/auth/Login";
 import NoBranch from "../pages/auth/NoBranch";
 import Register from "../pages/auth/Register";
-import BranchHome from "../pages/branch/BranchHome";
-import Branches from "../pages/branch/Branches";
-import DashboardHome from "../pages/dashboard/DashboardHome";
-import Registrations from "../pages/dashboard/Registrations";
-import Staff from "../pages/staff/Staff";
+import ComingSoon from "../pages/ComingSoon";
 import NotFound from "../pages/NotFound";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
 import Home from "../pages/public/Home";
+import AccessRoute from "./AccessRoute";
 import BranchRoute from "./BranchRoute";
 import GuestRoute from "./GuestRoute";
 import MainAdminRoute from "./MainAdminRoute";
+import { BRANCH_PANEL, getPanelPages, MAIN_PANEL } from "./panels";
 import RoleBasedRoute from "./RoleBasedRoute";
+
+// Routes for every page in a panel's menu config (routes/panels.js)
+const renderPanelPages = (panel) =>
+  getPanelPages(panel).map((page) => {
+    const Page = page.page;
+    return (
+      <Route
+        key={page.path}
+        index={page.path === panel.home}
+        path={page.path === panel.home ? undefined : page.path}
+        element={
+          <AccessRoute page={page} fallback={panel.home}>
+            {Page ? <Page /> : <ComingSoon title={page.label} />}
+          </AccessRoute>
+        }
+      />
+    );
+  });
 
 const Router = () => {
   return (
@@ -40,7 +56,7 @@ const Router = () => {
         </Route>
       </Route>
 
-      {/* Logged-in users; nest <RoleBasedRoute allowedRoles={[...]} /> for role-only pages */}
+      {/* Logged-in users */}
       <Route element={<RoleBasedRoute />}>
         <Route element={<AuthLayout />}>
           <Route path="no-branch" element={<NoBranch />} />
@@ -48,22 +64,17 @@ const Router = () => {
 
         {/* Main admin panel: admins not tied to a branch */}
         <Route element={<MainAdminRoute />}>
-          <Route path="dashboard" element={<DashboardLayout mode="main" />}>
-            <Route index element={<DashboardHome />} />
-            <Route path="branches" element={<Branches />} />
-            <Route path="staff" element={<Staff />} />
-            <Route path="change-password" element={<ChangePassword />} />
-            <Route element={<RoleBasedRoute allowedRoles={REVIEWER_ROLES} />}>
-              <Route path="registrations" element={<Registrations />} />
-            </Route>
+          <Route path={ROUTES.DASHBOARD} element={<DashboardLayout mode="main" />}>
+            {renderPanelPages(MAIN_PANEL)}
+            <Route path={ROUTES.CHANGE_PASSWORD} element={<ChangePassword />} />
           </Route>
         </Route>
 
         {/* Branch panel: branch staff, or a main admin who entered a branch */}
         <Route element={<BranchRoute />}>
-          <Route path="branch" element={<DashboardLayout mode="branch" />}>
-            <Route index element={<BranchHome />} />
-            <Route path="change-password" element={<ChangePassword />} />
+          <Route path={ROUTES.BRANCH_HOME} element={<DashboardLayout mode="branch" />}>
+            {renderPanelPages(BRANCH_PANEL)}
+            <Route path={ROUTES.BRANCH_CHANGE_PASSWORD} element={<ChangePassword />} />
           </Route>
         </Route>
       </Route>
