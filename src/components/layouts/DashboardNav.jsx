@@ -30,7 +30,7 @@ const DashboardNav = ({ mode, collapsed, setCollapsed, setSidebarOpen }) => {
   };
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
+    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6 print:hidden">
       {/* Mobile: open the drawer. Desktop: collapse / expand the sidebar */}
       <button type="button" onClick={() => setSidebarOpen(true)} className={`${iconButtonClass} lg:hidden`} aria-label="Open menu">
         <LuMenu className="h-5 w-5" aria-hidden="true" />

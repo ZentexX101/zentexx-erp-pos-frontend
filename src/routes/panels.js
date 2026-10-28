@@ -33,6 +33,8 @@ import DashboardHome from "../pages/dashboard/DashboardHome";
 import Products from "../pages/product/Products";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
+import SupplierLedger from "../pages/supplier/SupplierLedger";
+import Suppliers from "../pages/supplier/Suppliers";
 
 // One config per panel. The Router builds its routes from it and the Sidebar shows it as the menu.
 //
@@ -44,6 +46,7 @@ import Staff from "../pages/staff/Staff";
 //   children               sub menu; the parent is then only a dropdown, without its own page
 //
 // quickLinks are the shortcut buttons in the top bar.
+// hiddenPages get a route but no menu item (pages opened from another page, e.g. a supplier's ledger).
 
 export const MAIN_PANEL = {
   home: ROUTES.DASHBOARD,
@@ -71,7 +74,10 @@ export const MAIN_PANEL = {
         {
           label: "Supplier",
           icon: LuTruck,
-          children: [{ label: "Supplier List", path: ROUTES.SUPPLIERS, permission: "supplier.view" }],
+          children: [
+            { label: "Supplier List", path: ROUTES.SUPPLIERS, page: Suppliers, permission: "supplier.view" },
+            { label: "Supplier Payment Lists", path: ROUTES.SUPPLIER_PAYMENTS, permission: "payment.view" },
+          ],
         },
         {
           label: "Customer",
@@ -106,6 +112,7 @@ export const MAIN_PANEL = {
     { label: "Customer", icon: LuUserRound, path: ROUTES.CUSTOMERS, permission: "customer.view" },
     { label: "Service", icon: LuConciergeBell, path: ROUTES.SERVICES, permission: "service.view" },
   ],
+  hiddenPages: [{ label: "Supplier Ledger", path: ROUTES.SUPPLIER_LEDGER, page: SupplierLedger, permission: "supplier.view" }],
 };
 
 export const BRANCH_PANEL = {
@@ -176,9 +183,9 @@ export const BRANCH_PANEL = {
 
 export const PANELS = { main: MAIN_PANEL, branch: BRANCH_PANEL };
 
-// Every page in a panel, with the parent's roles / permission passed down to its children
-export const getPanelPages = (panel) =>
-  panel.sections
+// Every page in a panel (menu items and hiddenPages), with the parent's roles / permission passed down to its children
+export const getPanelPages = (panel) => [
+  ...panel.sections
     .flatMap((section) => section.items)
     .flatMap((item) =>
       item.children
@@ -188,4 +195,6 @@ export const getPanelPages = (panel) =>
             permission: child.permission || item.permission,
           }))
         : [item]
-    );
+    ),
+  ...(panel.hiddenPages ?? []),
+];

@@ -102,7 +102,7 @@ const Sidebar = ({ mode, sidebarOpen, setSidebarOpen, collapsed }) => {
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex h-screen w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex h-screen w-64 shrink-0 flex-col print:hidden border-r border-slate-200 bg-white transition-all duration-300 lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${iconOnly ? "lg:w-20" : "lg:w-64"}`}
       >

@@ -13,6 +13,8 @@ export const ROUTES = {
   STAFF: "/dashboard/staff",
   REGISTRATIONS: "/dashboard/registrations",
   SUPPLIERS: "/dashboard/suppliers",
+  SUPPLIER_PAYMENTS: "/dashboard/supplier-payments",
+  SUPPLIER_LEDGER: "/dashboard/suppliers/:id/ledger",
   CUSTOMERS: "/dashboard/customers",
   CATEGORIES: "/dashboard/categories",
   BRANDS: "/dashboard/brands",
@@ -54,3 +56,6 @@ export const getHomePath = (user) => {
   if (user?.branch) return ROUTES.BRANCH_HOME;
   return ROUTES.NO_BRANCH;
 };
+
+// Paths with an :id
+export const supplierLedgerPath = (supplierId) => ROUTES.SUPPLIER_LEDGER.replace(":id", supplierId);
