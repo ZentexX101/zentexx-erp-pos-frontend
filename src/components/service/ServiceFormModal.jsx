@@ -52,9 +52,9 @@ const ServiceFormModal = ({ service, onClose, onSaved }) => {
   const updateService = useUpdateService();
   const submitting = createService.isPending || updateService.isPending;
 
-  // Live example: what the service and the staff incentive come to on a ৳10,000 product
+  // Live example on a ৳10,000 product; both percentages are of the product's price
   const servicePrice = (EXAMPLE_PRICE * (Number(form.pricePercent) || 0)) / 100;
-  const incentive = (servicePrice * (Number(form.incentivePercent) || 0)) / 100;
+  const incentive = (EXAMPLE_PRICE * (Number(form.incentivePercent) || 0)) / 100;
 
   const setField = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
