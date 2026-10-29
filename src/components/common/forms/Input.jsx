@@ -14,7 +14,7 @@ const VARIANTS = {
   default: {
     label: "text-sm font-medium text-slate-700",
     input: "rounded-md bg-white focus:ring-2",
-    normal: "border-slate-300 focus:border-blue-500 focus:ring-blue-100",
+    normal: "border-slate-300 focus:border-slate-400 focus:ring-brand/10",
     error: "border-red-400 focus:ring-red-200",
   },
   soft: {

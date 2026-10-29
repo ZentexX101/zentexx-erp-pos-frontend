@@ -17,7 +17,7 @@ const ChipSelect = ({ label, options, value, onChange }) => {
               onClick={() => toggle(option.value)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
                 selected
-                  ? "border-blue-600 bg-blue-600 text-white"
+                  ? "border-brand bg-brand text-white"
                   : "border-slate-300 bg-white text-slate-600 hover:border-slate-400"
               }`}
             >

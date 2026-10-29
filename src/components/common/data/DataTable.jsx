@@ -21,7 +21,7 @@ const DataTable = ({ columns, rows, loading, emptyMessage = "No records found.",
             <tr>
               <td colSpan={colSpan} className="py-16">
                 <div className="flex justify-center">
-                  <Spinner className="h-6 w-6 text-blue-600" />
+                  <Spinner className="h-6 w-6 text-brand" />
                 </div>
               </td>
             </tr>

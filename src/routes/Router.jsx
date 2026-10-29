@@ -3,7 +3,6 @@ import AuthLayout from "../components/layouts/AuthLayout";
 import DashboardLayout from "../components/layouts/DashboardLayout";
 import MainLayout from "../components/layouts/MainLayout";
 import { ROUTES } from "../constants/routes";
-import ChangePassword from "../pages/auth/ChangePassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import Login from "../pages/auth/Login";
 import NoBranch from "../pages/auth/NoBranch";
@@ -12,6 +11,7 @@ import NotFound from "../pages/NotFound";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
 import Home from "../pages/public/Home";
+import Settings from "../pages/settings/Settings";
 import AccessRoute from "./AccessRoute";
 import BranchRoute from "./BranchRoute";
 import GuestRoute from "./GuestRoute";
@@ -64,7 +64,7 @@ const Router = () => {
         <Route element={<MainAdminRoute />}>
           <Route path={ROUTES.DASHBOARD} element={<DashboardLayout mode="main" />}>
             {renderPanelPages(MAIN_PANEL)}
-            <Route path={ROUTES.CHANGE_PASSWORD} element={<ChangePassword />} />
+            <Route path={ROUTES.SETTINGS} element={<Settings />} />
           </Route>
         </Route>
 
@@ -72,7 +72,7 @@ const Router = () => {
         <Route element={<BranchRoute />}>
           <Route path={ROUTES.BRANCH_HOME} element={<DashboardLayout mode="branch" />}>
             {renderPanelPages(BRANCH_PANEL)}
-            <Route path={ROUTES.BRANCH_CHANGE_PASSWORD} element={<ChangePassword />} />
+            <Route path={ROUTES.BRANCH_SETTINGS} element={<Settings />} />
           </Route>
         </Route>
       </Route>

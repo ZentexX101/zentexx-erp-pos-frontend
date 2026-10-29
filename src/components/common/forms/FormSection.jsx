@@ -6,7 +6,7 @@ const FormSection = ({ title, description, icon, actions, muted = false, childre
     <div className="mb-4 flex items-start justify-between gap-4">
       <div className="flex items-start gap-2.5">
         {icon && (
-          <span className="mt-0.5 text-blue-600">
+          <span className="mt-0.5 text-slate-500">
             <Icon name={icon} className="h-5 w-5" />
           </span>
         )}

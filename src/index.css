@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* App theme. Change the brand colour here and every button, active state and focus ring follows. */
+@theme inline {
+  --color-brand: var(--color-slate-900);
+  --color-brand-hover: var(--color-slate-800);
+}
+
 @theme {
   --animate-slide-in-right: slide-in-right 0.25s ease-out;
   --animate-fade-in: fade-in 0.2s ease-out;
@@ -53,6 +59,18 @@
     --tw-shadow: inset 0 0 0 1000px white;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
     -webkit-text-fill-color: var(--color-slate-900);
+  }
+}
+
+/* Thin, quiet scrollbars for side panels; scrollbar-none hides it (still scrollable) */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-200) transparent;
+}
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 

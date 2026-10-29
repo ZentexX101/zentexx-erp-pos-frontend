@@ -64,7 +64,7 @@ const Pagination = ({ meta, onPageChange, onLimitChange, limitOptions = PAGE_SIZ
               aria-label={`Page ${p}`}
               className={`${boxClass} min-w-9 px-2 ${
                 p === page
-                  ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
+                  ? "border-brand bg-brand text-white shadow-sm"
                   : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
@@ -92,7 +92,7 @@ const Pagination = ({ meta, onPageChange, onLimitChange, limitOptions = PAGE_SIZ
             <select
               value={limit}
               onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-sm font-medium text-slate-700 outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
             >
               {limitOptions.map((option) => (
                 <option key={option} value={option}>

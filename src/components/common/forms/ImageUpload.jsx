@@ -95,7 +95,7 @@ const ImageUpload = ({ label, file, existingUrl, onChange, onRemove, error }) =>
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           className={`flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-10 text-center transition-colors ${
-            dragging ? "border-indigo-400 bg-indigo-50" : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+            dragging ? "border-slate-500 bg-slate-50" : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"
           }`}
         >
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-500">

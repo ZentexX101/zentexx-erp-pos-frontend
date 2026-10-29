@@ -1,10 +1,11 @@
 import Spinner from "../loaders/Spinner";
 
 const variants = {
-  primary: "rounded-md bg-blue-600 text-white hover:bg-blue-700",
+  primary: "rounded-md bg-brand text-white hover:bg-brand-hover",
   secondary: "rounded-md bg-white text-slate-700 border border-slate-300 hover:bg-slate-50",
   danger: "rounded-md bg-red-600 text-white hover:bg-red-700",
-  dark: "rounded-lg bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 active:translate-y-px",
+  dangerOutline: "rounded-md border border-red-200 bg-white text-red-600 hover:bg-red-50",
+  dark: "rounded-lg bg-brand text-white shadow-sm hover:bg-brand-hover active:translate-y-px",
 };
 
 const Button = ({ children, className = "", type = "button", variant = "primary", loading = false, disabled, ...props }) => {

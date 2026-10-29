@@ -21,7 +21,7 @@ export const ROUTES = {
   SERVICES: "/dashboard/services",
   PRODUCTS: "/dashboard/products",
   TRANSFERS: "/dashboard/transfers",
-  CHANGE_PASSWORD: "/dashboard/change-password",
+  SETTINGS: "/dashboard/settings",
 
   // Branch panel (a branch's own staff, or a main admin who entered the branch)
   BRANCH_HOME: "/branch",
@@ -45,7 +45,7 @@ export const ROUTES = {
   BRANCH_REPLACEMENTS: "/branch/replacements",
   BRANCH_REPAIRS: "/branch/repairs",
   BRANCH_SALARIES: "/branch/salaries",
-  BRANCH_CHANGE_PASSWORD: "/branch/change-password",
+  BRANCH_SETTINGS: "/branch/settings",
 
   NOT_FOUND: "*",
 };

@@ -1,21 +1,29 @@
 import { useEffect, useState } from "react";
-import { LuMaximize, LuMenu, LuMinimize, LuPanelLeftClose, LuPanelLeftOpen } from "react-icons/lu";
-import { NavLink } from "react-router";
+import { LuMaximize, LuMenu, LuMinimize } from "react-icons/lu";
+import { Link, NavLink } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
 import { PANELS } from "../../routes/panels";
 import { canAccess } from "../../utils/access";
-import { getInitials } from "../../utils/initials";
-import { formatPhone } from "../../utils/phone";
+import BrandLogo from "../common/brand/BrandLogo";
+import UserMenu from "./UserMenu";
 
 const iconButtonClass =
-  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900";
+  "flex size-9 shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900";
 
-// Top bar: sidebar toggle, the panel's shortcut links, full screen and the user
-const DashboardNav = ({ mode, collapsed, setCollapsed, setSidebarOpen }) => {
+const quickLinkClass = ({ isActive }) =>
+  `flex h-9 shrink-0 items-center gap-2 rounded-md px-2.5 text-sm font-medium transition-colors ${
+    isActive ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+  }`;
+
+// Top bar: mobile menu button, the panel's shortcut links, full screen and the account menu
+const DashboardNav = ({ mode, setSidebarOpen }) => {
   const { user } = useAuth();
   const [fullscreen, setFullscreen] = useState(Boolean(document.fullscreenElement));
 
-  const quickLinks = PANELS[mode].quickLinks.filter((link) => canAccess(user, link));
+  const panel = PANELS[mode];
+  const quickLinks = panel.quickLinks.filter((link) => canAccess(user, link));
+  // Labels need room: show them from xl, or from 2xl when there are many shortcuts
+  const labelClass = quickLinks.length > 6 ? "hidden 2xl:inline" : "hidden xl:inline";
 
   // Keep the icon right when full screen is left with Esc
   useEffect(() => {
@@ -30,61 +38,42 @@ const DashboardNav = ({ mode, collapsed, setCollapsed, setSidebarOpen }) => {
   };
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6 print:hidden">
-      {/* Mobile: open the drawer. Desktop: collapse / expand the sidebar */}
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-3 sm:gap-3 sm:px-6 print:hidden">
+      {/* Mobile / tablet: open the drawer and show the logo (desktop collapses from the sidebar edge) */}
       <button type="button" onClick={() => setSidebarOpen(true)} className={`${iconButtonClass} lg:hidden`} aria-label="Open menu">
-        <LuMenu className="h-5 w-5" aria-hidden="true" />
+        <LuMenu className="size-5" aria-hidden="true" />
       </button>
-      <button
-        type="button"
-        onClick={() => setCollapsed(!collapsed)}
-        className={`${iconButtonClass} hidden lg:flex`}
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-      >
-        {collapsed ? <LuPanelLeftOpen className="h-5 w-5" aria-hidden="true" /> : <LuPanelLeftClose className="h-5 w-5" aria-hidden="true" />}
-      </button>
+      <Link to={panel.home} className="lg:hidden" aria-label="Dashboard home">
+        <BrandLogo className="h-6" />
+      </Link>
 
-      {/* Shortcuts */}
+      {/* Shortcuts (icons only until there's room for labels) */}
       {quickLinks.length > 0 && (
-        <nav className="hidden min-w-0 items-center gap-2 overflow-x-auto border-l border-slate-200 pl-3 md:flex" aria-label="Shortcuts">
-          {quickLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `flex shrink-0 flex-col items-center gap-1 rounded-lg border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide transition-colors ${
-                  isActive
-                    ? "border-indigo-200 bg-indigo-50 text-indigo-700"
-                    : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-                }`
-              }
-            >
-              <link.icon className="h-4 w-4" aria-hidden="true" />
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
+        <>
+          <span className="hidden h-6 w-px shrink-0 bg-slate-200 md:block lg:hidden" aria-hidden="true" />
+          <nav className="scrollbar-none hidden min-w-0 items-center gap-1 overflow-x-auto md:flex" aria-label="Shortcuts">
+            {quickLinks.map((link) => (
+              <NavLink key={link.path} to={link.path} title={link.label} className={quickLinkClass}>
+                <link.icon className="size-4 shrink-0" aria-hidden="true" />
+                <span className={labelClass}>{link.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </>
       )}
 
-      <div className="ml-auto flex items-center gap-3">
+      <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
         <button
           type="button"
           onClick={toggleFullscreen}
-          className={iconButtonClass}
+          className={`${iconButtonClass} hidden sm:flex`}
           aria-label={fullscreen ? "Exit full screen" : "Full screen"}
+          title={fullscreen ? "Exit full screen" : "Full screen"}
         >
-          {fullscreen ? <LuMinimize className="h-5 w-5" aria-hidden="true" /> : <LuMaximize className="h-5 w-5" aria-hidden="true" />}
+          {fullscreen ? <LuMinimize className="size-4.5" aria-hidden="true" /> : <LuMaximize className="size-4.5" aria-hidden="true" />}
         </button>
-
-        <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-3 sm:flex">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
-            {getInitials(user.name)}
-          </span>
-          <div className="leading-tight">
-            <p className="text-sm font-medium text-slate-900">{user.name}</p>
-            <p className="text-xs text-slate-500">{formatPhone(user.phone)}</p>
-          </div>
-        </div>
+        <span className="hidden h-6 w-px bg-slate-200 sm:block" aria-hidden="true" />
+        <UserMenu mode={mode} />
       </div>
     </header>
   );
