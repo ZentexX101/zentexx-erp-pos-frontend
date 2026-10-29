@@ -33,6 +33,7 @@ import CustomerLedger from "../pages/customer/CustomerLedger";
 import Customers from "../pages/customer/Customers";
 import DashboardHome from "../pages/dashboard/DashboardHome";
 import Products from "../pages/product/Products";
+import Services from "../pages/service/Services";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
@@ -99,7 +100,7 @@ export const MAIN_PANEL = {
         {
           label: "Service",
           icon: LuConciergeBell,
-          children: [{ label: "Service List", path: ROUTES.SERVICES, permission: "service.view" }],
+          children: [{ label: "Service List", path: ROUTES.SERVICES, page: Services, permission: "service.view" }],
         },
         { label: "All Products", icon: LuPackage, path: ROUTES.PRODUCTS, page: Products, permission: "product.view" },
         { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.TRANSFERS, permission: "transfer.view" },
