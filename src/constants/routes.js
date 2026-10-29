@@ -29,6 +29,7 @@ export const ROUTES = {
   BRANCH_REPORTS_PURCHASE: "/branch/reports/purchase",
   BRANCH_REPORTS_STOCK: "/branch/reports/stock",
   BRANCH_PAYMENT_METHODS: "/branch/payment-methods",
+  BRANCH_PAYMENT_METHOD_STATEMENT: "/branch/payment-methods/:id/statement",
   BRANCH_STOCK: "/branch/stock",
   BRANCH_PURCHASES: "/branch/purchases",
   BRANCH_PURCHASE_RETURNS: "/branch/purchase-returns",
@@ -59,4 +60,5 @@ export const getHomePath = (user) => {
 
 // Paths with an :id
 export const supplierLedgerPath = (supplierId) => ROUTES.SUPPLIER_LEDGER.replace(":id", supplierId);
+export const paymentMethodStatementPath = (methodId) => ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT.replace(":id", methodId);
 export const customerLedgerPath = (customerId) => ROUTES.CUSTOMER_LEDGER.replace(":id", customerId);

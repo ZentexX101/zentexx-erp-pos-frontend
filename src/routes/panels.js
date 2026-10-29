@@ -32,6 +32,8 @@ import Categories from "../pages/category/Categories";
 import CustomerLedger from "../pages/customer/CustomerLedger";
 import Customers from "../pages/customer/Customers";
 import DashboardHome from "../pages/dashboard/DashboardHome";
+import PaymentMethodStatement from "../pages/paymentMethod/PaymentMethodStatement";
+import PaymentMethods from "../pages/paymentMethod/PaymentMethods";
 import Products from "../pages/product/Products";
 import Services from "../pages/service/Services";
 import Registrations from "../pages/dashboard/Registrations";
@@ -141,7 +143,7 @@ export const BRANCH_PANEL = {
             { label: "Stock Report", path: ROUTES.BRANCH_REPORTS_STOCK },
           ],
         },
-        { label: "Payment Method", icon: LuCreditCard, path: ROUTES.BRANCH_PAYMENT_METHODS },
+        { label: "Payment Method", icon: LuCreditCard, path: ROUTES.BRANCH_PAYMENT_METHODS, page: PaymentMethods, permission: "payment_method.view" },
         { label: "Stock", icon: LuBoxes, path: ROUTES.BRANCH_STOCK, permission: "stock.view" },
         {
           label: "Purchase",
@@ -184,6 +186,14 @@ export const BRANCH_PANEL = {
     { label: "Expense", icon: LuReceipt, path: ROUTES.BRANCH_EXPENSES, permission: "expense.view" },
     { label: "Customer Payment", icon: LuHandCoins, path: ROUTES.BRANCH_CUSTOMER_PAYMENTS, permission: "payment.view" },
     { label: "Supplier Payment", icon: LuWallet, path: ROUTES.BRANCH_SUPPLIER_PAYMENTS, permission: "payment.view" },
+  ],
+  hiddenPages: [
+    {
+      label: "Payment Method Statement",
+      path: ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT,
+      page: PaymentMethodStatement,
+      permission: "payment_method.view",
+    },
   ],
 };
 
