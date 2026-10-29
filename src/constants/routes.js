@@ -16,6 +16,7 @@ export const ROUTES = {
   SUPPLIER_PAYMENTS: "/dashboard/supplier-payments",
   SUPPLIER_LEDGER: "/dashboard/suppliers/:id/ledger",
   CUSTOMERS: "/dashboard/customers",
+  CUSTOMER_LEDGER: "/dashboard/customers/:id/ledger",
   CATEGORIES: "/dashboard/categories",
   BRANDS: "/dashboard/brands",
   SERVICES: "/dashboard/services",
@@ -59,3 +60,4 @@ export const getHomePath = (user) => {
 
 // Paths with an :id
 export const supplierLedgerPath = (supplierId) => ROUTES.SUPPLIER_LEDGER.replace(":id", supplierId);
+export const customerLedgerPath = (customerId) => ROUTES.CUSTOMER_LEDGER.replace(":id", customerId);

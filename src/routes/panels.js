@@ -29,6 +29,8 @@ import Brands from "../pages/brand/Brands";
 import BranchHome from "../pages/branch/BranchHome";
 import Branches from "../pages/branch/Branches";
 import Categories from "../pages/category/Categories";
+import CustomerLedger from "../pages/customer/CustomerLedger";
+import Customers from "../pages/customer/Customers";
 import DashboardHome from "../pages/dashboard/DashboardHome";
 import Products from "../pages/product/Products";
 import Registrations from "../pages/dashboard/Registrations";
@@ -82,7 +84,7 @@ export const MAIN_PANEL = {
         {
           label: "Customer",
           icon: LuUserRound,
-          children: [{ label: "Customer List", path: ROUTES.CUSTOMERS, permission: "customer.view" }],
+          children: [{ label: "Customer List", path: ROUTES.CUSTOMERS, page: Customers, permission: "customer.view" }],
         },
         {
           label: "Category",
@@ -112,7 +114,10 @@ export const MAIN_PANEL = {
     { label: "Customer", icon: LuUserRound, path: ROUTES.CUSTOMERS, permission: "customer.view" },
     { label: "Service", icon: LuConciergeBell, path: ROUTES.SERVICES, permission: "service.view" },
   ],
-  hiddenPages: [{ label: "Supplier Ledger", path: ROUTES.SUPPLIER_LEDGER, page: SupplierLedger, permission: "supplier.view" }],
+  hiddenPages: [
+    { label: "Supplier Ledger", path: ROUTES.SUPPLIER_LEDGER, page: SupplierLedger, permission: "supplier.view" },
+    { label: "Customer Ledger", path: ROUTES.CUSTOMER_LEDGER, page: CustomerLedger, permission: "customer.view" },
+  ],
 };
 
 export const BRANCH_PANEL = {
