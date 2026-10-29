@@ -30,6 +30,10 @@ import BranchHome from "../pages/branch/BranchHome";
 import Branches from "../pages/branch/Branches";
 import Categories from "../pages/category/Categories";
 import CustomerLedger from "../pages/customer/CustomerLedger";
+import AllCustomerPayments from "../pages/customerPayment/AllCustomerPayments";
+import AllCustomerPayouts from "../pages/customerPayment/AllCustomerPayouts";
+import CustomerPayments from "../pages/customerPayment/CustomerPayments";
+import CustomerPayouts from "../pages/customerPayment/CustomerPayouts";
 import Customers from "../pages/customer/Customers";
 import DashboardHome from "../pages/dashboard/DashboardHome";
 import PaymentMethodStatement from "../pages/paymentMethod/PaymentMethodStatement";
@@ -42,6 +46,8 @@ import Purchases from "../pages/purchase/Purchases";
 import Services from "../pages/service/Services";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
+import AllSupplierPayments from "../pages/supplierPayment/AllSupplierPayments";
+import SupplierPayments from "../pages/supplierPayment/SupplierPayments";
 import Stock from "../pages/stock/Stock";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
 import Suppliers from "../pages/supplier/Suppliers";
@@ -86,13 +92,17 @@ export const MAIN_PANEL = {
           icon: LuTruck,
           children: [
             { label: "Supplier List", path: ROUTES.SUPPLIERS, page: Suppliers, permission: "supplier.view" },
-            { label: "Supplier Payment Lists", path: ROUTES.SUPPLIER_PAYMENTS, permission: "payment.view" },
+            { label: "Supplier Payment Lists", path: ROUTES.SUPPLIER_PAYMENTS, page: AllSupplierPayments, permission: "payment.view" },
           ],
         },
         {
           label: "Customer",
           icon: LuUserRound,
-          children: [{ label: "Customer List", path: ROUTES.CUSTOMERS, page: Customers, permission: "customer.view" }],
+          children: [
+            { label: "Customer List", path: ROUTES.CUSTOMERS, page: Customers, permission: "customer.view" },
+            { label: "Customer Payment Lists", path: ROUTES.CUSTOMER_PAYMENTS, page: AllCustomerPayments, permission: "payment.view" },
+            { label: "Customer Payout Lists", path: ROUTES.CUSTOMER_PAYOUTS, page: AllCustomerPayouts, permission: "payment.view" },
+          ],
         },
         {
           label: "Category",
@@ -163,9 +173,9 @@ export const BRANCH_PANEL = {
         },
         { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.BRANCH_TRANSFERS, permission: "transfer.view" },
         { label: "Expense", icon: LuReceipt, path: ROUTES.BRANCH_EXPENSES, permission: "expense.view" },
-        { label: "Supplier Payment", icon: LuWallet, path: ROUTES.BRANCH_SUPPLIER_PAYMENTS, permission: "payment.view" },
-        { label: "Customer Payment", icon: LuHandCoins, path: ROUTES.BRANCH_CUSTOMER_PAYMENTS, permission: "payment.view" },
-        { label: "Customer Payout", icon: LuBanknote, path: ROUTES.BRANCH_CUSTOMER_PAYOUTS, permission: "payment.view" },
+        { label: "Supplier Payment", icon: LuWallet, path: ROUTES.BRANCH_SUPPLIER_PAYMENTS, page: SupplierPayments, permission: "payment.view" },
+        { label: "Customer Payment", icon: LuHandCoins, path: ROUTES.BRANCH_CUSTOMER_PAYMENTS, page: CustomerPayments, permission: "payment.view" },
+        { label: "Customer Payout", icon: LuBanknote, path: ROUTES.BRANCH_CUSTOMER_PAYOUTS, page: CustomerPayouts, permission: "payment.view" },
         {
           label: "POS",
           icon: LuMonitorSmartphone,

@@ -16,6 +16,8 @@ export const ROUTES = {
   SUPPLIER_LEDGER: "/dashboard/suppliers/:id/ledger",
   CUSTOMERS: "/dashboard/customers",
   CUSTOMER_LEDGER: "/dashboard/customers/:id/ledger",
+  CUSTOMER_PAYMENTS: "/dashboard/customer-payments",
+  CUSTOMER_PAYOUTS: "/dashboard/customer-payouts",
   CATEGORIES: "/dashboard/categories",
   BRANDS: "/dashboard/brands",
   SERVICES: "/dashboard/services",
