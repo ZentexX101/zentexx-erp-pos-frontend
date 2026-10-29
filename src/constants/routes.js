@@ -3,7 +3,6 @@ import { isMainAdmin } from "./roles";
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
-  REGISTER: "/register",
   FORGOT_PASSWORD: "/forgot-password",
   NO_BRANCH: "/no-branch",
 

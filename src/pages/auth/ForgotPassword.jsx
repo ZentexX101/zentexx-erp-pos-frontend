@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import Input from "../../components/common/forms/Input";
+import Icon from "../../components/common/icons/Icon";
 import { ROUTES } from "../../constants/routes";
 import { forgotPassword, resetPassword, verifyOtp } from "../../providers/apiProviders/authApiProvider";
 import { isValid, validateConfirmPassword, validateEmail, validateNewPassword } from "../../utils/validators";
@@ -13,10 +14,11 @@ const RESEND_COOLDOWN = 60;
 const STEPS = { EMAIL: "email", OTP: "otp", RESET: "reset" };
 
 const STEP_TEXT = {
-  [STEPS.EMAIL]: ["Forgot password", "Enter your email and we'll send you a 6-digit code."],
-  [STEPS.OTP]: ["Enter the code", "Check your email for the 6-digit code. It's valid for 10 minutes."],
-  [STEPS.RESET]: ["Set a new password", "Choose a new password for your account."],
+  [STEPS.EMAIL]: ["Reset your password", "Enter the email on your account and we'll send you a 6-digit code."],
+  [STEPS.OTP]: ["Check your email", "Enter the 6-digit code we sent. It's valid for 10 minutes."],
+  [STEPS.RESET]: ["Choose a new password", "Use at least 8 characters. Avoid one you've used before."],
 };
+const STEP_ORDER = [STEPS.EMAIL, STEPS.OTP, STEPS.RESET];
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -106,24 +108,40 @@ const ForgotPassword = () => {
   };
 
   const [title, subtitle] = STEP_TEXT[step];
+  const stepIndex = STEP_ORDER.indexOf(step);
 
   return (
-    <>
-      <h2 className="mb-1 text-lg font-semibold text-slate-900">{title}</h2>
-      <p className="mb-5 text-sm text-slate-500">{subtitle}</p>
+    <div>
+      <Link
+        to={ROUTES.LOGIN}
+        className="-ml-1 mb-8 inline-flex items-center gap-1.5 rounded-md p-1 text-sm text-neutral-500 hover:text-neutral-900"
+      >
+        <Icon name="arrowLeft" />
+        Sign in
+      </Link>
 
-      <div className="mb-4 space-y-2">
-        <Alert type="info">{info}</Alert>
-        <Alert>{serverError}</Alert>
-      </div>
+      <p className="mb-2 text-xs text-neutral-400">
+        Step {stepIndex + 1} of {STEP_ORDER.length}
+      </p>
+      <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-neutral-900">{title}</h1>
+      <p className="mt-2 mb-9 text-[15px] text-neutral-500">{subtitle}</p>
+
+      {(info || serverError) && (
+        <div className="mb-5 space-y-2">
+          <Alert type="info">{info}</Alert>
+          <Alert>{serverError}</Alert>
+        </div>
+      )}
 
       {step === STEPS.EMAIL && (
-        <form onSubmit={handleEmailSubmit} noValidate className="space-y-4">
+        <form onSubmit={handleEmailSubmit} noValidate className="space-y-5">
           <Input
+            variant="soft"
             label="Email"
             type="email"
             autoComplete="email"
             autoFocus
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -131,16 +149,16 @@ const ForgotPassword = () => {
             }}
             error={errors.email}
           />
-          <Button type="submit" loading={submitting} className="w-full">
+          <Button type="submit" variant="dark" loading={submitting} className="h-12 w-full lg:h-11">
             Send code
           </Button>
         </form>
       )}
 
       {step === STEPS.OTP && (
-        <form onSubmit={handleOtpSubmit} noValidate className="space-y-4">
-          <p className="text-sm text-slate-600">
-            Code sent to <span className="font-medium text-slate-900">{email}</span>{" "}
+        <form onSubmit={handleOtpSubmit} noValidate className="space-y-5">
+          <p className="text-sm text-neutral-600">
+            Sent to <span className="font-medium text-neutral-900">{email}</span> ·{" "}
             <button
               type="button"
               onClick={() => {
@@ -149,13 +167,14 @@ const ForgotPassword = () => {
                 setServerError("");
                 setInfo("");
               }}
-              className="font-medium text-blue-600 hover:underline"
+              className="text-neutral-900 underline decoration-neutral-300 underline-offset-4 hover:decoration-neutral-900"
             >
               Change
             </button>
           </p>
 
           <Input
+            variant="soft"
             label="6-digit code"
             inputMode="numeric"
             autoComplete="one-time-code"
@@ -167,19 +186,20 @@ const ForgotPassword = () => {
               setErrors({});
             }}
             error={errors.otp}
-            className="[&_input]:tracking-[0.5em] [&_input]:text-center [&_input]:text-lg"
+            placeholder="••••••"
+            inputClassName="text-center font-mono text-2xl tracking-[0.6em]"
           />
 
-          <Button type="submit" loading={submitting} className="w-full">
+          <Button type="submit" variant="dark" loading={submitting} className="h-12 w-full lg:h-11">
             Verify code
           </Button>
 
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-sm text-neutral-500">
             Didn't get it?{" "}
             {cooldown > 0 ? (
               <span>Resend in {cooldown}s</span>
             ) : (
-              <button type="button" onClick={sendOtp} disabled={submitting} className="font-medium text-blue-600 hover:underline">
+              <button type="button" onClick={sendOtp} disabled={submitting} className="text-neutral-900 underline decoration-neutral-300 underline-offset-4 hover:decoration-neutral-900">
                 Resend code
               </button>
             )}
@@ -188,8 +208,9 @@ const ForgotPassword = () => {
       )}
 
       {step === STEPS.RESET && (
-        <form onSubmit={handleResetSubmit} noValidate className="space-y-4">
+        <form onSubmit={handleResetSubmit} noValidate className="space-y-5">
           <Input
+            variant="soft"
             label="New password"
             name="newPassword"
             type="password"
@@ -200,6 +221,7 @@ const ForgotPassword = () => {
             error={errors.newPassword}
           />
           <Input
+            variant="soft"
             label="Confirm new password"
             name="confirmPassword"
             type="password"
@@ -208,18 +230,13 @@ const ForgotPassword = () => {
             onChange={handlePasswordChange}
             error={errors.confirmPassword}
           />
-          <Button type="submit" loading={submitting} className="w-full">
+          <Button type="submit" variant="dark" loading={submitting} className="h-12 w-full lg:h-11">
             Reset password
           </Button>
         </form>
       )}
 
-      <p className="mt-6 text-center text-sm">
-        <Link to={ROUTES.LOGIN} className="font-medium text-blue-600 hover:underline">
-          Back to sign in
-        </Link>
-      </p>
-    </>
+    </div>
   );
 };
 

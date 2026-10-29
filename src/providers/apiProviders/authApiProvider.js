@@ -1,15 +1,5 @@
 import { apiRequest } from "../../services/ApiRequestHandler";
 
-// ✅ Register — the account starts pending; returns the created user (no tokens)
-export const registerUser = async ({ name, email, phone, password }) => {
-  const response = await apiRequest("/auth/register", {
-    method: "POST",
-    body: { name, email, phone, password },
-    auth: false,
-  });
-  return response.data;
-};
-
 // ✅ Login — identifier is a phone number or email
 export const loginUser = async ({ identifier, password, rememberMe }) => {
   const response = await apiRequest("/auth/login", {

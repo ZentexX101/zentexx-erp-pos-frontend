@@ -8,6 +8,7 @@ import { useBranch } from "../../hooks/useBranch";
 import { PANELS } from "../../routes/panels";
 import { canAccess } from "../../utils/access";
 import { getInitials } from "../../utils/initials";
+import BrandLogo, { BrandMark } from "../common/brand/BrandLogo";
 
 // Menu items the user may see that match the search text (a parent match keeps all its pages)
 const filterSections = (sections, user, search) => {
@@ -108,12 +109,12 @@ const Sidebar = ({ mode, sidebarOpen, setSidebarOpen, collapsed }) => {
       >
         {/* LOGO */}
         <div className={`flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 ${iconOnly ? "justify-center" : "px-5"}`}>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 font-bold text-white">Z</span>
-          {!iconOnly && (
+          {iconOnly ? (
+            <BrandMark />
+          ) : (
             <>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold tracking-wide text-slate-900">ZENTEXX ERP</p>
-                <p className="truncate text-xs text-slate-500">POS & Inventory</p>
+                <BrandLogo className="h-8 max-w-full" />
               </div>
               <button type="button" onClick={closeSidebar} aria-label="Close menu" className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden">
                 <LuX className="h-5 w-5" aria-hidden="true" />

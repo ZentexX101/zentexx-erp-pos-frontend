@@ -17,7 +17,7 @@ const DashboardHome = () => {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-slate-900">Welcome, {user.name}</h1>
-      <p className="mt-1 text-sm text-slate-500">You're signed in to Zentexx ERP.</p>
+      <p className="mt-1 text-sm text-slate-500">You're signed in to Decent Electronics & Exchange Center.</p>
 
       <dl className="mt-6 grid max-w-3xl gap-4 sm:grid-cols-2">
         {details.map(([label, value]) => (

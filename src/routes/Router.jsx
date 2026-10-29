@@ -7,7 +7,6 @@ import ChangePassword from "../pages/auth/ChangePassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import Login from "../pages/auth/Login";
 import NoBranch from "../pages/auth/NoBranch";
-import Register from "../pages/auth/Register";
 import ComingSoon from "../pages/ComingSoon";
 import NotFound from "../pages/NotFound";
 import About from "../pages/public/About";
@@ -51,7 +50,6 @@ const Router = () => {
       <Route element={<GuestRoute />}>
         <Route element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
         </Route>
       </Route>

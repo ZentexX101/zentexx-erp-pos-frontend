@@ -1,14 +1,15 @@
 import { Link } from "react-router";
 import { getHomePath, ROUTES } from "../../constants/routes";
 import { useAuth } from "../../hooks/useAuth";
+import BrandLogo from "../common/brand/BrandLogo";
 
 const Header = () => {
   const { user, loading } = useAuth();
 
   return (
     <div className="flex items-center justify-between bg-gray-800 text-white p-4">
-      <Link to={ROUTES.HOME} className="font-semibold">
-        Zentexx ERP
+      <Link to={ROUTES.HOME}>
+        <BrandLogo tone="light" className="h-8" />
       </Link>
       {!loading && (
         <Link

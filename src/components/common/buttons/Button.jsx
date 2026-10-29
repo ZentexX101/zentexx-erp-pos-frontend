@@ -1,9 +1,10 @@
 import Spinner from "../loaders/Spinner";
 
 const variants = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700",
-  secondary: "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50",
-  danger: "bg-red-600 text-white hover:bg-red-700",
+  primary: "rounded-md bg-blue-600 text-white hover:bg-blue-700",
+  secondary: "rounded-md bg-white text-slate-700 border border-slate-300 hover:bg-slate-50",
+  danger: "rounded-md bg-red-600 text-white hover:bg-red-700",
+  dark: "rounded-lg bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 active:translate-y-px",
 };
 
 const Button = ({ children, className = "", type = "button", variant = "primary", loading = false, disabled, ...props }) => {
@@ -11,7 +12,7 @@ const Button = ({ children, className = "", type = "button", variant = "primary"
     <button
       type={type}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium transition disabled:opacity-60 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 px-4 py-2 font-medium transition disabled:opacity-60 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
       {...props}
     >
       {loading && <Spinner />}

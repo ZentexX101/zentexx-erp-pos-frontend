@@ -13,15 +13,17 @@ const NoBranch = () => {
   if (home !== ROUTES.NO_BRANCH) return <Navigate to={home} replace />;
 
   return (
-    <div className="text-center">
-      <h2 className="mb-2 text-lg font-semibold text-slate-900">No branch assigned</h2>
-      <p className="mb-6 text-sm text-slate-500">
-        Hi {user.name}, your account isn't assigned to a branch yet. Ask an admin to assign you to one, then sign in
-        again.
+    <div>
+      <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-neutral-900">You're not on a branch yet</h1>
+      <p className="mt-3 text-sm leading-relaxed text-neutral-600">
+        Hi {user.name}, your account works, but no branch has been assigned to it. Ask your admin to add you to a branch,
+        then sign in again.
       </p>
+
       <Button
         variant="secondary"
         loading={loggingOut}
+        className="mt-8 h-12 w-full lg:h-11"
         onClick={() => {
           setLoggingOut(true);
           logout();

@@ -4,6 +4,18 @@
   --animate-slide-in-right: slide-in-right 0.25s ease-out;
   --animate-fade-in: fade-in 0.2s ease-out;
   --animate-zoom-in: zoom-in 0.2s ease-out;
+  --animate-slide-up: slide-up 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @keyframes zoom-in {
     from {
@@ -35,10 +47,28 @@
   }
 }
 
+/* Chrome paints autofilled fields light blue; keep them white (focus rings still show) */
+@utility autofill-white {
+  &:autofill {
+    --tw-shadow: inset 0 0 0 1000px white;
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    -webkit-text-fill-color: var(--color-slate-900);
+  }
+}
+
+/* Spacing that clears the phone notch / home bar, e.g. pt-safe-9, pb-safe-5 */
+@utility pt-safe-* {
+  padding-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
+}
+@utility pb-safe-* {
+  padding-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-slide-in-right,
   .animate-fade-in,
-  .animate-zoom-in {
+  .animate-zoom-in,
+  .animate-slide-up {
     animation: none;
   }
 }

@@ -1,4 +1,4 @@
-import { BUSINESS_NAME } from "../../constants/app";
+import BrandLogo from "../common/brand/BrandLogo";
 import { LEDGER_TYPE_LABELS } from "../../constants/customer";
 import { formatDateTime, formatShortDate } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
@@ -21,7 +21,9 @@ const CustomerLedgerPrint = ({ customer, summary, entries, total, filters }) => 
     <div className="hidden text-[11px] text-slate-800 print:block">
       <header className="flex items-start justify-between border-b-2 border-slate-800 pb-3">
         <div>
-          <h1 className="text-xl font-bold">{BUSINESS_NAME}</h1>
+          <h1>
+            <BrandLogo className="h-10" />
+          </h1>
           <p className="text-sm font-semibold text-slate-600">Customer Ledger Report</p>
           <p className="mt-1 text-slate-500">
             Period: {period}

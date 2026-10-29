@@ -263,7 +263,7 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
                 value={form.staffCode}
                 onChange={(e) => setField("staffCode", e.target.value.replace(/\D/g, "").slice(0, 4))}
                 error={errors.staffCode}
-                className="[&_input]:font-mono"
+                inputClassName="font-mono"
               />
               {!errors.staffCode && <p className="mt-1 text-xs text-slate-500">A unique 4-digit code.</p>}
             </div>

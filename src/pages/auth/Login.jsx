@@ -49,60 +49,64 @@ const Login = () => {
 
   return (
     <>
-      <h2 className="mb-1 text-lg font-semibold text-slate-900">Sign in</h2>
-      <p className="mb-5 text-sm text-slate-500">Enter your account details to continue.</p>
+      <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-neutral-900">Sign in</h1>
+      <p className="mt-2 mb-9 text-[15px] text-neutral-500">Use the phone number or email your admin set up for you.</p>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {notice && <Alert type="success">{notice}</Alert>}
         <Alert>{serverError}</Alert>
 
         <Input
+          variant="soft"
           label="Phone or Email"
           name="identifier"
           autoComplete="username"
           autoFocus
-          placeholder="01712345678 or you@example.com"
+          placeholder="01XXXXXXXXX"
           value={form.identifier}
           onChange={handleChange}
           error={errors.identifier}
         />
 
         <Input
+          variant="soft"
           label="Password"
           name="password"
           type="password"
           autoComplete="current-password"
+          labelAside={
+            <Link
+              to={ROUTES.FORGOT_PASSWORD}
+              className="text-[13px] text-neutral-500 underline-offset-4 hover:text-neutral-900 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          }
           value={form.password}
           onChange={handleChange}
           error={errors.password}
         />
 
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 text-slate-600">
-            <input
-              type="checkbox"
-              name="rememberMe"
-              checked={form.rememberMe}
-              onChange={handleChange}
-              className="h-4 w-4 rounded border-slate-300 accent-blue-600"
-            />
-            Remember me
-          </label>
-          <Link to={ROUTES.FORGOT_PASSWORD} className="font-medium text-blue-600 hover:underline">
-            Forgot password?
-          </Link>
-        </div>
+        <label className="flex w-fit cursor-pointer select-none items-center gap-2.5 text-sm text-neutral-600">
+          <input
+            type="checkbox"
+            name="rememberMe"
+            checked={form.rememberMe}
+            onChange={handleChange}
+            className="h-4 w-4 cursor-pointer accent-neutral-900"
+          />
+          Keep me signed in on this device
+        </label>
 
-        <Button type="submit" loading={submitting} className="w-full">
-          Sign in
-        </Button>
+        <div className="pt-2">
+          <Button type="submit" variant="dark" loading={submitting} className="h-12 w-full lg:h-11">
+            {submitting ? "Signing in…" : "Sign in"}
+          </Button>
+        </div>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
-        Don't have an account?{" "}
-        <Link to={ROUTES.REGISTER} className="font-medium text-blue-600 hover:underline">
-          Create one
-        </Link>
+      <p className="mt-10 border-t border-neutral-100 pt-6 text-sm text-neutral-500">
+        No account yet? Ask your branch manager to set one up for you.
       </p>
     </>
   );
