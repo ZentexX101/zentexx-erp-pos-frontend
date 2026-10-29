@@ -35,6 +35,10 @@ import DashboardHome from "../pages/dashboard/DashboardHome";
 import PaymentMethodStatement from "../pages/paymentMethod/PaymentMethodStatement";
 import PaymentMethods from "../pages/paymentMethod/PaymentMethods";
 import Products from "../pages/product/Products";
+import AddPurchase from "../pages/purchase/AddPurchase";
+import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
+import PurchaseReturns from "../pages/purchase/PurchaseReturns";
+import Purchases from "../pages/purchase/Purchases";
 import Services from "../pages/service/Services";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
@@ -150,8 +154,10 @@ export const BRANCH_PANEL = {
           icon: LuShoppingBag,
           permission: "purchase.view",
           children: [
-            { label: "Purchase List", path: ROUTES.BRANCH_PURCHASES },
-            { label: "Purchase Return", path: ROUTES.BRANCH_PURCHASE_RETURNS },
+            { label: "Add Purchase", path: ROUTES.BRANCH_PURCHASE_NEW, page: AddPurchase, permission: "purchase.create" },
+            { label: "Purchase List", path: ROUTES.BRANCH_PURCHASES, page: Purchases },
+            { label: "Purchase Return", path: ROUTES.BRANCH_PURCHASE_RETURN_NEW, page: AddPurchaseReturn, permission: "purchase.return" },
+            { label: "Purchase Return List", path: ROUTES.BRANCH_PURCHASE_RETURNS, page: PurchaseReturns },
           ],
         },
         { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.BRANCH_TRANSFERS, permission: "transfer.view" },

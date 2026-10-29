@@ -18,7 +18,7 @@ export const fetchProductsData = async (params) => {
   return response;
 };
 
-// ✅ Create product — data: { name, category, brand, status, image?: File }
+// ✅ Create product — data: { name, category, brand, status, trackSerial, image?: File }
 export const createProduct = async (data) => {
   const response = await apiRequest("/products", { method: "POST", body: toFormData(data) });
   return response.data;

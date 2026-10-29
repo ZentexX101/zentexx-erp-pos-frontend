@@ -8,6 +8,7 @@ import FormSection from "../common/forms/FormSection";
 import ImageUpload from "../common/forms/ImageUpload";
 import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
+import ToggleField from "../common/forms/ToggleField";
 import Modal from "../common/modals/Modal";
 
 const STATUS_OPTIONS = [
@@ -20,6 +21,7 @@ const toForm = (product) => ({
   category: product?.category?._id || "",
   brand: product?.brand?._id || "",
   status: product?.status || PRODUCT_STATUS.ACTIVE,
+  trackSerial: product?.trackSerial || false,
 });
 
 const validate = (form) => ({
@@ -143,6 +145,14 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
               error={errors.brand}
             />
             <Select label="Product Status" name="status" required options={STATUS_OPTIONS} value={form.status} onChange={handleChange} />
+          </div>
+          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <ToggleField
+              label="Track IMEI / Serial number"
+              description="For phones, tablets, laptops: every piece is bought and sold by its IMEI. Leave off for covers, cables and other items counted by quantity. Can't be changed once the product has stock."
+              checked={form.trackSerial}
+              onChange={(value) => setForm((prev) => ({ ...prev, trackSerial: value }))}
+            />
           </div>
         </FormSection>
 

@@ -19,11 +19,12 @@ export const useSuppliersData = (params) => {
   });
 };
 
-// ✅ Active suppliers for dropdowns (purchase form)
-export const useSupplierOptionsData = () => {
+// ✅ Active suppliers for pickers (purchase form), searched on the backend — max 20
+export const useSupplierOptionsData = (search = "") => {
   return useQuery({
-    queryKey: [SUPPLIER_KEY, "options"],
-    queryFn: fetchSupplierOptionsData,
+    queryKey: [SUPPLIER_KEY, "options", search],
+    queryFn: () => fetchSupplierOptionsData(search),
+    placeholderData: keepPreviousData,
   });
 };
 

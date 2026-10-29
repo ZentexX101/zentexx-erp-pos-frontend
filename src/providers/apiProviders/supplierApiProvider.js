@@ -8,9 +8,9 @@ export const fetchSuppliersData = async (params) => {
   return response;
 };
 
-// ✅ Fetch Function — active suppliers for dropdowns (all of them, name and phone only)
-export const fetchSupplierOptionsData = async () => {
-  const response = await apiRequest("/suppliers/options");
+// ✅ Fetch Function — active suppliers matching search, for pickers (max 20: name, phone, balance)
+export const fetchSupplierOptionsData = async (search) => {
+  const response = await apiRequest(`/suppliers/options${toQueryString({ search })}`);
   return response.data;
 };
 
