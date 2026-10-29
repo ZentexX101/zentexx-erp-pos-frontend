@@ -42,6 +42,7 @@ import Purchases from "../pages/purchase/Purchases";
 import Services from "../pages/service/Services";
 import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
+import Stock from "../pages/stock/Stock";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
 import Suppliers from "../pages/supplier/Suppliers";
 
@@ -148,7 +149,7 @@ export const BRANCH_PANEL = {
           ],
         },
         { label: "Payment Method", icon: LuCreditCard, path: ROUTES.BRANCH_PAYMENT_METHODS, page: PaymentMethods, permission: "payment_method.view" },
-        { label: "Stock", icon: LuBoxes, path: ROUTES.BRANCH_STOCK, permission: "stock.view" },
+        { label: "Stock", icon: LuBoxes, path: ROUTES.BRANCH_STOCK, page: Stock, permission: "stock.view" },
         {
           label: "Purchase",
           icon: LuShoppingBag,
