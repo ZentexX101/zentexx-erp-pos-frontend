@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import Pagination from "../../components/common/data/Pagination";
+import Select from "../../components/common/forms/Select";
 import Spinner from "../../components/common/loaders/Spinner";
 import Modal from "../../components/common/modals/Modal";
 import { BRANCH_STATUS } from "../../constants/branch";
@@ -19,8 +20,6 @@ const TABS = [
 ];
 
 const REASON_MAX = 300;
-
-const SELECT_CLASS = "rounded-md border bg-white px-2 py-2 text-sm text-slate-700";
 
 // Approve as a sub admin (needs a branch) or, owner only, as an admin (all branches).
 const ApproveControls = ({ user, branches, canGrantAdmin, busy, onApprove }) => {
@@ -40,47 +39,31 @@ const ApproveControls = ({ user, branches, canGrantAdmin, busy, onApprove }) => 
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <label className="sr-only" htmlFor={`role-${user._id}`}>
-        Role for {user.name}
-      </label>
-      <select
-        id={`role-${user._id}`}
+      <Select
+        variant="filter"
+        aria-label={`Role for ${user.name}`}
         value={role}
         onChange={(e) => {
           setRole(e.target.value);
           setBranchError(false);
         }}
         disabled={busy}
-        className={`${SELECT_CLASS} border-slate-300`}
-      >
-        {roles.map((r) => (
-          <option key={r} value={r}>
-            {ROLE_LABELS[r]}
-          </option>
-        ))}
-      </select>
-
-      <label className="sr-only" htmlFor={`branch-${user._id}`}>
-        Branch for {user.name}
-      </label>
-      <select
-        id={`branch-${user._id}`}
+        options={roles.map((r) => ({ value: r, label: ROLE_LABELS[r] }))}
+      />
+      <Select
+        variant="filter"
+        aria-label={`Branch for ${user.name}`}
         value={branchId}
         onChange={(e) => {
           setBranchId(e.target.value);
           setBranchError(false);
         }}
         disabled={busy}
-        aria-invalid={branchError}
-        className={`${SELECT_CLASS} max-w-48 ${branchError ? "border-red-400" : "border-slate-300"}`}
-      >
-        <option value="">{branchRequired ? "Select branch" : "All branches (main admin)"}</option>
-        {branches.map((b) => (
-          <option key={b._id} value={b._id}>
-            {b.name}
-          </option>
-        ))}
-      </select>
+        error={branchError}
+        placeholder={branchRequired ? "Select branch" : "All branches (main admin)"}
+        options={branches.map((b) => ({ value: b._id, label: b.name }))}
+        className="max-w-52"
+      />
 
       <Button onClick={handleApprove} loading={busy} className="text-sm">
         Approve

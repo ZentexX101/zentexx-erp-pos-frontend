@@ -1,43 +1,45 @@
 import { PRODUCT_STATUS } from "../../constants/product";
+import FilterBar from "../common/forms/FilterBar";
 import SearchInput from "../common/forms/SearchInput";
+import Select from "../common/forms/Select";
 
-const FILTER_CLASS =
-  "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+const STATUS_OPTIONS = [
+  { value: PRODUCT_STATUS.ACTIVE, label: "Active" },
+  { value: PRODUCT_STATUS.INACTIVE, label: "Inactive" },
+];
 
 // Search box and category / brand / status filters; the backend does the filtering
-const ProductFilters = ({ searchInput, onSearch, filters, onFilter, categories, brands }) => (
-  <div className="flex flex-col gap-3 pt-2 lg:flex-row">
-    <SearchInput value={searchInput} onChange={onSearch} placeholder="Search product..." className="lg:w-80" />
-
-    <select
+const ProductFilters = ({ searchInput, onSearch, filters, onFilter, onClear, categories, brands }) => (
+  <FilterBar
+    className="pt-2"
+    search={<SearchInput value={searchInput} onChange={onSearch} placeholder="Search product..." />}
+    onClear={Object.values(filters).some(Boolean) ? onClear : undefined}
+  >
+    <Select
+      variant="filter"
       value={filters.category}
       onChange={(e) => onFilter("category", e.target.value)}
       aria-label="Filter by category"
-      className={FILTER_CLASS}
-    >
-      <option value="">All categories</option>
-      {categories.map((c) => (
-        <option key={c._id} value={c._id}>
-          {c.name}
-        </option>
-      ))}
-    </select>
-
-    <select value={filters.brand} onChange={(e) => onFilter("brand", e.target.value)} aria-label="Filter by brand" className={FILTER_CLASS}>
-      <option value="">All brands</option>
-      {brands.map((b) => (
-        <option key={b._id} value={b._id}>
-          {b.name}
-        </option>
-      ))}
-    </select>
-
-    <select value={filters.status} onChange={(e) => onFilter("status", e.target.value)} aria-label="Filter by status" className={FILTER_CLASS}>
-      <option value="">All statuses</option>
-      <option value={PRODUCT_STATUS.ACTIVE}>Active</option>
-      <option value={PRODUCT_STATUS.INACTIVE}>Inactive</option>
-    </select>
-  </div>
+      placeholder="All categories"
+      options={categories.map((c) => ({ value: c._id, label: c.name }))}
+    />
+    <Select
+      variant="filter"
+      value={filters.brand}
+      onChange={(e) => onFilter("brand", e.target.value)}
+      aria-label="Filter by brand"
+      placeholder="All brands"
+      options={brands.map((b) => ({ value: b._id, label: b.name }))}
+    />
+    <Select
+      variant="filter"
+      value={filters.status}
+      onChange={(e) => onFilter("status", e.target.value)}
+      aria-label="Filter by status"
+      placeholder="All statuses"
+      options={STATUS_OPTIONS}
+    />
+  </FilterBar>
 );
 
 export default ProductFilters;

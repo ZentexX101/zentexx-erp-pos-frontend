@@ -5,7 +5,9 @@ import IconButton from "../../components/common/buttons/IconButton";
 import Badge from "../../components/common/data/Badge";
 import DataTable from "../../components/common/data/DataTable";
 import Pagination from "../../components/common/data/Pagination";
+import FilterBar from "../../components/common/forms/FilterBar";
 import SearchInput from "../../components/common/forms/SearchInput";
+import Select from "../../components/common/forms/Select";
 import Icon from "../../components/common/icons/Icon";
 import PageHeader from "../../components/common/layout/PageHeader";
 import ConfirmModal from "../../components/common/modals/ConfirmModal";
@@ -22,8 +24,7 @@ import { formatPhone } from "../../utils/phone";
 
 const ROLE_TONES = { [ROLES.SUPER_ADMIN]: "purple", [ROLES.ADMIN]: "blue", [ROLES.SUB_ADMIN]: "slate" };
 
-const FILTER_CLASS =
-  "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+const NO_FILTERS = { branch: "", role: "", status: "" };
 
 const formatTaka = (amount) => (amount === null || amount === undefined ? "—" : `৳${Number(amount).toLocaleString("en-IN")}`);
 
@@ -34,7 +35,7 @@ const Staff = () => {
   const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
-  const [filters, setFilters] = useState({ branch: "", role: "", status: "" });
+  const [filters, setFilters] = useState(NO_FILTERS);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   // null = closed, { staff: null } = create, { staff } = edit
@@ -62,6 +63,11 @@ const Staff = () => {
 
   const handleFilter = (name, value) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters(NO_FILTERS);
     setPage(1);
   };
 
@@ -211,51 +217,41 @@ const Staff = () => {
         }
       />
 
-      <div className="mt-6 flex flex-col gap-3 lg:flex-row">
-        <SearchInput
-          value={searchInput}
-          onChange={handleSearch}
-          placeholder="Search name, phone, ID, designation..."
-          className="lg:w-80"
-        />
-        <select
+      <FilterBar
+        className="mt-6"
+        search={<SearchInput value={searchInput} onChange={handleSearch} placeholder="Search name, phone, ID, designation..." />}
+        onClear={Object.values(filters).some(Boolean) ? handleClearFilters : undefined}
+      >
+        <Select
+          variant="filter"
           value={filters.branch}
           onChange={(e) => handleFilter("branch", e.target.value)}
           aria-label="Filter by branch"
-          className={FILTER_CLASS}
+          placeholder="All branches"
+          options={branches.map((b) => ({ value: b._id, label: b.name }))}
         >
-          <option value="">All branches</option>
           <option value="none">Main admins (no branch)</option>
-          {branches.map((b) => (
-            <option key={b._id} value={b._id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-        <select
+        </Select>
+        <Select
+          variant="filter"
           value={filters.role}
           onChange={(e) => handleFilter("role", e.target.value)}
           aria-label="Filter by type"
-          className={FILTER_CLASS}
-        >
-          <option value="">All types</option>
-          {Object.values(ROLES).map((role) => (
-            <option key={role} value={role}>
-              {ROLE_LABELS[role]}
-            </option>
-          ))}
-        </select>
-        <select
+          placeholder="All types"
+          options={Object.values(ROLES).map((role) => ({ value: role, label: ROLE_LABELS[role] }))}
+        />
+        <Select
+          variant="filter"
           value={filters.status}
           onChange={(e) => handleFilter("status", e.target.value)}
           aria-label="Filter by status"
-          className={FILTER_CLASS}
-        >
-          <option value="">All statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
+          placeholder="All statuses"
+          options={[
+            { value: "active", label: "Active" },
+            { value: "inactive", label: "Inactive" },
+          ]}
+        />
+      </FilterBar>
 
       <div className="mt-4 space-y-2">
         <Alert type="success">{notice}</Alert>

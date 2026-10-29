@@ -12,6 +12,8 @@ import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useDeleteProduct, useProductsData } from "../../hooks/useProductApi";
 import { hasPermission } from "../../utils/access";
 
+const NO_FILTERS = { category: "", brand: "", status: "" };
+
 const Products = () => {
   const { user } = useAuth();
   const canCreate = hasPermission(user, "product.create");
@@ -22,7 +24,7 @@ const Products = () => {
   const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
-  const [filters, setFilters] = useState({ category: "", brand: "", status: "" });
+  const [filters, setFilters] = useState(NO_FILTERS);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [form, setForm] = useState(null); // null = closed, { product: null } = create, { product } = edit
@@ -46,6 +48,11 @@ const Products = () => {
 
   const handleFilter = (name, value) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters(NO_FILTERS);
     setPage(1);
   };
 
@@ -86,6 +93,7 @@ const Products = () => {
         onSearch={handleSearch}
         filters={filters}
         onFilter={handleFilter}
+        onClear={handleClearFilters}
         categories={categories}
         brands={brands}
       />

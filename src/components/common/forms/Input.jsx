@@ -9,12 +9,18 @@ const EyeIcon = ({ open }) => (
   </svg>
 );
 
-// default: dashboard forms. soft: taller, rounded, brand-black focus (auth screens)
+// default: dashboard forms. soft: taller, rounded, brand-black focus (auth screens). filter: list filter bars
 const VARIANTS = {
   default: {
     label: "text-sm font-medium text-slate-700",
     input: "rounded-md bg-white focus:ring-2",
     normal: "border-slate-300 focus:border-slate-400 focus:ring-brand/10",
+    error: "border-red-400 focus:ring-red-200",
+  },
+  filter: {
+    label: "text-xs font-medium text-slate-600",
+    input: "h-10 rounded-lg bg-white text-sm shadow-xs focus:ring-2",
+    normal: "border-slate-300 hover:border-slate-400 focus:border-slate-500 focus:ring-brand/10",
     error: "border-red-400 focus:ring-red-200",
   },
   soft: {
