@@ -39,6 +39,10 @@ import DashboardHome from "../pages/dashboard/DashboardHome";
 import PaymentMethodStatement from "../pages/paymentMethod/PaymentMethodStatement";
 import PaymentMethods from "../pages/paymentMethod/PaymentMethods";
 import Products from "../pages/product/Products";
+import CreatePos from "../pages/sale/CreatePos";
+import Sales from "../pages/sale/Sales";
+import CreatePosReturn from "../pages/saleReturn/CreatePosReturn";
+import PosReturns from "../pages/saleReturn/PosReturns";
 import AddPurchase from "../pages/purchase/AddPurchase";
 import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
 import PurchaseReturns from "../pages/purchase/PurchaseReturns";
@@ -181,8 +185,10 @@ export const BRANCH_PANEL = {
           icon: LuMonitorSmartphone,
           permission: "sales.view",
           children: [
-            { label: "New Sale", path: ROUTES.BRANCH_POS },
-            { label: "Sales List", path: ROUTES.BRANCH_SALES },
+            { label: "Create POS", path: ROUTES.BRANCH_POS, page: CreatePos, permission: "sales.create" },
+            { label: "POS Orders List", path: ROUTES.BRANCH_SALES, page: Sales },
+            { label: "POS Return", path: ROUTES.BRANCH_POS_RETURN, page: CreatePosReturn, permission: "return.create" },
+            { label: "POS Return List", path: ROUTES.BRANCH_POS_RETURNS, page: PosReturns, permission: "return.view" },
             { label: "Service Sales", path: ROUTES.BRANCH_SERVICE_SALES },
           ],
         },

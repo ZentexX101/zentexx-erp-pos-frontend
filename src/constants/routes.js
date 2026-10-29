@@ -44,6 +44,8 @@ export const ROUTES = {
   BRANCH_CUSTOMER_PAYOUTS: "/branch/customer-payouts",
   BRANCH_POS: "/branch/pos",
   BRANCH_SALES: "/branch/sales",
+  BRANCH_POS_RETURN: "/branch/pos-return",
+  BRANCH_POS_RETURNS: "/branch/pos-returns",
   BRANCH_SERVICE_SALES: "/branch/service-sales",
   BRANCH_PRE_ORDERS: "/branch/pre-orders",
   BRANCH_EXCHANGES: "/branch/exchanges",
