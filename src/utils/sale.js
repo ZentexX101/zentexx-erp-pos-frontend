@@ -35,3 +35,14 @@ export const toSaleItems = (lines) =>
     ...(line.stock.product.trackSerial ? { serials: line.serials } : { quantity: Number(line.quantity) }),
     unitPrice: Number(line.unitPrice),
   }));
+
+// Cart after adding a product card (one more piece) or a scanned IMEI (that exact piece)
+export const addToCart = (lines, stock, serial) => {
+  const index = lines.findIndex((line) => line.stock.product._id === stock.product._id);
+  if (index === -1) return [...lines, newCartLine(stock, serial)];
+  return lines.map((line, i) => {
+    if (i !== index) return line;
+    if (stock.product.trackSerial) return serial && !line.serials.includes(serial) ? { ...line, serials: [...line.serials, serial] } : line;
+    return { ...line, quantity: String(Math.min((Number(line.quantity) || 0) + 1, stock.quantity)) };
+  });
+};

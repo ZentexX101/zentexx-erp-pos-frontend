@@ -72,7 +72,37 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
           </table>
         </div>
 
+        {sale.tradeIns?.length > 0 && (
+          <div className="rounded-lg border border-purple-200 bg-purple-50/50 p-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-purple-700">Old devices taken in</p>
+            <ul className="space-y-1 text-sm">
+              {sale.tradeIns.map((line) => (
+                <li key={line.product} className="flex justify-between gap-3">
+                  <span>
+                    {line.quantity} × {line.name}
+                    {line.serials.length > 0 && <span className="ml-1 font-mono text-xs text-slate-500">({line.serials.join(", ")})</span>}
+                  </span>
+                  <span className="font-semibold text-purple-700">{formatTaka(line.total)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <dl className="grid grid-cols-2 gap-3 rounded-lg bg-slate-50 p-3 sm:grid-cols-4">
+          {sale.kind === "exchange" && (
+            <>
+              <Field label="Old device value">
+                <span className="text-purple-700">{formatTaka(sale.exchangeValue)}</span>
+              </Field>
+              <Field label={sale.payable < 0 ? "We owed customer" : "Payable"}>{formatTaka(Math.abs(sale.payable))}</Field>
+              {sale.payoutAmount > 0 && (
+                <Field label="Paid out">
+                  <span className="text-orange-600">{formatTaka(sale.payoutAmount)}</span>
+                </Field>
+              )}
+            </>
+          )}
           <Field label="Sub total">{formatTaka(sale.subTotal)}</Field>
           <Field label="Discount">{formatTaka(sale.discount)}</Field>
           <Field label="Delivery">{formatTaka(sale.deliveryCharge)}</Field>

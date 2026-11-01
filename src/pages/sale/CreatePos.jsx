@@ -15,7 +15,7 @@ import { hasPermission } from "../../utils/access";
 import { formatTaka } from "../../utils/money";
 import { roundTaka } from "../../utils/number";
 import { paymentLinesTotal, toPaymentItems } from "../../utils/paymentLines";
-import { cartError, cartLineQuantity, cartSubTotal, newCartLine, toSaleItems } from "../../utils/sale";
+import { addToCart, cartError, cartLineQuantity, cartSubTotal, toSaleItems } from "../../utils/sale";
 
 const NO_AMOUNTS = { discount: "", deliveryCharge: "" };
 
@@ -55,15 +55,7 @@ const CreatePos = () => {
   // A product card: add one piece (IMEI products open their IMEI picker in the cart instead)
   const addStock = (stock, serial) => {
     clearMessages();
-    setLines((prev) => {
-      const index = prev.findIndex((line) => line.stock.product._id === stock.product._id);
-      if (index === -1) return [...prev, newCartLine(stock, serial)];
-      return prev.map((line, i) => {
-        if (i !== index) return line;
-        if (stock.product.trackSerial) return serial && !line.serials.includes(serial) ? { ...line, serials: [...line.serials, serial] } : line;
-        return { ...line, quantity: String(Math.min((Number(line.quantity) || 0) + 1, stock.quantity)) };
-      });
-    });
+    setLines((prev) => addToCart(prev, stock, serial));
   };
 
   // Scanned IMEI -> add that exact piece; returns true when it was added

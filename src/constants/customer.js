@@ -19,6 +19,7 @@ export const LEDGER_TYPE = {
   SALE_RETURN: "sale_return",
   PAYMENT: "payment",
   PAYOUT: "payout",
+  EXCHANGE: "exchange", // credit: the customer's old device taken in
 };
 
 export const LEDGER_TYPE_LABELS = {
@@ -28,4 +29,5 @@ export const LEDGER_TYPE_LABELS = {
   [LEDGER_TYPE.SALE_RETURN]: { label: "Sale Return", tone: "amber" },
   [LEDGER_TYPE.PAYMENT]: { label: "Payment Received", tone: "green" },
   [LEDGER_TYPE.PAYOUT]: { label: "Payout", tone: "red" },
+  [LEDGER_TYPE.EXCHANGE]: { label: "Exchange (Old Device)", tone: "purple" },
 };

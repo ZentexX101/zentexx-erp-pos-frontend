@@ -22,14 +22,27 @@ import { periodRange } from "../../utils/period";
 
 const DUE_OPTIONS = [{ value: "true", label: "Only with due" }];
 
-// The period's totals; profit only for main admins
-const Totals = ({ summary, showProfit }) => (
+// What differs between the POS Orders List and the Exchange Orders List
+const KINDS = {
+  sale: { title: "POS Orders List", subtitle: "Every sale of this branch", createLabel: "Create POS", createPath: ROUTES.BRANCH_POS, permission: "sales.create" },
+  exchange: {
+    title: "Exchange Orders List",
+    subtitle: "Every exchange of this branch: new items sold, old devices taken in",
+    createLabel: "Create Exchange",
+    createPath: ROUTES.BRANCH_EXCHANGE_NEW,
+    permission: "return.create",
+  },
+};
+
+// The period's totals; profit only for main admins, exchange value only on exchanges
+const Totals = ({ summary, showProfit, showExchange }) => (
   <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
     {[
       { label: "Sales", value: summary?.count ?? 0, plain: true },
       { label: "Total", value: summary?.total, className: "text-slate-900" },
       { label: "Paid", value: summary?.paid, className: "text-green-600" },
       { label: "Due", value: summary?.due, className: "text-red-600" },
+      ...(showExchange ? [{ label: "Old devices taken", value: summary?.exchange, className: "text-purple-600" }] : []),
       ...(showProfit ? [{ label: "Profit", value: summary?.profit, className: "text-indigo-600" }] : []),
     ].map(({ label, value, plain, className }) => (
       <div key={label} className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200">
@@ -40,8 +53,9 @@ const Totals = ({ summary, showProfit }) => (
   </div>
 );
 
-// POS Orders List: this branch's sales
-const Sales = () => {
+// POS Orders List (kind "sale") or Exchange Orders List (kind "exchange") of this branch
+const Sales = ({ kind = "sale" }) => {
+  const copy = KINDS[kind];
   const { user } = useAuth();
 
   // all states
@@ -55,7 +69,7 @@ const Sales = () => {
   const [printSale, setPrintSale] = useState(null);
 
   // call sale api (period, search, due and paging run on the backend)
-  const { data, isLoading, error } = useSalesData({ search, due, ...periodRange(period.period, period), page, limit });
+  const { data, isLoading, error } = useSalesData({ search, due, ...periodRange(period.period, period), page, limit }, kind);
   usePrintWhenReady(printSale, useCallback(() => setPrintSale(null), []));
 
   // Any filter change starts again from page 1
@@ -68,16 +82,16 @@ const Sales = () => {
     <div>
       <div className="space-y-4 print:hidden">
         <PageHeader
-          title="POS Orders List"
-          subtitle="Every sale of this branch"
+          title={copy.title}
+          subtitle={copy.subtitle}
           actions={
-            hasPermission(user, "sales.create") && (
+            hasPermission(user, copy.permission) && (
               <Link
-                to={ROUTES.BRANCH_POS}
+                to={copy.createPath}
                 className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-hover"
               >
                 <Icon name="plus" />
-                Create POS
+                {copy.createLabel}
               </Link>
             )
           }
@@ -95,12 +109,13 @@ const Sales = () => {
           />
         </FilterBar>
 
-        <Totals summary={data?.meta?.summary} showProfit={isMainAdmin(user)} />
+        <Totals summary={data?.meta?.summary} showProfit={isMainAdmin(user)} showExchange={kind === "exchange"} />
 
         <Alert>{error?.message}</Alert>
 
         <SaleTable
           sales={data?.data ?? []}
+          showExchange={kind === "exchange"}
           meta={data?.meta}
           isLoading={isLoading}
           hasFilters={Boolean(search || due) || period.period !== "all"}

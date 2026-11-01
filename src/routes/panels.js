@@ -42,6 +42,8 @@ import Products from "../pages/product/Products";
 import CreatePos from "../pages/sale/CreatePos";
 import Sales from "../pages/sale/Sales";
 import CreatePosReturn from "../pages/saleReturn/CreatePosReturn";
+import CreateExchange from "../pages/exchange/CreateExchange";
+import Exchanges from "../pages/exchange/Exchanges";
 import PosReturns from "../pages/saleReturn/PosReturns";
 import AddPurchase from "../pages/purchase/AddPurchase";
 import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
@@ -193,7 +195,15 @@ export const BRANCH_PANEL = {
           ],
         },
         { label: "Pre Order", icon: LuShoppingBag, path: ROUTES.BRANCH_PRE_ORDERS, permission: "sales.view" },
-        { label: "Exchange", icon: LuRepeat, path: ROUTES.BRANCH_EXCHANGES, permission: "return.view" },
+        {
+          label: "Exchange",
+          icon: LuRepeat,
+          permission: "return.view",
+          children: [
+            { label: "Create Exchange", path: ROUTES.BRANCH_EXCHANGE_NEW, page: CreateExchange, permission: "return.create" },
+            { label: "Exchange List", path: ROUTES.BRANCH_EXCHANGES, page: Exchanges },
+          ],
+        },
         { label: "Replacement", icon: LuRefreshCw, path: ROUTES.BRANCH_REPLACEMENTS, permission: "return.view" },
         { label: "Repair", icon: LuWrench, path: ROUTES.BRANCH_REPAIRS },
         { label: "Salary Management", icon: LuBadgeDollarSign, path: ROUTES.BRANCH_SALARIES },

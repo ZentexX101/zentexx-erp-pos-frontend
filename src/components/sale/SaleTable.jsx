@@ -6,8 +6,8 @@ import Pagination from "../common/data/Pagination";
 
 const money = (className = "") => ({ headerClassName: "text-right", className: `text-right whitespace-nowrap ${className}` });
 
-// POS orders, newest first. "View" opens the invoice.
-const SaleTable = ({ sales, meta, isLoading, hasFilters, onView, onPageChange, onLimitChange }) => {
+// POS orders or exchanges, newest first. showExchange adds the old-device value. "View" opens the invoice.
+const SaleTable = ({ sales, meta, isLoading, hasFilters, showExchange = false, onView, onPageChange, onLimitChange }) => {
   const columns = [
     { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
     { key: "invoiceNo", header: "Invoice", className: "font-mono text-xs font-semibold text-slate-900" },
@@ -25,6 +25,12 @@ const SaleTable = ({ sales, meta, isLoading, hasFilters, onView, onPageChange, o
       render: (s) => `${s.items.reduce((sum, item) => sum + item.quantity, 0)} pcs`,
     },
     { key: "grandTotal", header: "Total", ...money("font-semibold text-slate-900"), render: (s) => formatTaka(s.grandTotal) },
+    ...(showExchange
+      ? [
+          { key: "exchange", header: "Old Device", ...money("text-purple-600"), render: (s) => formatTaka(s.exchangeValue) },
+          { key: "payout", header: "Paid Out", ...money("text-orange-600"), render: (s) => (s.payoutAmount ? formatTaka(s.payoutAmount) : "—") },
+        ]
+      : []),
     { key: "paid", header: "Paid", ...money("text-green-600"), render: (s) => formatTaka(s.paidAmount) },
     { key: "due", header: "Due", ...money("text-red-600"), render: (s) => (s.dueAmount ? formatTaka(s.dueAmount) : "—") },
     { key: "soldBy", header: "Sold By", className: "text-slate-600", render: (s) => s.soldBy?.name ?? "—" },

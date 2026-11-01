@@ -10,7 +10,7 @@ import CustomerFormModal from "../customer/CustomerFormModal";
 import CustomerSelect from "../customer/CustomerSelect";
 
 // "Sold By" staff and the customer (search or create). No customer = walk-in, which must pay in full.
-const PosCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, canCreateCustomer }) => {
+const PosCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, canCreateCustomer, customerLabel = "Customer (empty = walk-in)" }) => {
   const [creating, setCreating] = useState(false);
   const { data: staff = [] } = useSaleStaffData();
 
@@ -31,7 +31,7 @@ const PosCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, canCreateCus
 
       <div className="flex items-end gap-2">
         <div className="min-w-0 flex-1">
-          <CustomerSelect label="Customer (empty = walk-in)" value={customer} onChange={onCustomer} />
+          <CustomerSelect label={customerLabel} value={customer} onChange={onCustomer} />
         </div>
         {canCreateCustomer && (
           <Button onClick={() => setCreating(true)} className="shrink-0">

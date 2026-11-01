@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  createExchange,
   createSale,
   fetchPosProductsData,
   fetchSaleStaffData,
@@ -38,21 +39,25 @@ export const useSaleStaffData = () => {
   });
 };
 
-// ✅ One page of sales — params: { search, customer, soldBy, due, from, to, page, limit }
-export const useSalesData = (params) => {
+// ✅ One page of sales or exchanges (kind) — params: { search, customer, soldBy, due, from, to, page, limit }
+export const useSalesData = (params, kind = "sale") => {
   return useQuery({
-    queryKey: [SALE_KEY, branchKey(), "list", params],
-    queryFn: () => fetchSalesData(params),
+    queryKey: [SALE_KEY, branchKey(), kind, params],
+    queryFn: () => fetchSalesData(params, kind),
     placeholderData: keepPreviousData,
   });
 };
 
-// ✅ A sale changes stock, the customer's balance and payment method balances too
-export const useCreateSale = () => {
+// ✅ A sale / exchange changes stock, the customer's balance and payment method balances too
+const useSaleMutation = (mutationFn) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data) => createSale(data),
+    mutationFn,
     onSuccess: () =>
       [SALE_KEY, STOCK_KEY, "customers", "paymentMethods"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
+
+export const useCreateSale = () => useSaleMutation((data) => createSale(data));
+
+export const useCreateExchange = () => useSaleMutation((data) => createExchange(data));

@@ -25,7 +25,7 @@ const SaleInvoicePrint = ({ sale }) => (
         )}
       </div>
       <div className="text-right">
-        <p className="text-base font-bold">INVOICE</p>
+        <p className="text-base font-bold">{sale.kind === "exchange" ? "EXCHANGE INVOICE" : "INVOICE"}</p>
         <p className="font-mono">{sale.invoiceNo}</p>
         <p>{formatDateTime(sale.date)}</p>
       </div>
@@ -73,11 +73,29 @@ const SaleInvoicePrint = ({ sale }) => (
       </tbody>
     </table>
 
+    {sale.tradeIns?.length > 0 && (
+      <div className="mt-3">
+        <p className="font-semibold">Old device(s) taken in</p>
+        {sale.tradeIns.map((line) => (
+          <p key={line.product} className="flex justify-between">
+            <span>
+              {line.quantity} × {line.name}
+              {line.serials.length > 0 && <span className="font-mono text-[10px]"> (IMEI: {line.serials.join(", ")})</span>}
+            </span>
+            <span>{formatTaka(line.total)}</span>
+          </p>
+        ))}
+      </div>
+    )}
+
     <div className="ml-auto mt-3 w-64 space-y-0.5">
       <TotalRow label="Sub Total" value={sale.subTotal} />
       {sale.discount > 0 && <TotalRow label="Discount" value={-sale.discount} />}
       {sale.deliveryCharge > 0 && <TotalRow label="Delivery Charge" value={sale.deliveryCharge} />}
       <TotalRow label="Grand Total" value={sale.grandTotal} strong />
+      {sale.exchangeValue > 0 && <TotalRow label="Old Device Value" value={-sale.exchangeValue} />}
+      {sale.exchangeValue > 0 && <TotalRow label={sale.payable < 0 ? "We Pay You" : "Payable"} value={Math.abs(sale.payable)} strong />}
+      {sale.payoutAmount > 0 && <TotalRow label="Paid Out" value={sale.payoutAmount} />}
       <TotalRow label={`Paid${sale.payments.length ? ` (${sale.payments.map((p) => p.paymentMethod?.name).join(", ")})` : ""}`} value={sale.paidAmount} />
       <TotalRow label="Due" value={sale.dueAmount} strong={sale.dueAmount > 0} />
     </div>
