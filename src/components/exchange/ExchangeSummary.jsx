@@ -14,7 +14,7 @@ const box = "w-36 rounded-md px-3 py-2 text-right text-sm font-bold";
 
 // New items total − discount − old device value = payable. When the old devices are worth more,
 // the difference is paid out to the customer (or left on their balance).
-const ExchangeSummary = ({ itemCount, subTotal, discount, onDiscount, exchangeValue, payable, payments, onPayments, methods, settled, onSettleFull, onSubmit, submitting, disabled }) => {
+const ExchangeSummary = ({ itemCount, subTotal, discount, onDiscount, exchangeValue, payable, payments, onPayments, methods, settled, onSettleFull, submitLabel, onSubmit, submitting }) => {
   const weOwe = payable < 0;
   const left = Math.round((Math.abs(payable) - settled) * 100) / 100;
 
@@ -74,8 +74,8 @@ const ExchangeSummary = ({ itemCount, subTotal, discount, onDiscount, exchangeVa
         </>
       )}
 
-      <Button onClick={onSubmit} loading={submitting} disabled={disabled} className="w-full py-3 text-base">
-        Complete Exchange
+      <Button onClick={onSubmit} loading={submitting} className="w-full py-3 text-base">
+        {submitLabel}
       </Button>
     </section>
   );

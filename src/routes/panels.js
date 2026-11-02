@@ -44,6 +44,7 @@ import Sales from "../pages/sale/Sales";
 import CreatePosReturn from "../pages/saleReturn/CreatePosReturn";
 import CreateExchange from "../pages/exchange/CreateExchange";
 import Exchanges from "../pages/exchange/Exchanges";
+import Expenses from "../pages/expense/Expenses";
 import PosReturns from "../pages/saleReturn/PosReturns";
 import AddPurchase from "../pages/purchase/AddPurchase";
 import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
@@ -178,7 +179,7 @@ export const BRANCH_PANEL = {
           ],
         },
         { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.BRANCH_TRANSFERS, permission: "transfer.view" },
-        { label: "Expense", icon: LuReceipt, path: ROUTES.BRANCH_EXPENSES, permission: "expense.view" },
+        { label: "Expense", icon: LuReceipt, path: ROUTES.BRANCH_EXPENSES, page: Expenses, permission: "expense.view" },
         { label: "Supplier Payment", icon: LuWallet, path: ROUTES.BRANCH_SUPPLIER_PAYMENTS, page: SupplierPayments, permission: "payment.view" },
         { label: "Customer Payment", icon: LuHandCoins, path: ROUTES.BRANCH_CUSTOMER_PAYMENTS, page: CustomerPayments, permission: "payment.view" },
         { label: "Customer Payout", icon: LuBanknote, path: ROUTES.BRANCH_CUSTOMER_PAYOUTS, page: CustomerPayouts, permission: "payment.view" },

@@ -20,7 +20,8 @@ import { roundTaka } from "../../utils/number";
 import { paymentLinesTotal, toPaymentItems } from "../../utils/paymentLines";
 import { addToCart, cartError, cartLineQuantity, cartSubTotal, toSaleItems } from "../../utils/sale";
 
-// New Exchange: sell new items and take the customer's old devices in, on one invoice
+// New Exchange: sell new items and take the customer's old devices in, on one invoice.
+// Without new items it is a buyback: we only buy the old device from the customer.
 const CreateExchange = () => {
   const { user } = useAuth();
 
@@ -79,8 +80,8 @@ const CreateExchange = () => {
     const filled = paymentLines.filter((line) => line.paymentMethod || Number(line.amount) > 0);
     const problem =
       (!customer && "Select the customer whose old device you're taking in.") ||
-      cartError(lines) ||
       tradeInsError(tradeIns) ||
+      (lines.length > 0 && cartError(lines)) ||
       ((Number(discount) || 0) > subTotal && "Discount can't be more than the new product total.") ||
       (filled.some((line) => !line.paymentMethod) && "Select the payment method for every amount.") ||
       (settled > Math.abs(payable) && (payable >= 0 ? "Paid amount can't be more than the payable amount." : "Payout can't be more than what we owe."));
@@ -110,7 +111,10 @@ const CreateExchange = () => {
   return (
     <div>
       <div className="space-y-4 print:hidden">
-        <PageHeader title="New Exchange" subtitle="Sell new products and take the customer's old device in, on one invoice" />
+        <PageHeader
+          title="New Exchange / Buyback"
+          subtitle="Sell new products and take the customer's old device in, on one invoice. Leave the cart empty to only buy the old device."
+        />
 
         {notice && (
           <Alert type="success">
@@ -157,9 +161,9 @@ const CreateExchange = () => {
               methods={methods}
               settled={settled}
               onSettleFull={() => setPayments(null)}
+              submitLabel={lines.length ? "Complete Exchange" : "Complete Buyback"}
               onSubmit={handleSubmit}
               submitting={createExchange.isPending}
-              disabled={!lines.length}
             />
           </div>
         </div>
