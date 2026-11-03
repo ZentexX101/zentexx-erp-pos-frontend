@@ -10,7 +10,7 @@ import { isValid } from "../../utils/validators";
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); // carries a notice from the password reset
 
   const [form, setForm] = useState({ identifier: "", password: "", rememberMe: false });
   const [errors, setErrors] = useState({});
@@ -40,7 +40,8 @@ const Login = () => {
     setSubmitting(true);
     try {
       const user = await login({ identifier: form.identifier.trim(), password: form.password, rememberMe: form.rememberMe });
-      navigate(location.state?.from?.pathname || getHomePath(user), { replace: true });
+      // Always start on the dashboard (main admin) or the branch dashboard (branch staff)
+      navigate(getHomePath(user), { replace: true });
     } catch (err) {
       setServerError(err.message);
       setSubmitting(false);
