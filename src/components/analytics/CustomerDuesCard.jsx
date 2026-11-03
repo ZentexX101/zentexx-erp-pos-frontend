@@ -1,5 +1,4 @@
 import { LuHourglass } from "react-icons/lu";
-import { ROUTES } from "../../constants/routes";
 import { formatTaka } from "../../utils/money";
 import { formatPhone } from "../../utils/phone";
 import ChartCard from "./ui/ChartCard";
@@ -13,8 +12,8 @@ const COLUMNS = [
 ];
 
 // Who owes the business the most (customers are shared by every branch)
-const CustomerDuesCard = ({ customers, inBranch }) => (
-  <ChartCard icon={LuHourglass} title="Customer Dues" subtitle="Who owes the most (all branches)" action={<ViewAllLink to={!inBranch && ROUTES.CUSTOMERS} />}>
+const CustomerDuesCard = ({ customers, linkTo }) => (
+  <ChartCard icon={LuHourglass} title="Customer Dues" subtitle="Who owes the most (all branches)" action={<ViewAllLink link={linkTo("customers")} />}>
     <MiniTable rows={customers} columns={COLUMNS} emptyText="No customer owes anything." />
   </ChartCard>
 );

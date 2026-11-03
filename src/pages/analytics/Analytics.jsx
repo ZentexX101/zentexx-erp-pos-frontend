@@ -23,6 +23,7 @@ import { useAnalyticsOverviewData, useRefreshAnalytics } from "../../hooks/useAn
 import { useAuth } from "../../hooks/useAuth";
 import { useBranch } from "../../hooks/useBranch";
 import { useBranchNamesData } from "../../hooks/useBranchApi";
+import { useCardLink } from "../../hooks/useCardLink";
 import { hasPermission } from "../../utils/access";
 import { PERIOD_OPTIONS, periodRange } from "../../utils/period";
 
@@ -46,6 +47,8 @@ const Analytics = ({ scope = "main" }) => {
   const { data, isLoading, isFetching, error, dataUpdatedAt } = useAnalyticsOverviewData(params, { enabled: canView });
   const refresh = useRefreshAnalytics(params);
   const { data: branches = [] } = useBranchNamesData();
+  // where each card leads (a branch picked on the main dashboard opens that branch's pages)
+  const linkTo = useCardLink({ inBranch, branch: branches.find((b) => b._id === branchFilter) });
 
   const periodLabel = period.period === "custom" ? "Custom range" : PERIOD_OPTIONS.find((o) => o.value === period.period)?.label;
   const subtitle = inBranch ? `Here is how ${activeBranch?.name ?? "this branch"} is doing` : "Here is how the whole business is doing";
@@ -90,31 +93,31 @@ const Analytics = ({ scope = "main" }) => {
               expenses={data.expenses}
               profit={data.profit}
               trend={data.charts.trend}
-              inBranch={inBranch}
+              linkTo={linkTo}
               showMoney={mainAdmin}
               periodLabel={periodLabel}
             />
 
             {/* Details */}
             <div className="grid gap-4 xl:grid-cols-2">
-              <SalesDetailsPanel sales={data.sales} exchanges={data.exchanges} saleReturns={data.saleReturns} inBranch={inBranch} periodLabel={periodLabel} />
+              <SalesDetailsPanel sales={data.sales} exchanges={data.exchanges} saleReturns={data.saleReturns} linkTo={linkTo} periodLabel={periodLabel} />
               <MoneyFlowPanel
                 cash={data.cash}
                 purchases={data.purchases}
                 purchaseReturns={data.purchaseReturns}
                 payments={data.payments}
-                inBranch={inBranch}
+                linkTo={linkTo}
                 periodLabel={periodLabel}
               />
               <StockPanel
                 stock={data.stock}
                 transfers={data.transfers}
                 productCount={data.counts.products}
-                inBranch={inBranch}
+                linkTo={linkTo}
                 showMoney={mainAdmin}
                 periodLabel={periodLabel}
               />
-              <BusinessPanel dues={data.dues} counts={data.counts} inBranch={inBranch} />
+              <BusinessPanel dues={data.dues} counts={data.counts} linkTo={linkTo} />
             </div>
 
             {/* Charts */}
@@ -135,10 +138,10 @@ const Analytics = ({ scope = "main" }) => {
 
             {/* Latest activity and what needs attention */}
             <div className="grid gap-4 lg:grid-cols-2">
-              <RecentSalesCard sales={data.recent.recentSales} inBranch={inBranch} showBranch={showBranch} />
-              <RecentPurchasesCard purchases={data.recent.recentPurchases} inBranch={inBranch} showBranch={showBranch} />
-              <CustomerDuesCard customers={data.recent.customerDues} inBranch={inBranch} />
-              <LowStockCard rows={data.recent.lowStockRows} inBranch={inBranch} showBranch={showBranch} />
+              <RecentSalesCard sales={data.recent.recentSales} linkTo={linkTo} showBranch={showBranch} />
+              <RecentPurchasesCard purchases={data.recent.recentPurchases} linkTo={linkTo} showBranch={showBranch} />
+              <CustomerDuesCard customers={data.recent.customerDues} linkTo={linkTo} />
+              <LowStockCard rows={data.recent.lowStockRows} linkTo={linkTo} showBranch={showBranch} />
             </div>
           </>
         )

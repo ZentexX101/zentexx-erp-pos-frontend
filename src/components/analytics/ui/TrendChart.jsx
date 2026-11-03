@@ -12,7 +12,8 @@ const SERIES = [
 ];
 
 // Full-height hairline that follows the pointer
-const Crosshair = ({ points, height, top }) => (points?.[0] ? <line x1={points[0].x} x2={points[0].x} y1={top} y2={top + height} stroke="#94a3b8" strokeWidth={1} /> : null);
+const Crosshair = ({ points, height, top }) =>
+  points?.[0] ? <line x1={points[0].x} x2={points[0].x} y1={top} y2={top + height} stroke="#94a3b8" strokeWidth={1} /> : null;
 
 // Sales, purchases or expenses per day / month as one soft gradient area (the clearest read),
 // or all three as light areas on "Compare" (the default). The tabs double as the legend with each period total.
@@ -70,10 +71,7 @@ const TrendChart = ({ data }) => {
               padding={{ left: 4, right: 4 }}
             />
             <YAxis tickFormatter={formatTakaShort} tick={{ fontSize: 11, fill: AXIS_COLOR }} tickLine={false} axisLine={false} width={52} />
-            <Tooltip
-              content={<ChartTooltip labelFormatter={bucketLabel} accent={compare ? undefined : SERIES_COLORS[metric]} />}
-              cursor={<Crosshair />}
-            />
+            <Tooltip content={<ChartTooltip labelFormatter={bucketLabel} accent={compare ? undefined : SERIES_COLORS[metric]} />} cursor={<Crosshair />} />
             {shown.map(({ key, name }) => (
               <Area
                 key={key}

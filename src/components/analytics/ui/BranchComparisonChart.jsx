@@ -18,7 +18,15 @@ const BranchComparisonChart = ({ rows }) => (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={rows} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barGap={2} barCategoryGap="24%">
         <CartesianGrid stroke="#eef2f6" vertical={false} />
-        <XAxis dataKey="branch" tickFormatter={shortName} tick={{ fontSize: 11, fill: AXIS_COLOR }} tickLine={false} axisLine={false} tickMargin={8} interval={0} />
+        <XAxis
+          dataKey="branch"
+          tickFormatter={shortName}
+          tick={{ fontSize: 11, fill: AXIS_COLOR }}
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+          interval={0}
+        />
         <YAxis tickFormatter={formatTakaShort} tick={{ fontSize: 11, fill: AXIS_COLOR }} tickLine={false} axisLine={false} width={56} />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "#f8fafc", radius: 8 }} />
         <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: AXIS_COLOR }} />

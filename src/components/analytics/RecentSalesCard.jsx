@@ -1,5 +1,4 @@
 import { LuShoppingCart } from "react-icons/lu";
-import { ROUTES } from "../../constants/routes";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
 import Badge from "../common/data/Badge";
@@ -8,7 +7,7 @@ import MiniTable from "./ui/MiniTable";
 import ViewAllLink from "./ui/ViewAllLink";
 
 // The latest sales and exchanges of the period. showBranch: the all-branch view adds the branch.
-const RecentSalesCard = ({ sales, inBranch, showBranch }) => {
+const RecentSalesCard = ({ sales, linkTo, showBranch }) => {
   const columns = [
     {
       key: "invoiceNo",
@@ -41,7 +40,7 @@ const RecentSalesCard = ({ sales, inBranch, showBranch }) => {
   ];
 
   return (
-    <ChartCard icon={LuShoppingCart} title="Recent Sales" action={<ViewAllLink to={inBranch && ROUTES.BRANCH_SALES} />}>
+    <ChartCard icon={LuShoppingCart} title="Recent Sales" action={<ViewAllLink link={linkTo("sales")} />}>
       <MiniTable rows={sales} columns={columns} emptyText="No sales in this period." />
     </ChartCard>
   );

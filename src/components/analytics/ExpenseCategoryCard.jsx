@@ -7,10 +7,7 @@ import RankedList from "./ui/RankedList";
 // Where the money went: expense total per category
 const ExpenseCategoryCard = ({ categories }) => (
   <ChartCard icon={LuReceipt} title="Expenses by Category" subtitle="Where the money went" empty={!categories.length}>
-    <RankedList
-      color={SERIES_COLORS.expenses}
-      rows={categories.map((row) => ({ key: row.category, label: categoryLabel(row.category), value: row.amount }))}
-    />
+    <RankedList color={SERIES_COLORS.expenses} rows={categories.map((row) => ({ key: row.category, label: categoryLabel(row.category), value: row.amount }))} />
   </ChartCard>
 );
 

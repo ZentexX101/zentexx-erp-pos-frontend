@@ -18,7 +18,11 @@ const ChartCard = ({ icon, title, subtitle, action, empty, emptyText = "No data 
         </div>
         {action}
       </div>
-      {empty ? <p className="flex flex-1 items-center justify-center py-12 text-sm text-slate-400">{emptyText}</p> : <div className="min-w-0 flex-1">{children}</div>}
+      {empty ? (
+        <p className="flex flex-1 items-center justify-center py-12 text-sm text-slate-400">{emptyText}</p>
+      ) : (
+        <div className="min-w-0 flex-1">{children}</div>
+      )}
     </section>
   );
 };
