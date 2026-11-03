@@ -6,6 +6,14 @@ import { toQueryString } from "../../utils/queryString";
 // ✅ Fetch Function — one page of the branch's stock
 // params: { search, category, brand, quantity, maxSalePrice, maxPurchasePrice, page, limit }
 // -> { data, meta: { ...paging, summary: { products, quantity, value } } }
+// ✅ Fetch Function — Stock Center (main admin): every product with each branch's quantity
+// params: { branch, search, category, brand, quantity, page, limit }
+// -> { data: [{ product, quantity, value, saleValue, branches: { [branchId]: qty } }], meta: { ...paging, summary, branches } }
+export const fetchStockCenterData = async (params) => {
+  const response = await apiRequest(`/stock/center${toQueryString(params)}`);
+  return response;
+};
+
 export const fetchStockData = async (params) => {
   const response = await apiRequest(`/stock${toQueryString(params)}`);
   return response;

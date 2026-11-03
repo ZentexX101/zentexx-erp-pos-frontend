@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  fetchStockCenterData,
   fetchStockData,
   fetchStockOptionsData,
   fetchStockSerialsData,
@@ -12,6 +13,15 @@ export const STOCK_KEY = "stock";
 
 // Stock belongs to a branch, so the key holds the branch a main admin entered
 const branchKey = () => branchStorage.getId() ?? "own";
+
+// ✅ Stock Center (main admin, every branch) — params: { branch, search, category, brand, quantity, page, limit }
+export const useStockCenterData = (params) => {
+  return useQuery({
+    queryKey: [STOCK_KEY, "center", params],
+    queryFn: () => fetchStockCenterData(params),
+    placeholderData: keepPreviousData,
+  });
+};
 
 // ✅ One page of the branch's stock with the filtered totals (meta.summary)
 // params: { search, category, brand, quantity, maxSalePrice, maxPurchasePrice, page, limit }

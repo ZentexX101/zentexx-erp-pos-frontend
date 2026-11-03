@@ -60,6 +60,7 @@ import Staff from "../pages/staff/Staff";
 import AllSupplierPayments from "../pages/supplierPayment/AllSupplierPayments";
 import SupplierPayments from "../pages/supplierPayment/SupplierPayments";
 import Stock from "../pages/stock/Stock";
+import StockCenter from "../pages/stock/StockCenter";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
 import Suppliers from "../pages/supplier/Suppliers";
 
@@ -131,12 +132,14 @@ export const MAIN_PANEL = {
           children: [{ label: "Service List", path: ROUTES.SERVICES, page: Services, permission: "service.view" }],
         },
         { label: "All Products", icon: LuPackage, path: ROUTES.PRODUCTS, page: Products, permission: "product.view" },
+        { label: "Stock Center", icon: LuBoxes, path: ROUTES.STOCK_CENTER, page: StockCenter },
         { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.TRANSFERS, page: Transfers, permission: "transfer.view" },
       ],
     },
   ],
   quickLinks: [
     { label: "Product", icon: LuPackage, path: ROUTES.PRODUCTS, permission: "product.view" },
+    { label: "Stock", icon: LuBoxes, path: ROUTES.STOCK_CENTER },
     { label: "Branch", icon: LuListTree, path: ROUTES.BRANCHES },
     { label: "Staff", icon: LuUsers, path: ROUTES.STAFF },
     { label: "Supplier", icon: LuTruck, path: ROUTES.SUPPLIERS, permission: "supplier.view" },

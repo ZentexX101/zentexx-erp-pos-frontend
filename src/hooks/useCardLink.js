@@ -14,7 +14,7 @@ const CARD_PAGES = {
   purchases: { branch: ROUTES.BRANCH_PURCHASES, permission: "purchase.view" },
   purchaseReturns: { branch: ROUTES.BRANCH_PURCHASE_RETURNS, permission: "purchase.view" },
   expenses: { branch: ROUTES.BRANCH_EXPENSES, permission: "expense.view" },
-  stock: { branch: ROUTES.BRANCH_STOCK, permission: "stock.view" },
+  stock: { branch: ROUTES.BRANCH_STOCK, main: ROUTES.STOCK_CENTER, permission: "stock.view" },
   paymentMethods: { branch: ROUTES.BRANCH_PAYMENT_METHODS, permission: "payment_method.view" },
   transfers: { branch: ROUTES.BRANCH_TRANSFERS, main: ROUTES.TRANSFERS, permission: "transfer.view" },
   supplierPayments: { branch: ROUTES.BRANCH_SUPPLIER_PAYMENTS, main: ROUTES.SUPPLIER_PAYMENTS, permission: "payment.view" },

@@ -23,6 +23,7 @@ export const ROUTES = {
   SERVICES: "/dashboard/services",
   PRODUCTS: "/dashboard/products",
   TRANSFERS: "/dashboard/transfers",
+  STOCK_CENTER: "/dashboard/stock-center",
   SETTINGS: "/dashboard/settings",
 
   // Branch panel (a branch's own staff, or a main admin who entered the branch)
