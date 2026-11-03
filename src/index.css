@@ -90,3 +90,30 @@
     animation: none;
   }
 }
+
+/* Recharts 3 makes charts focusable for keyboard users; keep that, but don't draw a black box
+   around a chart when it's clicked with the mouse */
+.recharts-wrapper:focus,
+.recharts-wrapper *:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+.recharts-wrapper:focus-visible {
+  outline: 2px solid var(--color-indigo-300);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* Soft glow under the bold chart lines: a blurred shadow in each measure's own colour */
+.chart-glow-sales .recharts-area-curve {
+  filter: drop-shadow(0 6px 8px rgb(42 120 214 / 0.35));
+}
+.chart-glow-purchases .recharts-area-curve {
+  filter: drop-shadow(0 6px 8px rgb(235 104 52 / 0.35));
+}
+.chart-glow-expenses .recharts-area-curve {
+  filter: drop-shadow(0 6px 8px rgb(27 175 122 / 0.35));
+}
+.chart-glow-profit .recharts-area-curve {
+  filter: drop-shadow(0 6px 8px rgb(237 161 0 / 0.35));
+}
