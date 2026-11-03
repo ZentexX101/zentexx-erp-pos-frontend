@@ -100,7 +100,14 @@ const Analytics = ({ scope = "main" }) => {
 
             {/* Details */}
             <div className="grid gap-4 xl:grid-cols-2">
-              <SalesDetailsPanel sales={data.sales} exchanges={data.exchanges} saleReturns={data.saleReturns} linkTo={linkTo} periodLabel={periodLabel} />
+              <SalesDetailsPanel
+                sales={data.sales}
+                exchanges={data.exchanges}
+                saleReturns={data.saleReturns}
+                serviceSales={data.serviceSales}
+                linkTo={linkTo}
+                periodLabel={periodLabel}
+              />
               <MoneyFlowPanel
                 cash={data.cash}
                 purchases={data.purchases}

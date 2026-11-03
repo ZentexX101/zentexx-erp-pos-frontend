@@ -48,6 +48,8 @@ import Expenses from "../pages/expense/Expenses";
 import BranchTransfers from "../pages/transfer/BranchTransfers";
 import Transfers from "../pages/transfer/Transfers";
 import PosReturns from "../pages/saleReturn/PosReturns";
+import CreateServiceSale from "../pages/serviceSale/CreateServiceSale";
+import ServiceSales from "../pages/serviceSale/ServiceSales";
 import AddPurchase from "../pages/purchase/AddPurchase";
 import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
 import PurchaseReturns from "../pages/purchase/PurchaseReturns";
@@ -194,7 +196,8 @@ export const BRANCH_PANEL = {
             { label: "POS Orders List", path: ROUTES.BRANCH_SALES, page: Sales },
             { label: "POS Return", path: ROUTES.BRANCH_POS_RETURN, page: CreatePosReturn, permission: "return.create" },
             { label: "POS Return List", path: ROUTES.BRANCH_POS_RETURNS, page: PosReturns, permission: "return.view" },
-            { label: "Service Sales", path: ROUTES.BRANCH_SERVICE_SALES },
+            { label: "Sell Service", path: ROUTES.BRANCH_SERVICE_SALE_NEW, page: CreateServiceSale, permission: "sales.create" },
+            { label: "Service Sales", path: ROUTES.BRANCH_SERVICE_SALES, page: ServiceSales },
           ],
         },
         { label: "Pre Order", icon: LuShoppingBag, path: ROUTES.BRANCH_PRE_ORDERS, permission: "sales.view" },

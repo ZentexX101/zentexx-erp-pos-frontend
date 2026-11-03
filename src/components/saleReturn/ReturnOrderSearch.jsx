@@ -3,7 +3,7 @@ import { LuSearch } from "react-icons/lu";
 import Button from "../common/buttons/Button";
 
 // "Search by Order ID or IMEI" + Search button (Enter works too, so a scanner can be used)
-const ReturnOrderSearch = ({ onSearch, searching }) => {
+const ReturnOrderSearch = ({ onSearch, searching, placeholder = "Search by Order ID (INV-000001) or IMEI..." }) => {
   const [value, setValue] = useState("");
 
   const submit = (e) => {
@@ -19,7 +19,7 @@ const ReturnOrderSearch = ({ onSearch, searching }) => {
           autoFocus
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Search by Order ID (INV-000001) or IMEI..."
+          placeholder={placeholder}
           aria-label="Order ID or IMEI"
           className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-500 focus:border-slate-500 focus:ring-2 focus:ring-brand/10"
         />

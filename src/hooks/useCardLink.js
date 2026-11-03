@@ -10,6 +10,7 @@ const CARD_PAGES = {
   sales: { branch: ROUTES.BRANCH_SALES, permission: "sales.view" },
   posReturns: { branch: ROUTES.BRANCH_POS_RETURNS, permission: "return.view" },
   exchanges: { branch: ROUTES.BRANCH_EXCHANGES, permission: "return.view" },
+  serviceSales: { branch: ROUTES.BRANCH_SERVICE_SALES, permission: "sales.view" },
   purchases: { branch: ROUTES.BRANCH_PURCHASES, permission: "purchase.view" },
   purchaseReturns: { branch: ROUTES.BRANCH_PURCHASE_RETURNS, permission: "purchase.view" },
   expenses: { branch: ROUTES.BRANCH_EXPENSES, permission: "expense.view" },
