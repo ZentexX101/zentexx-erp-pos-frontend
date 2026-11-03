@@ -41,6 +41,9 @@ const HeroCard = ({ icon, label, value, hint, color, glow, spark, valueClass = "
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill={`url(#${gradientId})`}
+                // Fill down to the bottom of the sparkline, not to 0: with negative values (a loss)
+                // 0 sits at the top and the fill would spill above the line
+                baseValue="dataMin"
                 isAnimationActive={false}
               />
             </AreaChart>
