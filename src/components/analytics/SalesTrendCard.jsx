@@ -11,7 +11,7 @@ const SalesTrendCard = ({ trend, unit, allTime }) => (
     subtitle={`Sales, purchases and expenses per ${unit}${allTime ? " · last 12 months" : ""}`}
     empty={trend.every((row) => !row.sales && !row.purchases && !row.expenses)}
   >
-    <TrendChart data={trend} />
+    <TrendChart data={trend} unit={unit} />
   </ChartCard>
 );
 
