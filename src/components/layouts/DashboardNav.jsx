@@ -8,11 +8,12 @@ import BrandLogo from "../common/brand/BrandLogo";
 import UserMenu from "./UserMenu";
 
 const iconButtonClass =
-  "flex size-9 shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900";
+  "flex size-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900";
 
+// Shortcuts sit in one soft segmented bar; the current page is the raised white pill
 const quickLinkClass = ({ isActive }) =>
-  `flex h-9 shrink-0 items-center gap-2 rounded-md px-2.5 text-sm font-medium transition-colors ${
-    isActive ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+  `flex h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-brand/20 ${
+    isActive ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:bg-white/70 hover:text-slate-900"
   }`;
 
 // Top bar: mobile menu button, the panel's shortcut links, full screen and the account menu
@@ -38,7 +39,8 @@ const DashboardNav = ({ mode, setSidebarOpen }) => {
   };
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-3 sm:gap-3 sm:px-6 print:hidden">
+    // relative z-20: the blur makes the header its own layer, so it must sit above the page for its menus to show on top
+    <header className="relative z-20 flex h-16 shrink-0 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-3 backdrop-blur sm:gap-3 sm:px-6 print:hidden">
       {/* Mobile / tablet: open the drawer and show the logo (desktop collapses from the sidebar edge) */}
       <button type="button" onClick={() => setSidebarOpen(true)} className={`${iconButtonClass} lg:hidden`} aria-label="Open menu">
         <LuMenu className="size-5" aria-hidden="true" />
@@ -51,7 +53,7 @@ const DashboardNav = ({ mode, setSidebarOpen }) => {
       {quickLinks.length > 0 && (
         <>
           <span className="hidden h-6 w-px shrink-0 bg-slate-200 md:block lg:hidden" aria-hidden="true" />
-          <nav className="scrollbar-none hidden min-w-0 items-center gap-1 overflow-x-auto md:flex" aria-label="Shortcuts">
+          <nav className="scrollbar-none hidden min-w-0 items-center gap-0.5 overflow-x-auto rounded-xl bg-slate-100/80 p-1 md:flex" aria-label="Shortcuts">
             {quickLinks.map((link) => (
               <NavLink key={link.path} to={link.path} title={link.label} className={quickLinkClass}>
                 <link.icon className="size-4 shrink-0" aria-hidden="true" />

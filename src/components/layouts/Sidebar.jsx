@@ -148,13 +148,13 @@ const Sidebar = ({ mode, sidebarOpen, setSidebarOpen, collapsed, setCollapsed })
           <div className="px-3 pt-3">
             <label className="relative block">
               <span className="sr-only">Search menu</span>
-              <LuSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
+              <LuSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
               <input
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search menu"
-                className="h-9 w-full rounded-md border border-transparent bg-slate-100 pl-9 pr-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-slate-300 focus:bg-white focus:ring-2 focus:ring-brand/10"
+                className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-slate-300 focus:bg-white focus:ring-2 focus:ring-brand/10"
               />
             </label>
           </div>

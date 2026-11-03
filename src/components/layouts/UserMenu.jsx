@@ -22,16 +22,16 @@ const UserMenu = ({ mode }) => {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Account menu"
-        className="flex items-center gap-2.5 rounded-lg p-1 transition-colors hover:bg-slate-100 md:pr-2"
+        className={`flex items-center gap-2.5 rounded-lg p-1 outline-none transition-colors hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-brand/20 md:pr-2.5 ${open ? "bg-slate-100" : ""}`}
       >
-        <span className="flex size-8 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">
+        <span className="flex size-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white ring-2 ring-white shadow-sm">
           {getInitials(user.name)}
         </span>
         <span className="hidden text-left leading-tight md:block">
-          <span className="block max-w-40 truncate text-sm font-medium text-slate-900">{user.name}</span>
+          <span className="block max-w-40 truncate text-sm font-semibold text-slate-900">{user.name}</span>
           <span className="block text-xs text-slate-500">{ROLE_LABELS[user.role] || user.role}</span>
         </span>
-        <LuChevronDown className="hidden size-4 text-slate-400 md:block" aria-hidden="true" />
+        <LuChevronDown className={`hidden size-4 text-slate-400 transition-transform md:block ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
 
       {open && <AccountMenu mode={mode} onClose={close} className="absolute right-0 top-full mt-2 w-64 origin-top-right" />}

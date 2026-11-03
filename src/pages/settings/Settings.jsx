@@ -16,13 +16,13 @@ const Settings = () => {
   const tab = SETTINGS_TABS.some((t) => t.key === requested) ? requested : SETTINGS_TABS[0].key;
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="space-y-6">
       <PageHeader title="Settings" subtitle="Manage your account and how you sign in." />
 
-      <div className="mt-6 grid gap-6 lg:mt-8 lg:grid-cols-4 lg:gap-8">
+      <div className="grid items-start gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <SettingsNav active={tab} onChange={(key) => setParams({ tab: key }, { replace: true })} />
 
-        <div className="min-w-0 space-y-6 lg:col-span-3">
+        <div className="min-w-0 max-w-4xl space-y-6">
           {tab === "account" && <AccountDetails user={user} />}
           {tab === "security" && (
             <>

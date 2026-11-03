@@ -2,18 +2,26 @@ import { useState } from "react";
 import { LuChevronDown } from "react-icons/lu";
 import { matchPath, NavLink } from "react-router";
 
+// Current page: a soft tint with dark text and a slim accent bar on the left (not a heavy solid block)
 const itemClass = (active, iconOnly) =>
-  `group flex h-10 w-full items-center gap-3 rounded-lg text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand/20 ${iconOnly ? "justify-center" : "px-3"} ${
+  `group relative flex h-10 w-full items-center gap-3 rounded-lg text-sm transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand/20 ${iconOnly ? "justify-center" : "px-3"} ${
     active
-      ? "bg-slate-100 text-slate-900 ring-1 ring-inset ring-slate-200"
-      : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+      ? `bg-slate-100 font-semibold text-slate-900 ${iconOnly ? "" : "before:absolute before:inset-y-2.5 before:left-0 before:w-[3px] before:rounded-r-full before:bg-brand"}`
+      : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
   }`;
 
-const iconClass = (active) => `size-5 shrink-0 ${active ? "text-slate-900" : "text-slate-500 group-hover:text-slate-700"}`;
+const iconClass = (active) => `size-[18px] shrink-0 transition-colors ${active ? "text-slate-900" : "text-slate-400 group-hover:text-slate-700"}`;
 
+// A dropdown holding the current page keeps a dark label and icon (the page itself gets the pill style below)
+const groupClass = (active) =>
+  `group flex h-10 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors outline-none hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-brand/20 ${
+    active ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
+  }`;
+
+// Pages inside a dropdown: a dot on the guide line, filled for the current page
 const subItemClass = ({ isActive }) =>
-  `-ml-px flex h-9 items-center border-l pl-4 pr-3 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand/20 ${
-    isActive ? "border-brand font-medium text-slate-900" : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+  `group/sub flex h-9 items-center gap-2.5 rounded-md pl-3 pr-3 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand/20 ${
+    isActive ? "bg-slate-100 font-semibold text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
   }`;
 
 // A dropdown with only one page is shown as a plain link to that page
@@ -33,7 +41,7 @@ const SidebarMenu = ({ sections, iconOnly, searching, pathname, onNavigate }) =>
     const sectionOpen = iconOnly || searching || !closedSections[section.title];
 
     return (
-      <div key={section.title} className={index > 0 ? "mt-5" : "mt-3"}>
+      <div key={section.title} className={index > 0 ? "mt-6" : "mt-4"}>
         {iconOnly ? (
           index > 0 && <div className="mx-auto mb-3 h-px w-6 bg-slate-200" aria-hidden="true" />
         ) : (
@@ -41,10 +49,14 @@ const SidebarMenu = ({ sections, iconOnly, searching, pathname, onNavigate }) =>
             type="button"
             onClick={() => setClosedSections((prev) => ({ ...prev, [section.title]: sectionOpen }))}
             aria-expanded={sectionOpen}
-            className="mb-1 flex w-full items-center justify-between rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 outline-none transition-colors hover:text-slate-800 focus-visible:ring-2 focus-visible:ring-brand/20"
+            className="group/section mb-1.5 flex w-full items-center justify-between rounded-md px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-slate-400 outline-none transition-colors hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-brand/20"
           >
             {section.title}
-            <LuChevronDown className={`size-4 transition-transform duration-200 ${sectionOpen ? "" : "-rotate-90"}`} aria-hidden="true" />
+            {/* The arrow shows on hover, or always while the section is closed */}
+            <LuChevronDown
+              className={`size-3.5 transition duration-200 ${sectionOpen ? "opacity-0 group-hover/section:opacity-100" : "-rotate-90"}`}
+              aria-hidden="true"
+            />
           </button>
         )}
 
@@ -96,24 +108,30 @@ const SidebarMenu = ({ sections, iconOnly, searching, pathname, onNavigate }) =>
                     type="button"
                     onClick={() => setOpenGroups((prev) => ({ ...prev, [item.label]: !open }))}
                     aria-expanded={open}
-                    className={`group flex h-10 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors hover:bg-slate-50 outline-none focus-visible:ring-2 focus-visible:ring-brand/20 ${
-                      active ? "text-slate-900" : "text-slate-700 hover:text-slate-900"
-                    }`}
+                    className={groupClass(active)}
                   >
-                    <item.icon className={iconClass(active)} aria-hidden="true" />
+                    <item.icon className={`size-[18px] shrink-0 ${active ? "text-slate-900" : "text-slate-400 group-hover:text-slate-700"}`} aria-hidden="true" />
                     <span className="flex-1 truncate text-left">{item.label}</span>
                     <LuChevronDown
                       aria-hidden="true"
-                      className={`size-4 shrink-0 text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                      className={`size-4 shrink-0 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
                     />
                   </button>
 
                   {open && (
-                    <ul className="mb-1 ml-5.5 mt-1 space-y-0.5 border-l border-slate-200">
+                    <ul className="mb-1 ml-[21px] mt-1 space-y-0.5 border-l border-slate-200 pl-2">
                       {item.children.map((child) => (
                         <li key={child.path}>
                           <NavLink to={child.path} end onClick={onNavigate} className={subItemClass}>
-                            {child.label}
+                            {({ isActive }) => (
+                              <>
+                                <span
+                                  className={`size-1.5 shrink-0 rounded-full transition-colors ${isActive ? "bg-brand" : "bg-slate-300 group-hover/sub:bg-slate-500"}`}
+                                  aria-hidden="true"
+                                />
+                                <span className="truncate">{child.label}</span>
+                              </>
+                            )}
                           </NavLink>
                         </li>
                       ))}

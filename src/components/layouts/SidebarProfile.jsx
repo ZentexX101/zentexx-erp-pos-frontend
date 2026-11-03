@@ -30,9 +30,9 @@ const SidebarProfile = ({ mode, iconOnly, onNavigate }) => {
         aria-expanded={open}
         aria-label="Account menu"
         title={iconOnly ? user.name : undefined}
-        className={`group flex w-full items-center gap-3 rounded-lg text-left outline-none transition-colors hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-brand/20 ${
-          iconOnly ? "justify-center p-1.5" : "p-2"
-        } ${open ? "bg-slate-50" : ""}`}
+        className={`group flex w-full items-center gap-3 rounded-lg text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-brand/20 ${
+          iconOnly ? "justify-center p-1.5 hover:bg-slate-100" : "border border-slate-200 bg-slate-50 p-2.5 hover:border-slate-300 hover:bg-white"
+        } ${open ? (iconOnly ? "bg-slate-100" : "border-slate-300 bg-white") : ""}`}
       >
         {avatar}
         {!iconOnly && (

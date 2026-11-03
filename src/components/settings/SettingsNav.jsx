@@ -1,8 +1,9 @@
 import { SETTINGS_TABS } from "../../constants/settings";
 
-// Tabs across the top on small screens, a side list from lg
+// Tabs in one card: side by side on small screens, a list from lg.
+// The open tab looks like the sidebar's current page (soft tint + slim bar on the left).
 const SettingsNav = ({ active, onChange }) => (
-  <nav className="flex gap-1 border-b border-slate-200 lg:flex-col lg:gap-1 lg:border-b-0" aria-label="Settings">
+  <nav className="grid grid-cols-2 gap-1 rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-slate-200/80 lg:grid-cols-1 lg:p-2" aria-label="Settings">
     {SETTINGS_TABS.map((tab) => {
       const isActive = tab.key === active;
       return (
@@ -11,16 +12,20 @@ const SettingsNav = ({ active, onChange }) => (
           type="button"
           onClick={() => onChange(tab.key)}
           aria-current={isActive ? "page" : undefined}
-          className={`-mb-px flex items-center gap-3 border-b-2 px-3 pb-3 text-left text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-brand/20 lg:mb-0 lg:rounded-lg lg:border-b-0 lg:py-2.5 ${
+          className={`relative flex min-w-0 items-center gap-3 rounded-lg px-3 py-2.5 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-brand/20 ${
             isActive
-              ? "border-brand text-slate-900 lg:bg-white lg:shadow-sm lg:ring-1 lg:ring-slate-200"
-              : "border-transparent text-slate-600 hover:text-slate-900 lg:hover:bg-white/70"
+              ? "bg-slate-100 text-slate-900 before:absolute before:inset-y-3 before:left-0 before:w-[3px] before:rounded-r-full before:bg-brand"
+              : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
           }`}
         >
-          <tab.icon className={`size-4.5 shrink-0 ${isActive ? "text-slate-900" : "text-slate-500"}`} aria-hidden="true" />
-          <span>
-            {tab.label}
-            <span className="hidden text-xs font-normal text-slate-500 lg:block">{tab.hint}</span>
+          <span
+            className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${isActive ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200" : "bg-slate-50 text-slate-500"}`}
+          >
+            <tab.icon className="size-4.5" aria-hidden="true" />
+          </span>
+          <span className="min-w-0">
+            <span className={`block truncate text-sm ${isActive ? "font-semibold" : "font-medium"}`}>{tab.label}</span>
+            <span className="block truncate text-xs text-slate-500">{tab.hint}</span>
           </span>
         </button>
       );
