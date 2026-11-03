@@ -45,6 +45,8 @@ import CreatePosReturn from "../pages/saleReturn/CreatePosReturn";
 import CreateExchange from "../pages/exchange/CreateExchange";
 import Exchanges from "../pages/exchange/Exchanges";
 import Expenses from "../pages/expense/Expenses";
+import BranchTransfers from "../pages/transfer/BranchTransfers";
+import Transfers from "../pages/transfer/Transfers";
 import PosReturns from "../pages/saleReturn/PosReturns";
 import AddPurchase from "../pages/purchase/AddPurchase";
 import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
@@ -127,7 +129,7 @@ export const MAIN_PANEL = {
           children: [{ label: "Service List", path: ROUTES.SERVICES, page: Services, permission: "service.view" }],
         },
         { label: "All Products", icon: LuPackage, path: ROUTES.PRODUCTS, page: Products, permission: "product.view" },
-        { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.TRANSFERS, permission: "transfer.view" },
+        { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.TRANSFERS, page: Transfers, permission: "transfer.view" },
       ],
     },
   ],
@@ -178,7 +180,7 @@ export const BRANCH_PANEL = {
             { label: "Purchase Return List", path: ROUTES.BRANCH_PURCHASE_RETURNS, page: PurchaseReturns },
           ],
         },
-        { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.BRANCH_TRANSFERS, permission: "transfer.view" },
+        { label: "Transfer", icon: LuArrowLeftRight, path: ROUTES.BRANCH_TRANSFERS, page: BranchTransfers, permission: "transfer.view" },
         { label: "Expense", icon: LuReceipt, path: ROUTES.BRANCH_EXPENSES, page: Expenses, permission: "expense.view" },
         { label: "Supplier Payment", icon: LuWallet, path: ROUTES.BRANCH_SUPPLIER_PAYMENTS, page: SupplierPayments, permission: "payment.view" },
         { label: "Customer Payment", icon: LuHandCoins, path: ROUTES.BRANCH_CUSTOMER_PAYMENTS, page: CustomerPayments, permission: "payment.view" },

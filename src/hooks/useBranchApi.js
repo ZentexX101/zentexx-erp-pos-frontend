@@ -3,6 +3,7 @@ import {
   createBranch,
   deleteBranch,
   fetchBranchesData,
+  fetchBranchNamesData,
   fetchBranchOptionsData,
   fetchCurrentBranchData,
   updateBranch,
@@ -24,6 +25,14 @@ export const useBranchOptionsData = (status) => {
   return useQuery({
     queryKey: [BRANCH_KEY, "options", status],
     queryFn: () => fetchBranchOptionsData(status),
+  });
+};
+
+// ✅ Active branch names for any user (Transfer "To Branch")
+export const useBranchNamesData = () => {
+  return useQuery({
+    queryKey: [BRANCH_KEY, "names"],
+    queryFn: fetchBranchNamesData,
   });
 };
 

@@ -15,6 +15,12 @@ export const fetchBranchOptionsData = async (status) => {
   return response.data;
 };
 
+// ✅ Fetch Function — active branch names, open to any logged-in user (Transfer "To Branch")
+export const fetchBranchNamesData = async () => {
+  const response = await apiRequest("/branches/options");
+  return response.data;
+};
+
 // ✅ Fetch Function — the branch this user works in
 // Their own, or the one a main admin entered (sent with the X-Branch-Id header)
 export const fetchCurrentBranchData = async () => {
