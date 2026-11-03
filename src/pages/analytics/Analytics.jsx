@@ -43,7 +43,7 @@ const Analytics = ({ scope = "main" }) => {
   // call analytics api (everything is worked out on the backend, cached for a minute)
   const branch = inBranch ? activeBranch?._id : branchFilter;
   const params = { branch: mainAdmin ? branch : undefined, ...periodRange(period.period, period) };
-  const { data, isLoading, isFetching, error } = useAnalyticsOverviewData(params, { enabled: canView });
+  const { data, isLoading, isFetching, error, dataUpdatedAt } = useAnalyticsOverviewData(params, { enabled: canView });
   const refresh = useRefreshAnalytics(params);
   const { data: branches = [] } = useBranchNamesData();
 
@@ -66,12 +66,14 @@ const Analytics = ({ scope = "main" }) => {
         user={user}
         subtitle={subtitle}
         period={period}
+        range={params}
         onPeriod={setPeriod}
         branches={!inBranch && mainAdmin ? branches : null}
         branch={branchFilter}
         onBranch={setBranchFilter}
         onRefresh={refresh}
         refreshing={isFetching}
+        updatedAt={dataUpdatedAt}
       />
 
       <Alert>{error?.message}</Alert>
