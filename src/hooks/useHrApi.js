@@ -10,6 +10,12 @@ const key = (...parts) => [HR_KEY, branchStorage.getId() ?? "own", ...parts];
 const useList = (parts, fn, options = {}) => useQuery({ queryKey: key(...parts), queryFn: fn, placeholderData: keepPreviousData, staleTime: 0, ...options });
 
 export const useMyHrData = (options) => useList(["me"], api.fetchMyHrData, options);
+export const useMyLeavesData = (params, staffId) => useList(["person-leaves", staffId, params], () => api.fetchMyLeavesData(params, staffId));
+export const useMyPayslipsData = (params, staffId) => useList(["person-payslips", staffId, params], () => api.fetchMyPayslipsData(params, staffId));
+export const useMyMoneyData = (staffId) => useList(["person-money", staffId], () => api.fetchMyMoneyData(staffId));
+export const useMyIncentivesData = (month, staffId) => useList(["person-incentives", staffId, month], () => api.fetchMyIncentivesData(month, staffId));
+export const useStaffListData = (params) => useList(["staff-list", params], () => api.fetchStaffListData(params));
+export const useStaffFileData = (id) => useList(["staff-file", id], () => api.fetchStaffFileData(id));
 export const useDayBoardData = (day, options) => useList(["board", day], () => api.fetchDayBoardData(day), options);
 export const useAttendanceRegisterData = (month, options) => useList(["register", month], () => api.fetchAttendanceRegisterData(month), options);
 export const useMonthSheetData = (params, options) => useList(["sheet", params], () => api.fetchMonthSheetData(params), options);

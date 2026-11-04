@@ -3,7 +3,6 @@ import Alert from "../../components/common/alerts/Alert";
 import PageHeader from "../../components/common/layout/PageHeader";
 import AttendanceDayView from "../../components/hr/AttendanceDayView";
 import AttendanceEditModal from "../../components/hr/AttendanceEditModal";
-import AttendanceMonthModal from "../../components/hr/AttendanceMonthModal";
 import AttendanceRegister from "../../components/hr/AttendanceRegister";
 import MonthSwitcher from "../../components/hr/MonthSwitcher";
 import { useAuth } from "../../hooks/useAuth";
@@ -26,7 +25,6 @@ const Attendance = () => {
   const [day, setDay] = useState(todayInputValue());
   const [month, setMonth] = useState(currentMonth());
   const [editing, setEditing] = useState(null);
-  const [viewing, setViewing] = useState(null);
 
   // call hr api (only the open view loads)
   const board = useDayBoardData(day, { enabled: view === "day" });
@@ -73,19 +71,17 @@ const Attendance = () => {
           isLoading={board.isLoading}
           canManage={hasPermission(user, "hr.manage")}
           onEdit={setEditing}
-          onOpenPerson={setViewing}
         />
       ) : (
         <>
           <MonthSwitcher month={month} onChange={setMonth} />
-          <AttendanceRegister data={register.data} isLoading={register.isLoading} onOpenDay={openDay} onOpenPerson={setViewing} />
+          <AttendanceRegister data={register.data} isLoading={register.isLoading} onOpenDay={openDay} />
         </>
       )}
 
       {editing && (
         <AttendanceEditModal row={editing} day={day} onClose={() => setEditing(null)} onSave={(values) => mark.mutateAsync(values)} saving={mark.isPending} />
       )}
-      {viewing && <AttendanceMonthModal person={viewing} onClose={() => setViewing(null)} />}
     </div>
   );
 };

@@ -24,6 +24,8 @@ export const ROUTES = {
   PRODUCTS: "/dashboard/products",
   TRANSFERS: "/dashboard/transfers",
   STOCK_CENTER: "/dashboard/stock-center",
+  HR_STAFF: "/dashboard/hr/staff",
+  HR_STAFF_FILE: "/dashboard/hr/staff/:id",
   REPORT_DAILY: "/dashboard/reports/daily-statement",
   REPORT_PROFIT: "/dashboard/reports/profit-loss",
   SETTINGS: "/dashboard/settings",
@@ -57,6 +59,8 @@ export const ROUTES = {
   BRANCH_REPLACEMENTS: "/branch/replacements",
   BRANCH_REPAIRS: "/branch/repairs",
   BRANCH_HR: "/branch/hr",
+  BRANCH_HR_STAFF: "/branch/hr/staff",
+  BRANCH_HR_STAFF_FILE: "/branch/hr/staff/:id",
   BRANCH_HR_ATTENDANCE: "/branch/hr/attendance",
   BRANCH_HR_LEAVES: "/branch/hr/leaves",
   BRANCH_HR_SALARIES: "/branch/hr/salaries",
@@ -77,5 +81,6 @@ export const getHomePath = (user) => {
 
 // Paths with an :id
 export const supplierLedgerPath = (supplierId) => ROUTES.SUPPLIER_LEDGER.replace(":id", supplierId);
+export const staffFilePath = (id, inBranch) => (inBranch ? ROUTES.BRANCH_HR_STAFF_FILE : ROUTES.HR_STAFF_FILE).replace(":id", id);
 export const paymentMethodStatementPath = (methodId) => ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT.replace(":id", methodId);
 export const customerLedgerPath = (customerId) => ROUTES.CUSTOMER_LEDGER.replace(":id", customerId);

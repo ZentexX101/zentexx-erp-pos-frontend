@@ -8,8 +8,20 @@ const tones = {
   outline: "border border-slate-200 bg-white text-slate-500",
 };
 
-const Badge = ({ tone = "slate", children, className = "" }) => (
+const DOTS = {
+  green: "bg-green-500",
+  red: "bg-red-500",
+  blue: "bg-blue-500",
+  amber: "bg-amber-500",
+  purple: "bg-purple-500",
+  slate: "bg-slate-400",
+  outline: "bg-slate-300",
+};
+
+// dot: a small status dot before the text
+const Badge = ({ tone = "slate", dot = false, children, className = "" }) => (
   <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${tones[tone]} ${className}`}>
+    {dot && <span className={`mr-1.5 size-1.5 rounded-full ${DOTS[tone]}`} aria-hidden="true" />}
     {children}
   </span>
 );

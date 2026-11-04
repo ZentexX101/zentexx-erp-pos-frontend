@@ -6,7 +6,7 @@ import Badge from "../../components/common/data/Badge";
 import Pagination from "../../components/common/data/Pagination";
 import PageHeader from "../../components/common/layout/PageHeader";
 import LeaveFormModal from "../../components/hr/LeaveFormModal";
-import PersonCell from "../../components/hr/PersonCell";
+import PersonLink from "../../components/hr/PersonLink";
 import { LEAVE_STATUS_TONE, leaveTypeLabel } from "../../constants/hr";
 import { useAuth } from "../../hooks/useAuth";
 import { useAddLeave, useLeavesData, usePayrollData, useReviewLeave } from "../../hooks/useHrApi";
@@ -80,7 +80,7 @@ const Leaves = () => {
 
       <Alert>{error || loadError?.message}</Alert>
 
-      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
+      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         {isLoading && !data ? (
           <div className="h-40 animate-pulse bg-slate-100" aria-hidden="true" />
         ) : rows.length === 0 ? (
@@ -90,7 +90,7 @@ const Leaves = () => {
             {rows.map((leave) => (
               <li key={leave._id} className="flex flex-col gap-3 px-5 py-3.5 lg:flex-row lg:items-center">
                 <div className="min-w-0 lg:w-56 lg:shrink-0">
-                  <PersonCell person={leave.user} />
+                  <PersonLink person={leave.user} />
                 </div>
                 <div className="min-w-0 flex-1 text-sm">
                   <p className="font-medium text-slate-800">
@@ -117,7 +117,9 @@ const Leaves = () => {
                       </Button>
                     </>
                   ) : (
-                    <Badge tone={LEAVE_STATUS_TONE[leave.status]}>{leave.status}</Badge>
+                    <Badge dot tone={LEAVE_STATUS_TONE[leave.status]}>
+                      {leave.status}
+                    </Badge>
                   )}
                 </div>
               </li>

@@ -8,7 +8,7 @@ import Select from "../../components/common/forms/Select";
 import PageHeader from "../../components/common/layout/PageHeader";
 import Modal from "../../components/common/modals/Modal";
 import MonthSwitcher from "../../components/hr/MonthSwitcher";
-import PersonCell from "../../components/hr/PersonCell";
+import PersonLink from "../../components/hr/PersonLink";
 import { useAuth } from "../../hooks/useAuth";
 import { useCreateIncrement, useIncrementsData, usePayrollData } from "../../hooks/useHrApi";
 import { hasPermission } from "../../utils/access";
@@ -111,7 +111,7 @@ const Increments = () => {
 
       <Alert>{error?.message}</Alert>
 
-      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
+      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         {isLoading && !data ? (
           <div className="h-40 animate-pulse bg-slate-100" aria-hidden="true" />
         ) : rows.length === 0 ? (
@@ -124,7 +124,7 @@ const Increments = () => {
               return (
                 <li key={row._id} className="flex flex-col gap-3 px-5 py-3.5 lg:flex-row lg:items-center">
                   <div className="min-w-0 lg:w-56 lg:shrink-0">
-                    <PersonCell person={row.user} />
+                    <PersonLink person={row.user} />
                   </div>
                   <div className="min-w-0 flex-1 text-sm">
                     <p className="flex flex-wrap items-center gap-2 font-medium tabular-nums text-slate-800">

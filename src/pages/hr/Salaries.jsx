@@ -8,7 +8,7 @@ import HrStat from "../../components/hr/HrStat";
 import MonthSwitcher from "../../components/hr/MonthSwitcher";
 import PaySalaryModal from "../../components/hr/PaySalaryModal";
 import PayslipPrint from "../../components/hr/PayslipPrint";
-import PersonCell from "../../components/hr/PersonCell";
+import PersonLink from "../../components/hr/PersonLink";
 import { useAuth } from "../../hooks/useAuth";
 import { usePayrollData, usePaySalary } from "../../hooks/useHrApi";
 import { usePaymentMethodOptionsData } from "../../hooks/usePaymentMethodApi";
@@ -63,7 +63,7 @@ const Salaries = () => {
         )}
         <Alert>{error?.message}</Alert>
 
-        <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
+        <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
           {isLoading && !data ? (
             <div className="h-48 animate-pulse bg-slate-100" aria-hidden="true" />
           ) : data?.rows.length === 0 ? (
@@ -71,7 +71,7 @@ const Salaries = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[860px] text-left text-sm">
-                <thead className="bg-slate-50 text-slate-600">
+                <thead className="bg-slate-50/70 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-5 py-3 font-semibold">Staff</th>
                     <th className="px-4 py-3 text-right font-semibold">Salary</th>
@@ -87,9 +87,9 @@ const Salaries = () => {
                     const slip = row.slip;
                     const noSalary = !row.basic && !row.incentive;
                     return (
-                      <tr key={row.user._id}>
+                      <tr key={row.user._id} className="transition-colors hover:bg-slate-50/60">
                         <td className="px-5 py-3">
-                          <PersonCell person={row.user} />
+                          <PersonLink person={row.user} />
                         </td>
                         <td className={money}>{noSalary ? <span className="text-xs text-amber-700">Not set</span> : formatTaka(slip?.basic ?? row.basic)}</td>
                         <td className={money}>
@@ -117,7 +117,9 @@ const Salaries = () => {
                         <td className="whitespace-nowrap px-4 py-3 text-right">
                           {slip ? (
                             <span className="inline-flex items-center gap-2">
-                              <Badge tone="green">Paid</Badge>
+                              <Badge dot tone="green">
+                                Paid
+                              </Badge>
                               <button
                                 type="button"
                                 onClick={() => setPrintSlip(slip)}
@@ -133,7 +135,9 @@ const Salaries = () => {
                               Pay
                             </Button>
                           ) : (
-                            <Badge tone="amber">Not paid</Badge>
+                            <Badge dot tone="amber">
+                              Not paid
+                            </Badge>
                           )}
                         </td>
                       </tr>

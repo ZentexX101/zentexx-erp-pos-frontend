@@ -1,10 +1,10 @@
-import { LuCalendarDays, LuChevronLeft, LuChevronRight, LuPencil } from "react-icons/lu";
+import { LuCalendarCheck, LuCalendarDays, LuCalendarX, LuChevronLeft, LuChevronRight, LuClock, LuCoffee, LuPencil, LuPlane } from "react-icons/lu";
 import { ATTENDANCE_STATUS, leaveTypeLabel } from "../../constants/hr";
 import { todayInputValue } from "../../utils/formatDate";
 import { dayLabel, dutyLabel, minutesLabel, shiftDay, timeLabel, workedLabel } from "../../utils/hr";
 import Badge from "../common/data/Badge";
 import HrStat from "./HrStat";
-import PersonCell from "./PersonCell";
+import PersonLink from "./PersonLink";
 
 const arrow = "flex size-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:invisible";
 
@@ -25,7 +25,7 @@ const DayPicker = ({ day, onDay }) => {
           Yesterday
         </button>
       </div>
-      <div className="flex items-center gap-1 rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200/80">
+      <div className="flex items-center gap-1 rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200/70">
         <button type="button" onClick={() => onDay(shiftDay(day, -1))} aria-label="Previous day" className={arrow}>
           <LuChevronLeft className="size-4" aria-hidden="true" />
         </button>
@@ -57,7 +57,7 @@ const outLabel = (row, isToday) => {
 };
 
 // One day in detail: how the day went, then everyone's times in plain columns
-const AttendanceDayView = ({ day, onDay, data, isLoading, canManage, onEdit, onOpenPerson }) => {
+const AttendanceDayView = ({ day, onDay, data, isLoading, canManage, onEdit }) => {
   const isToday = day === todayInputValue();
   const s = data?.summary;
   const missing = isToday ? (s?.notYet ?? 0) : (s?.absent ?? 0);
@@ -72,14 +72,16 @@ const AttendanceDayView = ({ day, onDay, data, isLoading, canManage, onEdit, onO
           value={`${s?.present ?? 0} of ${s?.staff ?? 0}`}
           tone="text-emerald-600"
           hint={s?.late ? `${s.late} of them late` : s?.present ? "All on time" : undefined}
+          icon={LuCalendarCheck}
+          accent="green"
         />
-        <HrStat label="Late" value={s?.late ?? 0} tone={s?.late ? "text-amber-600" : "text-slate-900"} />
-        <HrStat label="On leave" value={s?.leave ?? 0} tone={s?.leave ? "text-blue-600" : "text-slate-900"} />
-        <HrStat label={isToday ? "Not in yet" : "Absent"} value={missing} tone={missing ? "text-red-600" : "text-slate-900"} />
-        <HrStat label="Weekly off" value={s?.off ?? 0} />
+        <HrStat label="Late" value={s?.late ?? 0} tone={s?.late ? "text-amber-600" : "text-slate-900"} icon={LuClock} accent="amber" />
+        <HrStat label="On leave" value={s?.leave ?? 0} tone={s?.leave ? "text-blue-600" : "text-slate-900"} icon={LuPlane} accent="blue" />
+        <HrStat label={isToday ? "Not in yet" : "Absent"} value={missing} tone={missing ? "text-red-600" : "text-slate-900"} icon={LuCalendarX} accent="red" />
+        <HrStat label="Weekly off" value={s?.off ?? 0} icon={LuCoffee} />
       </div>
 
-      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
+      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         {isLoading && !data ? (
           <div className="h-48 animate-pulse bg-slate-100" aria-hidden="true" />
         ) : data?.board.length === 0 ? (
@@ -87,7 +89,7 @@ const AttendanceDayView = ({ day, onDay, data, isLoading, canManage, onEdit, onO
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-slate-50/70 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-5 py-3 font-semibold">Staff</th>
                   <th className="px-4 py-3 font-semibold">Duty</th>
@@ -103,11 +105,9 @@ const AttendanceDayView = ({ day, onDay, data, isLoading, canManage, onEdit, onO
                 {data?.board.map((row) => {
                   const meta = ATTENDANCE_STATUS[row.status];
                   return (
-                    <tr key={row.user._id}>
+                    <tr key={row.user._id} className="transition-colors hover:bg-slate-50/60">
                       <td className="px-5 py-3">
-                        <button type="button" onClick={() => onOpenPerson(row.user)} title="See the month" className="text-left hover:opacity-80">
-                          <PersonCell person={row.user} />
-                        </button>
+                        <PersonLink person={row.user} />
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-slate-500">
                         {row.user.dutyStart ? (
@@ -135,7 +135,9 @@ const AttendanceDayView = ({ day, onDay, data, isLoading, canManage, onEdit, onO
                         )}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">
-                        <Badge tone={meta.tone}>{row.leaveType && !row.checkIn ? leaveTypeLabel(row.leaveType) : meta.label}</Badge>
+                        <Badge dot tone={meta.tone}>
+                          {row.leaveType && !row.checkIn ? leaveTypeLabel(row.leaveType) : meta.label}
+                        </Badge>
                       </td>
                       {canManage && (
                         <td className="px-4 py-3 text-right">

@@ -6,7 +6,7 @@ import Input from "../../components/common/forms/Input";
 import Select from "../../components/common/forms/Select";
 import PageHeader from "../../components/common/layout/PageHeader";
 import Modal from "../../components/common/modals/Modal";
-import PersonCell from "../../components/hr/PersonCell";
+import PersonLink from "../../components/hr/PersonLink";
 import PaymentMethodLines from "../../components/payment/PaymentMethodLines";
 import { useAuth } from "../../hooks/useAuth";
 import { useAdvancesData, useGiveAdvance, usePayrollData } from "../../hooks/useHrApi";
@@ -108,7 +108,7 @@ const Advances = () => {
 
       <Alert>{error?.message}</Alert>
 
-      <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200/80">
+      <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200/70">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-semibold text-slate-900">Still to come back</h2>
           <span className="text-lg font-bold tabular-nums text-amber-700">{formatTaka(data?.meta?.summary?.outstanding ?? 0)}</span>
@@ -119,7 +119,7 @@ const Advances = () => {
           <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {balances.map((row) => (
               <li key={row.user._id} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
-                <PersonCell person={row.user} />
+                <PersonLink person={row.user} />
                 <span className="shrink-0 font-semibold tabular-nums text-slate-900">{formatTaka(row.amount)}</span>
               </li>
             ))}
@@ -127,7 +127,7 @@ const Advances = () => {
         )}
       </section>
 
-      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
+      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         <h2 className="border-b border-slate-100 px-5 py-3.5 font-semibold text-slate-900">Advances given</h2>
         {isLoading && !data ? (
           <div className="h-40 animate-pulse bg-slate-100" aria-hidden="true" />
@@ -138,7 +138,7 @@ const Advances = () => {
             {rows.map((row) => (
               <li key={row._id} className="flex flex-col gap-2 px-5 py-3.5 sm:flex-row sm:items-center">
                 <div className="min-w-0 flex-1">
-                  <PersonCell person={row.user} />
+                  <PersonLink person={row.user} />
                 </div>
                 <div className="min-w-0 text-sm text-slate-500 sm:text-right">
                   <span className="block font-mono text-xs">{row.advanceNo}</span>

@@ -5,6 +5,15 @@ import { toQueryString } from "../../utils/queryString";
 
 // ✅ A person's own page -> { user, today, attendance, month, slips, leaves }
 export const fetchMyHrData = async () => (await apiRequest("/hr/me")).data;
+// A person's history: their own (no staffId), or a staff member an admin opened
+const personPath = (staffId) => (staffId ? `/hr/staff/${staffId}` : "/hr/me");
+export const fetchMyLeavesData = async (params, staffId) => apiRequest(`${personPath(staffId)}/leaves${toQueryString(params)}`);
+export const fetchMyPayslipsData = async (params, staffId) => apiRequest(`${personPath(staffId)}/payslips${toQueryString(params)}`);
+export const fetchMyMoneyData = async (staffId) => (await apiRequest(`${personPath(staffId)}/money`)).data;
+export const fetchMyIncentivesData = async (month, staffId) => (await apiRequest(`${personPath(staffId)}/incentives${toQueryString({ month })}`)).data;
+// ✅ Staff files (an admin) — params: { branch, search, month, page, limit }
+export const fetchStaffListData = async (params) => apiRequest(`/hr/staff${toQueryString(params)}`);
+export const fetchStaffFileData = async (id) => (await apiRequest(`/hr/staff/${id}`)).data;
 export const checkIn = async () => (await apiRequest("/hr/me/check-in", { method: "POST" })).data;
 export const checkOut = async () => (await apiRequest("/hr/me/check-out", { method: "POST" })).data;
 export const requestLeave = async (data) => (await apiRequest("/hr/me/leaves", { method: "POST", body: data })).data;
@@ -13,7 +22,8 @@ export const cancelLeave = async (id) => (await apiRequest(`/hr/me/leaves/${id}`
 // ✅ Attendance — the day's board, one person's month, a manager's correction
 export const fetchDayBoardData = async (day) => (await apiRequest(`/hr/attendance${toQueryString({ day })}`)).data;
 export const fetchAttendanceRegisterData = async (month) => (await apiRequest(`/hr/attendance/register${toQueryString({ month })}`)).data;
-export const fetchMonthSheetData = async (params) => (await apiRequest(`/hr/attendance/sheet${toQueryString(params)}`)).data;
+export const fetchMonthSheetData = async ({ month, staffId }) =>
+  (await apiRequest(staffId ? `/hr/staff/${staffId}/sheet${toQueryString({ month })}` : `/hr/attendance/sheet${toQueryString({ month })}`)).data;
 export const markAttendance = async (data) => (await apiRequest("/hr/attendance", { method: "PUT", body: data })).data;
 
 // ✅ Leaves — params: { status, user, page, limit } -> { data, meta: { ...paging, summary: { pending } } }

@@ -1,13 +1,13 @@
 import { ATTENDANCE_STATUS, CALENDAR_LEGEND } from "../../constants/hr";
 import { todayInputValue } from "../../utils/formatDate";
 import { timeLabel } from "../../utils/hr";
-import PersonCell from "./PersonCell";
+import PersonLink from "./PersonLink";
 
 const total = "whitespace-nowrap px-2 py-2 text-center text-sm font-semibold tabular-nums";
 
 // A whole month for everyone: a row per person with their totals, then a coloured cell per day. The names stay
-// in place while the days scroll sideways. A cell opens that day; a name opens the person's month.
-const AttendanceRegister = ({ data, isLoading, onOpenDay, onOpenPerson }) => {
+// in place while the days scroll sideways. A cell opens that day; a name opens the person's file.
+const AttendanceRegister = ({ data, isLoading, onOpenDay }) => {
   const today = todayInputValue();
   const days = data?.rows[0]?.days ?? [];
 
@@ -50,9 +50,7 @@ const AttendanceRegister = ({ data, isLoading, onOpenDay, onOpenPerson }) => {
             {data.rows.map((row) => (
               <tr key={row.user._id}>
                 <td className="sticky left-0 z-10 border-b border-slate-100 bg-white px-4 py-2">
-                  <button type="button" onClick={() => onOpenPerson(row.user)} title="See the month" className="text-left hover:opacity-80">
-                    <PersonCell person={row.user} />
-                  </button>
+                  <PersonLink person={row.user} />
                 </td>
                 <td className={`${total} border-b border-slate-100 text-emerald-700`}>{row.counts.present}</td>
                 <td className={`${total} border-b border-slate-100 text-amber-700`}>{row.counts.late}</td>

@@ -10,14 +10,14 @@ const AttendanceCalendar = ({ days }) => {
 
   return (
     <div>
-      <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+      <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-slate-400">
         {WEEK.map((name) => (
           <span key={name} className="py-1">
             {name}
           </span>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1.5">
         {Array.from({ length: blanks }, (_, i) => (
           <span key={`blank-${i}`} />
         ))}
@@ -28,7 +28,7 @@ const AttendanceCalendar = ({ days }) => {
             <span
               key={d.day}
               title={title}
-              className={`flex aspect-square max-h-12 w-full items-center justify-center justify-self-center rounded-lg text-sm font-semibold tabular-nums ${meta.cell} ${d.day === today ? "ring-2 ring-slate-900" : ""}`}
+              className={`flex h-11 w-full items-center justify-center rounded-xl text-sm font-semibold tabular-nums transition hover:brightness-95 ${meta.cell} ${d.day === today ? "ring-2 ring-blue-500 ring-offset-1" : ""}`}
             >
               {Number(d.day.slice(8))}
             </span>

@@ -66,6 +66,8 @@ import Increments from "../pages/hr/Increments";
 import Leaves from "../pages/hr/Leaves";
 import MyHr from "../pages/hr/MyHr";
 import Salaries from "../pages/hr/Salaries";
+import StaffFile from "../pages/hr/StaffFile";
+import StaffFiles from "../pages/hr/StaffFiles";
 import CreateReplacement from "../pages/replacement/CreateReplacement";
 import Replacements from "../pages/replacement/Replacements";
 import DailyStatement from "../pages/report/DailyStatement";
@@ -119,6 +121,7 @@ export const MAIN_PANEL = {
             { label: "Registration Requests", path: ROUTES.REGISTRATIONS, page: Registrations, roles: REVIEWER_ROLES },
           ],
         },
+        { label: "HR", icon: LuBadgeDollarSign, path: ROUTES.HR_STAFF, page: StaffFiles, permission: "hr.view" },
         {
           label: "Supplier",
           icon: LuTruck,
@@ -167,6 +170,7 @@ export const MAIN_PANEL = {
     { label: "Service", icon: LuConciergeBell, path: ROUTES.SERVICES, permission: "service.view" },
   ],
   hiddenPages: [
+    { label: "Staff File", path: ROUTES.HR_STAFF_FILE, page: StaffFile, permission: "hr.view" },
     { label: "Supplier Ledger", path: ROUTES.SUPPLIER_LEDGER, page: SupplierLedger, permission: "supplier.view" },
     { label: "Customer Ledger", path: ROUTES.CUSTOMER_LEDGER, page: CustomerLedger, permission: "customer.view" },
   ],
@@ -247,6 +251,7 @@ export const BRANCH_PANEL = {
           icon: LuBadgeDollarSign,
           children: [
             { label: "My HR", path: ROUTES.BRANCH_HR, page: MyHr, staffOnly: true },
+            { label: "Staff History", path: ROUTES.BRANCH_HR_STAFF, page: StaffFiles, permission: "hr.view" },
             { label: "Attendance", path: ROUTES.BRANCH_HR_ATTENDANCE, page: Attendance, permission: "hr.view" },
             { label: "Leave", path: ROUTES.BRANCH_HR_LEAVES, page: Leaves, permission: "hr.view" },
             { label: "Salary", path: ROUTES.BRANCH_HR_SALARIES, page: Salaries, permission: "hr.view" },
@@ -269,6 +274,7 @@ export const BRANCH_PANEL = {
     { label: "Supplier Payment", icon: LuWallet, path: ROUTES.BRANCH_SUPPLIER_PAYMENTS, permission: "payment.view" },
   ],
   hiddenPages: [
+    { label: "Staff File", path: ROUTES.BRANCH_HR_STAFF_FILE, page: StaffFile, permission: "hr.view" },
     {
       label: "Payment Method Statement",
       path: ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT,
