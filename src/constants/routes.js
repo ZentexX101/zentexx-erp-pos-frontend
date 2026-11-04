@@ -58,6 +58,8 @@ export const ROUTES = {
   BRANCH_REPLACEMENT_NEW: "/branch/replacements/new",
   BRANCH_REPLACEMENTS: "/branch/replacements",
   BRANCH_REPAIRS: "/branch/repairs",
+  BRANCH_REPAIR_NEW: "/branch/repairs/new",
+  BRANCH_REPAIR_DETAIL: "/branch/repairs/:id",
   BRANCH_HR: "/branch/hr",
   BRANCH_HR_STAFF: "/branch/hr/staff",
   BRANCH_HR_STAFF_FILE: "/branch/hr/staff/:id",
@@ -81,6 +83,7 @@ export const getHomePath = (user) => {
 
 // Paths with an :id
 export const supplierLedgerPath = (supplierId) => ROUTES.SUPPLIER_LEDGER.replace(":id", supplierId);
+export const repairDetailPath = (id) => ROUTES.BRANCH_REPAIR_DETAIL.replace(":id", id);
 export const staffFilePath = (id, inBranch) => (inBranch ? ROUTES.BRANCH_HR_STAFF_FILE : ROUTES.HR_STAFF_FILE).replace(":id", id);
 export const paymentMethodStatementPath = (methodId) => ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT.replace(":id", methodId);
 export const customerLedgerPath = (customerId) => ROUTES.CUSTOMER_LEDGER.replace(":id", customerId);

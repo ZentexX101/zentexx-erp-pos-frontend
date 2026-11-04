@@ -105,6 +105,7 @@ const Analytics = ({ scope = "main" }) => {
                 exchanges={data.exchanges}
                 saleReturns={data.saleReturns}
                 serviceSales={data.serviceSales}
+                repairs={data.repairs}
                 linkTo={linkTo}
                 periodLabel={periodLabel}
               />

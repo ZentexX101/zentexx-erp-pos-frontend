@@ -5,7 +5,7 @@ import { newPaymentLine, paymentLinesTotal } from "../../utils/paymentLines";
 import Button from "../common/buttons/Button";
 
 const fieldClass =
-  "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10";
+  "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10";
 
 // "Payment Methods & Amounts": one or more method + amount lines, like the reference app.
 // checkBalance warns when a method can't cover its amount (money going out).
@@ -43,7 +43,7 @@ const PaymentMethodLines = ({ lines, onChange, methods, checkBalance = false, ti
                   aria-label={`Payment method ${index + 1}`}
                   value={line.paymentMethod}
                   onChange={(e) => setLine(line.key, "paymentMethod", e.target.value)}
-                  className={fieldClass}
+                  className={`${fieldClass} w-full`}
                 >
                   <option value="">Select Payment Method</option>
                   {methods

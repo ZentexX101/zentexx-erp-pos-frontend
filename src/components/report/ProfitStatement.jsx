@@ -52,6 +52,11 @@ const ProfitStatement = ({ report, linkTo }) => (
     <Line label="Service staff incentives" value={report.serviceIncentive} less />
     <Subtotal label="Service profit" value={report.serviceProfit} />
 
+    <Heading>Repairs</Heading>
+    <Line label="Repair charges" hint={`${report.repairCount} job${report.repairCount === 1 ? "" : "s"} closed`} value={report.repairRevenue} link={linkTo("repairs")} />
+    <Line label="Parts and outside work" value={report.repairCost} less />
+    <Subtotal label="Repair profit" value={report.repairProfit} />
+
     <Heading>Running costs</Heading>
     <Line label="Replacements" hint={`${report.replacementCount} done, after charges and pieces restocked`} value={report.replacements} less />
     <Line label="Product staff incentives" value={report.productIncentive} less />

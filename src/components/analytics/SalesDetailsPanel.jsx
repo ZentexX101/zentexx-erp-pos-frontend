@@ -1,4 +1,4 @@
-import { LuConciergeBell, LuGift, LuHourglass, LuRepeat, LuShoppingCart, LuTag, LuTruck, LuUndo2, LuWallet } from "react-icons/lu";
+import { LuConciergeBell, LuGift, LuHourglass, LuRepeat, LuShoppingCart, LuTag, LuTruck, LuWrench, LuUndo2, LuWallet } from "react-icons/lu";
 import { TILE_TINTS } from "../../constants/chart";
 import { countLabel } from "../../utils/analytics";
 import { formatTaka } from "../../utils/money";
@@ -8,7 +8,7 @@ import StatPanel, { StatTile } from "./ui/StatPanel";
 // What happened around the sales in the period: collected, due, returns, exchanges, services, discount,
 // delivery and incentive. sales covers POS sales and exchanges together; due is what was left unpaid at billing.
 // serviceSales: services sold for devices (coverage...); the incentive adds the sellers' share of those.
-const SalesDetailsPanel = ({ sales, exchanges, saleReturns, serviceSales, linkTo, periodLabel }) => {
+const SalesDetailsPanel = ({ sales, exchanges, saleReturns, serviceSales, repairs, linkTo, periodLabel }) => {
   const services = serviceSales ?? { count: 0, total: 0, due: 0, incentive: 0 };
   return (
     <StatPanel icon={LuShoppingCart} title="Sales details" hint={periodLabel}>
@@ -45,6 +45,14 @@ const SalesDetailsPanel = ({ sales, exchanges, saleReturns, serviceSales, linkTo
         link={linkTo("serviceSales")}
         value={formatTaka(services.total)}
         hint={`${countLabel(services.count, "service")}${services.due ? ` · due ${formatTaka(services.due)}` : ""}`}
+      />
+      <StatTile
+        icon={LuWrench}
+        tone={TILE_TINTS.slate}
+        label="Repairs"
+        link={linkTo("repairs")}
+        value={formatTaka(repairs?.total ?? 0)}
+        hint={`${countLabel(repairs?.count ?? 0, "job")} closed · ${repairs?.open ?? 0} in the shop${repairs?.due ? ` · due ${formatTaka(repairs.due)}` : ""}`}
       />
       <StatTile
         icon={LuGift}

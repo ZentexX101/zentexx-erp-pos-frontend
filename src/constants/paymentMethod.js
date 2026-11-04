@@ -19,4 +19,6 @@ export const LEDGER_TYPE_LABELS = {
   supplier_payment: { label: "Supplier Payment", tone: "red" },
   expense: { label: "Expense", tone: "red" },
   salary: { label: "Salary", tone: "purple" },
+  repair_cost: { label: "Repair Cost", tone: "red" },
+  repair_cost_back: { label: "Repair Cost Removed", tone: "green" },
 };

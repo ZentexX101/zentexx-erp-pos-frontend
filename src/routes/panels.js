@@ -68,6 +68,9 @@ import MyHr from "../pages/hr/MyHr";
 import Salaries from "../pages/hr/Salaries";
 import StaffFile from "../pages/hr/StaffFile";
 import StaffFiles from "../pages/hr/StaffFiles";
+import CreateRepair from "../pages/repair/CreateRepair";
+import RepairDetail from "../pages/repair/RepairDetail";
+import Repairs from "../pages/repair/Repairs";
 import CreateReplacement from "../pages/replacement/CreateReplacement";
 import Replacements from "../pages/replacement/Replacements";
 import DailyStatement from "../pages/report/DailyStatement";
@@ -245,7 +248,14 @@ export const BRANCH_PANEL = {
             { label: "Replacement List", path: ROUTES.BRANCH_REPLACEMENTS, page: Replacements },
           ],
         },
-        { label: "Repair", icon: LuWrench, path: ROUTES.BRANCH_REPAIRS },
+        {
+          label: "Repair",
+          icon: LuWrench,
+          children: [
+            { label: "New Repair", path: ROUTES.BRANCH_REPAIR_NEW, page: CreateRepair, permission: "repair.create" },
+            { label: "Repair Jobs", path: ROUTES.BRANCH_REPAIRS, page: Repairs, permission: "repair.view" },
+          ],
+        },
         {
           label: "HR",
           icon: LuBadgeDollarSign,
@@ -275,6 +285,7 @@ export const BRANCH_PANEL = {
   ],
   hiddenPages: [
     { label: "Staff File", path: ROUTES.BRANCH_HR_STAFF_FILE, page: StaffFile, permission: "hr.view" },
+    { label: "Repair Job", path: ROUTES.BRANCH_REPAIR_DETAIL, page: RepairDetail, permission: "repair.view" },
     {
       label: "Payment Method Statement",
       path: ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT,

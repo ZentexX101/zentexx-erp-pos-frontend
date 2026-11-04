@@ -52,6 +52,11 @@ const ProfitLossPrint = ({ report, branchName, range }) => (
         <Row label="Service staff incentives" value={report.serviceIncentive} less />
         <Subtotal label="Service profit" value={report.serviceProfit} />
 
+        <Section>Repairs</Section>
+        <Row label={`Repair charges (${report.repairCount})`} value={report.repairRevenue} />
+        <Row label="Parts and outside work" value={report.repairCost} less />
+        <Subtotal label="Repair profit" value={report.repairProfit} />
+
         <Section>Running costs</Section>
         <Row label={`Replacements (${report.replacementCount})`} value={report.replacements} less />
         <Row label="Product staff incentives" value={report.productIncentive} less />

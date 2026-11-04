@@ -31,10 +31,10 @@ const ProfitVerdict = ({ report }) => {
         ) : report.income > 0 ? (
           <>
             {made ? "Kept" : "Lost"} <span className="font-bold">{formatTaka(Math.abs(report.margin))}</span> of every ৳100 earned, from{" "}
-            {formatTaka(report.income)} of sales and services.
+            {formatTaka(report.income)} of sales, services and repairs.
           </>
         ) : (
-          "Only costs in this period, with no sales or services."
+          "Only costs in this period, with no sales, services or repairs."
         )}
       </p>
     </section>
