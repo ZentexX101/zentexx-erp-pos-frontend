@@ -54,6 +54,7 @@ const ProfitLossPrint = ({ report, branchName, range }) => (
 
         <Section>Running costs</Section>
         <Row label="Product staff incentives" value={report.productIncentive} less />
+        <Row label={`Salaries (${report.salaryCount})`} value={report.salaries} less />
         <Row label={`Expenses (${report.expenseCount})`} value={report.expenses} less />
 
         <tr className="break-inside-avoid text-sm font-bold">

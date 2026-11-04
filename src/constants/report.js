@@ -15,6 +15,7 @@ export const FLOW_LABELS = {
   supplier_payment: "Supplier Payments",
   expense: "Expenses",
   salary: "Salaries",
+  salary_advance: "Salary Advances",
   cash_out: "Cash Out",
 };
 

@@ -54,6 +54,7 @@ const ProfitStatement = ({ report, linkTo }) => (
 
     <Heading>Running costs</Heading>
     <Line label="Product staff incentives" value={report.productIncentive} less />
+    <Line label="Salaries" hint={`${report.salaryCount} paid`} value={report.salaries} less />
     <Line
       label="Expenses"
       hint={`${report.expenseCount} expense${report.expenseCount === 1 ? "" : "s"}`}

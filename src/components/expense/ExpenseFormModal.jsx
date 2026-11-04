@@ -110,7 +110,7 @@ const ExpenseFormModal = ({ onClose, onSaved }) => {
             onChange={(e) => setField("title", e.target.value)}
             className="sm:col-span-3"
           />
-          <Select label="Category" options={EXPENSE_CATEGORIES} value={form.category} onChange={(e) => setField("category", e.target.value)} />
+          <Select label="Category" options={EXPENSE_CATEGORIES.filter((c) => c.value !== "salary")} value={form.category} onChange={(e) => setField("category", e.target.value)} />
           <Input label="Date" type="date" max={todayInputValue()} value={form.date} onChange={(e) => setField("date", e.target.value)} />
         </div>
 

@@ -59,6 +59,13 @@ import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
 import AllSupplierPayments from "../pages/supplierPayment/AllSupplierPayments";
 import SupplierPayments from "../pages/supplierPayment/SupplierPayments";
+import Advances from "../pages/hr/Advances";
+import Attendance from "../pages/hr/Attendance";
+import Incentives from "../pages/hr/Incentives";
+import Increments from "../pages/hr/Increments";
+import Leaves from "../pages/hr/Leaves";
+import MyHr from "../pages/hr/MyHr";
+import Salaries from "../pages/hr/Salaries";
 import DailyStatement from "../pages/report/DailyStatement";
 import ProfitLoss from "../pages/report/ProfitLoss";
 import Stock from "../pages/stock/Stock";
@@ -225,7 +232,19 @@ export const BRANCH_PANEL = {
         },
         { label: "Replacement", icon: LuRefreshCw, path: ROUTES.BRANCH_REPLACEMENTS, permission: "return.view" },
         { label: "Repair", icon: LuWrench, path: ROUTES.BRANCH_REPAIRS },
-        { label: "Salary Management", icon: LuBadgeDollarSign, path: ROUTES.BRANCH_SALARIES },
+        {
+          label: "HR",
+          icon: LuBadgeDollarSign,
+          children: [
+            { label: "My HR", path: ROUTES.BRANCH_HR, page: MyHr, staffOnly: true },
+            { label: "Attendance", path: ROUTES.BRANCH_HR_ATTENDANCE, page: Attendance, permission: "hr.view" },
+            { label: "Leave", path: ROUTES.BRANCH_HR_LEAVES, page: Leaves, permission: "hr.view" },
+            { label: "Salary", path: ROUTES.BRANCH_HR_SALARIES, page: Salaries, permission: "hr.view" },
+            { label: "Incentive", path: ROUTES.BRANCH_HR_INCENTIVES, page: Incentives, permission: "hr.view" },
+            { label: "Increment", path: ROUTES.BRANCH_HR_INCREMENTS, page: Increments, permission: "hr.view" },
+            { label: "Advance Salary", path: ROUTES.BRANCH_HR_ADVANCES, page: Advances, permission: "hr.view" },
+          ],
+        },
       ],
     },
   ],
