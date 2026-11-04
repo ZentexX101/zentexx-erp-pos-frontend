@@ -3,6 +3,7 @@ export const FLOW_LABELS = {
   pos_sale: "POS Sales",
   exchange: "Exchange Sales",
   service_sale: "Service Sales",
+  replacement: "Replacement Charges",
   customer_payment: "Customer Payments",
   purchase_return: "Purchase Returns",
   cash_in: "Cash In",

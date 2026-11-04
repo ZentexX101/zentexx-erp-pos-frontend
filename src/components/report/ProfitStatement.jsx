@@ -53,6 +53,7 @@ const ProfitStatement = ({ report, linkTo }) => (
     <Subtotal label="Service profit" value={report.serviceProfit} />
 
     <Heading>Running costs</Heading>
+    <Line label="Replacements" hint={`${report.replacementCount} done, after charges and pieces restocked`} value={report.replacements} less />
     <Line label="Product staff incentives" value={report.productIncentive} less />
     <Line label="Salaries" hint={`${report.salaryCount} paid`} value={report.salaries} less />
     <Line

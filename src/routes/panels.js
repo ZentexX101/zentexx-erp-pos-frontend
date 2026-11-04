@@ -66,6 +66,8 @@ import Increments from "../pages/hr/Increments";
 import Leaves from "../pages/hr/Leaves";
 import MyHr from "../pages/hr/MyHr";
 import Salaries from "../pages/hr/Salaries";
+import CreateReplacement from "../pages/replacement/CreateReplacement";
+import Replacements from "../pages/replacement/Replacements";
 import DailyStatement from "../pages/report/DailyStatement";
 import ProfitLoss from "../pages/report/ProfitLoss";
 import Stock from "../pages/stock/Stock";
@@ -230,7 +232,15 @@ export const BRANCH_PANEL = {
             { label: "Exchange List", path: ROUTES.BRANCH_EXCHANGES, page: Exchanges },
           ],
         },
-        { label: "Replacement", icon: LuRefreshCw, path: ROUTES.BRANCH_REPLACEMENTS, permission: "return.view" },
+        {
+          label: "Replacement",
+          icon: LuRefreshCw,
+          permission: "return.view",
+          children: [
+            { label: "Create Replacement", path: ROUTES.BRANCH_REPLACEMENT_NEW, page: CreateReplacement, permission: "return.create" },
+            { label: "Replacement List", path: ROUTES.BRANCH_REPLACEMENTS, page: Replacements },
+          ],
+        },
         { label: "Repair", icon: LuWrench, path: ROUTES.BRANCH_REPAIRS },
         {
           label: "HR",

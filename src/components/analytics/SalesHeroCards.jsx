@@ -27,7 +27,7 @@ const SalesHeroCards = ({ sales, purchases, expenses, profit, trend, linkTo, sho
         value={formatTaka(profit.net)}
         words={takaInWords(profit.net)}
         valueClass={profit.net >= 0 ? "text-green-600" : "text-red-600"}
-        hint={`Gross ${formatTaka(profit.gross)} − incentives − salaries − expenses`}
+        hint={`Gross ${formatTaka(profit.gross)} − all costs`}
         color={SERIES_COLORS.profit}
         glow="profit"
         spark={sparkOf(trend, "profit")}
