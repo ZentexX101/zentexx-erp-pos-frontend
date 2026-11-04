@@ -12,7 +12,14 @@ const SalesDetailsPanel = ({ sales, exchanges, saleReturns, serviceSales, repair
   const services = serviceSales ?? { count: 0, total: 0, due: 0, incentive: 0 };
   return (
     <StatPanel icon={LuShoppingCart} title="Sales details" hint={periodLabel}>
-      <StatTile icon={LuWallet} tone={TILE_TINTS.teal} label="Collected" link={linkTo("sales")} value={formatTaka(sales.paid)} hint="Paid at billing" />
+      <StatTile
+        icon={LuWallet}
+        tone={TILE_TINTS.teal}
+        label="Collected"
+        link={linkTo("sales")}
+        value={formatTaka(sales.paid)}
+        hint={sales.advance ? `Includes ${formatTaka(sales.advance)} pre order advance` : "Paid at billing"}
+      />
       <StatTile
         icon={LuHourglass}
         tone={TILE_TINTS.red}
@@ -63,7 +70,14 @@ const SalesDetailsPanel = ({ sales, exchanges, saleReturns, serviceSales, repair
         hint={`Sales ${formatTaka(sales.incentive)} · services ${formatTaka(services.incentive)}`}
       />
       <StatTile icon={LuTag} tone={TILE_TINTS.pink} label="Discount Given" link={linkTo("sales")} value={formatTaka(sales.discount)} />
-      <StatTile icon={LuTruck} tone={TILE_TINTS.slate} label="Delivery Charge" link={linkTo("sales")} value={formatTaka(sales.delivery)} hint="Charged to customers" />
+      <StatTile
+        icon={LuTruck}
+        tone={TILE_TINTS.slate}
+        label="Delivery Charge"
+        link={linkTo("sales")}
+        value={formatTaka(sales.delivery)}
+        hint="Charged to customers"
+      />
     </StatPanel>
   );
 };

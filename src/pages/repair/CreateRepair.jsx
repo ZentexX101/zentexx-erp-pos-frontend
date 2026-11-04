@@ -2,10 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
-import Input from "../../components/common/forms/Input";
-import PhoneInput from "../../components/common/forms/PhoneInput";
 import PageHeader from "../../components/common/layout/PageHeader";
-import CustomerSelect from "../../components/customer/CustomerSelect";
+import CustomerChoice from "../../components/customer/CustomerChoice";
 import PaymentMethodLines from "../../components/payment/PaymentMethodLines";
 import RepairDeviceNote from "../../components/repair/RepairDeviceNote";
 import { JobSection, RepairDeviceFields, RepairPromiseFields, RepairTechnicianFields } from "../../components/repair/RepairJobFields";
@@ -101,30 +99,16 @@ const CreateRepair = () => {
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="min-w-0 space-y-5">
           <JobSection title="Customer">
-            <div className="inline-flex rounded-xl bg-slate-100 p-1" role="group" aria-label="Customer type">
-              {[
-                [false, "Walk-in"],
-                [true, "Saved customer"],
-              ].map(([value, label]) => (
-                <button
-                  key={label}
-                  type="button"
-                  aria-pressed={saved === value}
-                  onClick={() => setSaved(value)}
-                  className={`rounded-lg px-4 py-1.5 text-sm font-medium transition ${saved === value ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            {saved ? (
-              <CustomerSelect value={customer} onChange={setCustomer} />
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Input label="Name" required maxLength={100} value={form.customerName} onChange={(e) => handleField("customerName", e.target.value)} />
-                <PhoneInput label="Phone" required value={form.customerPhone} onChange={(value) => handleField("customerPhone", value)} />
-              </div>
-            )}
+            <CustomerChoice
+              saved={saved}
+              onSaved={setSaved}
+              customer={customer}
+              onCustomer={setCustomer}
+              name={form.customerName}
+              onName={(value) => handleField("customerName", value)}
+              phone={form.customerPhone}
+              onPhone={(value) => handleField("customerPhone", value)}
+            />
           </JobSection>
 
           <JobSection title="Device">

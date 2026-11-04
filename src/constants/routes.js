@@ -53,6 +53,8 @@ export const ROUTES = {
   BRANCH_SERVICE_SALE_NEW: "/branch/service-sales/new",
   BRANCH_SERVICE_SALES: "/branch/service-sales",
   BRANCH_PRE_ORDERS: "/branch/pre-orders",
+  BRANCH_PRE_ORDER_NEW: "/branch/pre-orders/new",
+  BRANCH_PRE_ORDER_DETAIL: "/branch/pre-orders/:id",
   BRANCH_EXCHANGE_NEW: "/branch/exchanges/new",
   BRANCH_EXCHANGES: "/branch/exchanges",
   BRANCH_REPLACEMENT_NEW: "/branch/replacements/new",
@@ -83,6 +85,7 @@ export const getHomePath = (user) => {
 
 // Paths with an :id
 export const supplierLedgerPath = (supplierId) => ROUTES.SUPPLIER_LEDGER.replace(":id", supplierId);
+export const preOrderDetailPath = (id) => ROUTES.BRANCH_PRE_ORDER_DETAIL.replace(":id", id);
 export const repairDetailPath = (id) => ROUTES.BRANCH_REPAIR_DETAIL.replace(":id", id);
 export const staffFilePath = (id, inBranch) => (inBranch ? ROUTES.BRANCH_HR_STAFF_FILE : ROUTES.HR_STAFF_FILE).replace(":id", id);
 export const paymentMethodStatementPath = (methodId) => ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT.replace(":id", methodId);

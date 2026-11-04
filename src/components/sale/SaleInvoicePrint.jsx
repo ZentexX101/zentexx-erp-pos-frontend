@@ -96,7 +96,11 @@ const SaleInvoicePrint = ({ sale }) => (
       {sale.exchangeValue > 0 && <TotalRow label="Old Device Value" value={-sale.exchangeValue} />}
       {sale.exchangeValue > 0 && <TotalRow label={sale.payable < 0 ? "We Pay You" : "Payable"} value={Math.abs(sale.payable)} strong />}
       {sale.payoutAmount > 0 && <TotalRow label="Paid Out" value={sale.payoutAmount} />}
-      <TotalRow label={`Paid${sale.payments.length ? ` (${sale.payments.map((p) => p.paymentMethod?.name).join(", ")})` : ""}`} value={sale.paidAmount} />
+      {sale.advanceAmount > 0 && <TotalRow label={`Advance (${sale.preOrderNo})`} value={sale.advanceAmount} />}
+      <TotalRow
+        label={`Paid${sale.payments.length ? ` (${sale.payments.map((p) => p.paymentMethod?.name).join(", ")})` : ""}`}
+        value={Math.round((sale.paidAmount - (sale.advanceAmount ?? 0)) * 100) / 100}
+      />
       <TotalRow label="Due" value={sale.dueAmount} strong={sale.dueAmount > 0} />
     </div>
 

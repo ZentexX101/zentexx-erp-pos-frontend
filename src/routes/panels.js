@@ -68,6 +68,9 @@ import MyHr from "../pages/hr/MyHr";
 import Salaries from "../pages/hr/Salaries";
 import StaffFile from "../pages/hr/StaffFile";
 import StaffFiles from "../pages/hr/StaffFiles";
+import CreatePreOrder from "../pages/preOrder/CreatePreOrder";
+import PreOrderDetail from "../pages/preOrder/PreOrderDetail";
+import PreOrders from "../pages/preOrder/PreOrders";
 import CreateRepair from "../pages/repair/CreateRepair";
 import RepairDetail from "../pages/repair/RepairDetail";
 import Repairs from "../pages/repair/Repairs";
@@ -229,7 +232,14 @@ export const BRANCH_PANEL = {
             { label: "Service Sales", path: ROUTES.BRANCH_SERVICE_SALES, page: ServiceSales },
           ],
         },
-        { label: "Pre Order", icon: LuShoppingBag, path: ROUTES.BRANCH_PRE_ORDERS, permission: "sales.view" },
+        {
+          label: "Pre Order",
+          icon: LuShoppingBag,
+          children: [
+            { label: "New Pre Order", path: ROUTES.BRANCH_PRE_ORDER_NEW, page: CreatePreOrder, permission: "pre_order.create" },
+            { label: "Pre Order List", path: ROUTES.BRANCH_PRE_ORDERS, page: PreOrders, permission: "pre_order.view" },
+          ],
+        },
         {
           label: "Exchange",
           icon: LuRepeat,
@@ -285,6 +295,7 @@ export const BRANCH_PANEL = {
   ],
   hiddenPages: [
     { label: "Staff File", path: ROUTES.BRANCH_HR_STAFF_FILE, page: StaffFile, permission: "hr.view" },
+    { label: "Pre Order", path: ROUTES.BRANCH_PRE_ORDER_DETAIL, page: PreOrderDetail, permission: "pre_order.view" },
     { label: "Repair Job", path: ROUTES.BRANCH_REPAIR_DETAIL, page: RepairDetail, permission: "repair.view" },
     {
       label: "Payment Method Statement",

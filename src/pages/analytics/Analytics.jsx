@@ -110,6 +110,7 @@ const Analytics = ({ scope = "main" }) => {
                 periodLabel={periodLabel}
               />
               <MoneyFlowPanel
+                preOrders={data.preOrders}
                 cash={data.cash}
                 purchases={data.purchases}
                 purchaseReturns={data.purchaseReturns}

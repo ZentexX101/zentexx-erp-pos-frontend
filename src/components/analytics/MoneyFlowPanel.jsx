@@ -1,11 +1,11 @@
-import { LuBanknote, LuHandCoins, LuHourglass, LuLandmark, LuUndo2 } from "react-icons/lu";
+import { LuBanknote, LuHandCoins, LuHourglass, LuLandmark, LuUndo2, LuWallet } from "react-icons/lu";
 import { TILE_TINTS } from "../../constants/chart";
 import { countLabel } from "../../utils/analytics";
 import { formatTaka } from "../../utils/money";
 import StatPanel, { StatTile } from "./ui/StatPanel";
 
 // Where money stands and moved: cash now, what's owed to suppliers, and the payments of the period
-const MoneyFlowPanel = ({ cash, purchases, purchaseReturns, payments, linkTo, periodLabel }) => (
+const MoneyFlowPanel = ({ cash, purchases, purchaseReturns, payments, preOrders, linkTo, periodLabel }) => (
   <StatPanel icon={LuBanknote} title="Money flow" hint={periodLabel}>
     <StatTile
       icon={LuLandmark}
@@ -14,6 +14,14 @@ const MoneyFlowPanel = ({ cash, purchases, purchaseReturns, payments, linkTo, pe
       link={linkTo("paymentMethods")}
       value={formatTaka(cash.balance)}
       hint={`${countLabel(cash.methods, "method")} · right now`}
+    />
+    <StatTile
+      icon={LuWallet}
+      tone={TILE_TINTS.blue}
+      label="Pre Order Advances"
+      link={linkTo("preOrders")}
+      value={formatTaka(preOrders?.advance ?? 0)}
+      hint={`Inside cash, not income · ${countLabel(preOrders?.count ?? 0, "booking")}`}
     />
     <StatTile
       icon={LuHourglass}

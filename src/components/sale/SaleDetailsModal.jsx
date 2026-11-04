@@ -37,7 +37,12 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
             {sale.customer && <span className="block text-xs font-normal text-slate-500">{formatPhone(sale.customer.phone)}</span>}
           </Field>
           <Field label="Sold by">{sale.soldBy?.name ?? "—"}</Field>
-          <Field label="Paid with">{sale.payments.map((line) => `${line.paymentMethod?.name} ${formatTaka(line.amount)}`).join(", ") || "—"}</Field>
+          <Field label="Paid with">
+            {[
+              ...sale.payments.map((line) => `${line.paymentMethod?.name} ${formatTaka(line.amount)}`),
+              ...(sale.advanceAmount > 0 ? [`Advance ${formatTaka(sale.advanceAmount)} (${sale.preOrderNo})`] : []),
+            ].join(", ") || "—"}
+          </Field>
         </dl>
 
         <div className="overflow-x-auto rounded-lg border border-slate-200">
