@@ -1,18 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { LuCalendarDays, LuChevronDown } from "react-icons/lu";
 import { useDismiss } from "../../../hooks/useDismiss";
-import { PERIOD_OPTIONS } from "../../../utils/period";
+import { PERIOD_OPTIONS, rangeText } from "../../../utils/period";
 import RangeCalendar from "./RangeCalendar";
-
-// "2026-11-01" -> "1 Nov 2026"
-const shortDay = (day) => new Date(`${day}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-
-// The dates a period covers: "1 Nov 2026 – 3 Nov 2026", one date, or "Every day so far"
-const rangeText = ({ from, to }) => {
-  if (!from && !to) return "Every day so far";
-  if (from === to) return shortDay(from);
-  return `${from ? shortDay(from) : "Start"} – ${to ? shortDay(to) : "Today"}`;
-};
 
 const PRESETS = PERIOD_OPTIONS.filter((option) => option.value !== "custom");
 

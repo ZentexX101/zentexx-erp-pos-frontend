@@ -59,6 +59,8 @@ import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
 import AllSupplierPayments from "../pages/supplierPayment/AllSupplierPayments";
 import SupplierPayments from "../pages/supplierPayment/SupplierPayments";
+import DailyStatement from "../pages/report/DailyStatement";
+import ProfitLoss from "../pages/report/ProfitLoss";
 import Stock from "../pages/stock/Stock";
 import StockCenter from "../pages/stock/StockCenter";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
@@ -86,6 +88,15 @@ export const MAIN_PANEL = {
     {
       title: "Features",
       items: [
+        {
+          label: "Report",
+          icon: LuFileText,
+          permission: "report.view",
+          children: [
+            { label: "Daily Statement", path: ROUTES.REPORT_DAILY, page: DailyStatement },
+            { label: "Profit & Loss", path: ROUTES.REPORT_PROFIT, page: ProfitLoss, permission: "report.profit" },
+          ],
+        },
         {
           label: "Branch",
           icon: LuListTree,
@@ -167,9 +178,8 @@ export const BRANCH_PANEL = {
           icon: LuFileText,
           permission: "report.view",
           children: [
-            { label: "Sales Report", path: ROUTES.BRANCH_REPORTS_SALES },
-            { label: "Purchase Report", path: ROUTES.BRANCH_REPORTS_PURCHASE },
-            { label: "Stock Report", path: ROUTES.BRANCH_REPORTS_STOCK },
+            { label: "Daily Statement", path: ROUTES.BRANCH_REPORT_DAILY, page: DailyStatement },
+            { label: "Profit & Loss", path: ROUTES.BRANCH_REPORT_PROFIT, page: ProfitLoss, permission: "report.profit" },
           ],
         },
         { label: "Payment Method", icon: LuCreditCard, path: ROUTES.BRANCH_PAYMENT_METHODS, page: PaymentMethods, permission: "payment_method.view" },

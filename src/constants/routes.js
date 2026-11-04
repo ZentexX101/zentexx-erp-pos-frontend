@@ -24,13 +24,14 @@ export const ROUTES = {
   PRODUCTS: "/dashboard/products",
   TRANSFERS: "/dashboard/transfers",
   STOCK_CENTER: "/dashboard/stock-center",
+  REPORT_DAILY: "/dashboard/reports/daily-statement",
+  REPORT_PROFIT: "/dashboard/reports/profit-loss",
   SETTINGS: "/dashboard/settings",
 
   // Branch panel (a branch's own staff, or a main admin who entered the branch)
   BRANCH_HOME: "/branch",
-  BRANCH_REPORTS_SALES: "/branch/reports/sales",
-  BRANCH_REPORTS_PURCHASE: "/branch/reports/purchase",
-  BRANCH_REPORTS_STOCK: "/branch/reports/stock",
+  BRANCH_REPORT_DAILY: "/branch/reports/daily-statement",
+  BRANCH_REPORT_PROFIT: "/branch/reports/profit-loss",
   BRANCH_PAYMENT_METHODS: "/branch/payment-methods",
   BRANCH_PAYMENT_METHOD_STATEMENT: "/branch/payment-methods/:id/statement",
   BRANCH_STOCK: "/branch/stock",
