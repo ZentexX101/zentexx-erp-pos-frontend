@@ -9,10 +9,9 @@ import Textarea from "../common/forms/Textarea";
 // payment: { paidAmount, paymentMethod, note } as strings; onChange(field, value)
 const PurchasePaymentCard = ({ total, payment, onChange }) => {
   const { data: methods = [] } = usePaymentMethodOptionsData();
-  const method = methods.find((m) => m._id === payment.paymentMethod);
   const paid = Number(payment.paidAmount) || 0;
 
-  const options = methods.map((m) => ({ value: m._id, label: `${m.name} (${formatTaka(m.balance)})` }));
+  const options = methods.map((m) => ({ value: m._id, label: m.name }));
 
   return (
     <section className="grid gap-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5 lg:grid-cols-2">
@@ -45,11 +44,6 @@ const PurchasePaymentCard = ({ total, payment, onChange }) => {
             onChange={(e) => onChange("paymentMethod", e.target.value)}
             disabled={paid === 0}
           />
-          {method && paid > method.balance && (
-            <p className="mt-1 text-xs text-red-600">
-              {method.name} has only {formatTaka(method.balance)}.
-            </p>
-          )}
         </div>
       </div>
 

@@ -33,7 +33,6 @@ const PaymentMethodTransactionModal = ({ paymentMethod, direction, onClose, onSa
     setServerError("");
 
     if (value <= 0) return setError("Enter an amount more than 0");
-    if (balanceAfter < 0) return setError(`Only ${formatTaka(paymentMethod.balance)} is available`);
 
     try {
       const saved = await transaction.mutateAsync({ id: paymentMethod._id, direction, data: { amount: value, note: note.trim() } });

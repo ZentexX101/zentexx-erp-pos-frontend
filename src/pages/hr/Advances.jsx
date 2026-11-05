@@ -28,7 +28,7 @@ const GiveAdvanceModal = ({ staff, methods, onClose, onSave, saving }) => {
 
   const save = async () => {
     if (!user) return setError("Pick a staff member.");
-    const problem = paymentLinesError(lines, methods, { checkBalance: true });
+    const problem = paymentLinesError(lines);
     if (problem) return setError(problem);
     try {
       await onSave({ user, payments: toPaymentItems(lines), note: note.trim() });
@@ -70,7 +70,6 @@ const GiveAdvanceModal = ({ staff, methods, onClose, onSave, saving }) => {
           lines={lines}
           onChange={setLines}
           methods={methods}
-          checkBalance
           title="Pay from"
           addLabel="Add Method"
           totalLabel="Advance"

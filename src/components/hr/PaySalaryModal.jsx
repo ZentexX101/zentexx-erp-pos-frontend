@@ -65,7 +65,7 @@ const PaySalaryModal = ({ row, methods, onClose, onPay, submitting }) => {
       (num(advance) > row.advanceOwed && `Only ${formatTaka(row.advanceOwed)} of advance is owed.`) ||
       (salaryCost < 0 && "Deductions can't be more than the salary and bonus.") ||
       (net < 0 && "The advance taken back can't be more than what's payable.") ||
-      (net > 0 && paymentLinesError(filled, methods, { checkBalance: true })) ||
+      (net > 0 && paymentLinesError(filled)) ||
       (paid !== roundTaka(Math.max(net, 0)) && `Pay exactly ${formatTaka(net)}.`);
     if (problem) return setError(problem);
     try {
@@ -139,7 +139,6 @@ const PaySalaryModal = ({ row, methods, onClose, onPay, submitting }) => {
             lines={lines}
             onChange={setPaymentLines}
             methods={methods}
-            checkBalance
             title="Pay from"
             addLabel="Add Method"
             totalLabel="Paid"

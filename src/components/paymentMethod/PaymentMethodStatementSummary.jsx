@@ -27,7 +27,7 @@ const PaymentMethodStatementSummary = ({ paymentMethod, summary }) => (
       </div>
       <div className="text-right">
         <p className="text-sm text-slate-500">Current Balance</p>
-        <p className="text-2xl font-bold text-green-600">{formatTaka(paymentMethod.balance)}</p>
+        <p className={`text-2xl font-bold ${paymentMethod.balance < 0 ? "text-red-600" : "text-green-600"}`}>{formatTaka(paymentMethod.balance)}</p>
       </div>
     </div>
 

@@ -11,8 +11,8 @@ const PaymentMethodDeleteModal = ({ paymentMethod, onClose, onConfirm }) => (
     danger
     message={
       <>
-        Delete <span className="font-medium text-slate-900">{paymentMethod?.name}</span>? This can't be undone. A method that still
-        has money or any transaction can't be deleted; set it to inactive instead.
+        Delete <span className="font-medium text-slate-900">{paymentMethod?.name}</span>? This can't be undone. A method that still has money or any transaction
+        can't be deleted; set it to inactive instead.
       </>
     }
   />

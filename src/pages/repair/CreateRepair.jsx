@@ -75,7 +75,7 @@ const CreateRepair = () => {
       (!saved && !form.customerName.trim() && "Enter the customer's name.") ||
       (!saved && validateBdMobile(form.customerPhone)) ||
       jobFormError(form) ||
-      (filled.length > 0 && paymentLinesError(filled, methods, { checkBalance: false }));
+      (filled.length > 0 && paymentLinesError(filled));
     if (problem) return setError(problem);
 
     try {

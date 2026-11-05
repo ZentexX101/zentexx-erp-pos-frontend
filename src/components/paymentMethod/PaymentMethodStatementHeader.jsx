@@ -12,10 +12,7 @@ const FIELD_CLASS =
 const PaymentMethodStatementHeader = ({ name, branchName, filters, onFilter, onPrint, canPrint }) => (
   <>
     <div className="space-y-3 print:hidden">
-      <Link
-        to={ROUTES.BRANCH_PAYMENT_METHODS}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900"
-      >
+      <Link to={ROUTES.BRANCH_PAYMENT_METHODS} className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900">
         <LuArrowLeft className="h-4 w-4" aria-hidden="true" />
         Back to payment methods
       </Link>
@@ -56,9 +53,7 @@ const PaymentMethodStatementHeader = ({ name, branchName, filters, onFilter, onP
     {/* Print only */}
     <header className="hidden border-b-2 border-slate-800 pb-3 print:block">
       <h1 className="text-xl font-bold">{BUSINESS_NAME}</h1>
-      <p className="text-sm font-semibold text-slate-600">
-        Payment Method Statement{branchName && ` · Branch: ${branchName}`}
-      </p>
+      <p className="text-sm font-semibold text-slate-600">Payment Method Statement{branchName && ` · Branch: ${branchName}`}</p>
       <p className="mt-1 text-xs text-slate-500">
         Period: {filters.from || "Start"} to {filters.to || todayInputValue()} · Printed {formatDateTime(new Date())}
       </p>

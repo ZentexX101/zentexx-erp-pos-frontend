@@ -8,9 +8,7 @@ const fieldClass =
   "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10";
 
 // "Payment Methods & Amounts": one or more method + amount lines, like the reference app.
-// checkBalance warns when a method can't cover its amount (money going out).
-const PaymentMethodLines = ({ lines, onChange, methods, checkBalance = false, title, addLabel, totalLabel, tone = "text-slate-900", footer }) => {
-  const methodById = new Map(methods.map((m) => [m._id, m]));
+const PaymentMethodLines = ({ lines, onChange, methods, title, addLabel, totalLabel, tone = "text-slate-900", footer }) => {
   const total = paymentLinesTotal(lines);
 
   const setLine = (key, field, value) => onChange(lines.map((line) => (line.key === key ? { ...line, [field]: value } : line)));
@@ -31,8 +29,6 @@ const PaymentMethodLines = ({ lines, onChange, methods, checkBalance = false, ti
 
       <div className="space-y-2">
         {lines.map((line, index) => {
-          const method = methodById.get(line.paymentMethod);
-          const short = checkBalance && method && Number(line.amount) > method.balance;
           // A method already used on another line can't be picked again
           const taken = new Set(lines.filter((l) => l.key !== line.key).map((l) => l.paymentMethod));
           return (
@@ -50,11 +46,10 @@ const PaymentMethodLines = ({ lines, onChange, methods, checkBalance = false, ti
                     .filter((m) => !taken.has(m._id))
                     .map((m) => (
                       <option key={m._id} value={m._id}>
-                        {m.name} ({formatTaka(m.balance)})
+                        {m.name}
                       </option>
                     ))}
                 </select>
-                {short && <p className="mt-1 text-xs text-red-600">Only {formatTaka(method.balance)} available</p>}
               </div>
               <input
                 inputMode="decimal"

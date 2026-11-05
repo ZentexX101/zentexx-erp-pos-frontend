@@ -60,7 +60,7 @@ const CreatePosReturn = () => {
     const filled = lines.filter((line) => line.paymentMethod || Number(line.amount) > 0);
     const problem =
       returnPicksError(sale, picks) ||
-      (filled.length > 0 && paymentLinesError(filled, methods, { checkBalance: true })) ||
+      (filled.length > 0 && paymentLinesError(filled)) ||
       (refund > total && "Refund can't be more than the return total.") ||
       (!sale.customer && refund !== total && "A walk-in customer must get the whole return amount back.");
     if (problem) return setError(problem);

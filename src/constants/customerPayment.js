@@ -18,7 +18,6 @@ export const CUSTOMER_PAYMENT_KINDS = {
     // the customer owes us (positive balance): pay it all in one click
     dueOf: (customer) => (customer?.balance > 0 ? customer.balance : 0),
     dueLabel: "Receive full due",
-    checkBalance: false, // money comes in
   },
   payout: {
     path: "/customer-payouts",
@@ -37,6 +36,5 @@ export const CUSTOMER_PAYMENT_KINDS = {
     // we owe the customer (negative balance): pay it all in one click
     dueOf: (customer) => (customer?.balance < 0 ? -customer.balance : 0),
     dueLabel: "Pay full amount owed",
-    checkBalance: true, // money goes out, so each method needs enough
   },
 };

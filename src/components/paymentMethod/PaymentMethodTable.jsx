@@ -45,15 +45,13 @@ const PaymentMethodTable = ({
       header: "Current Balance",
       headerClassName: "text-right",
       className: "text-right whitespace-nowrap",
-      render: (m) => <span className="font-semibold text-green-600">{formatTaka(m.balance)}</span>,
+      render: (m) => <span className={`font-semibold ${m.balance < 0 ? "text-red-600" : "text-green-600"}`}>{formatTaka(m.balance)}</span>,
     },
     {
       key: "status",
       header: "Status",
       render: (m) => (
-        <Badge tone={m.status === PAYMENT_METHOD_STATUS.ACTIVE ? "green" : "slate"}>
-          {m.status === PAYMENT_METHOD_STATUS.ACTIVE ? "Active" : "Inactive"}
-        </Badge>
+        <Badge tone={m.status === PAYMENT_METHOD_STATUS.ACTIVE ? "green" : "slate"}>{m.status === PAYMENT_METHOD_STATUS.ACTIVE ? "Active" : "Inactive"}</Badge>
       ),
     },
     { key: "createdAt", header: "Created Date", className: "whitespace-nowrap text-slate-600", render: (m) => formatShortDate(m.createdAt) },
@@ -90,7 +88,7 @@ const PaymentMethodTable = ({
         rows={paymentMethods}
         loading={isLoading}
         minWidth={1050}
-        emptyMessage={search ? `No payment method matches "${search}".` : "No payment methods yet. Create your first one, e.g. Cash."}
+        emptyMessage={search ? `No payment method matches "${search}".` : "No payment methods yet."}
       />
       <Pagination meta={meta} onPageChange={onPageChange} onLimitChange={onLimitChange} />
     </div>

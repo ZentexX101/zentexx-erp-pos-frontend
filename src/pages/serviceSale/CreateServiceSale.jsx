@@ -100,7 +100,7 @@ const CreateServiceSale = () => {
       (!service && "Pick a service.") ||
       (!row.serial && (quantity < 1 || quantity > left) && `Enter 1 to ${left} pieces.`) ||
       (discount > price && "Discount can't be more than the service price.") ||
-      (filled.length > 0 && paymentLinesError(filled, methods, { checkBalance: false })) ||
+      (filled.length > 0 && paymentLinesError(filled)) ||
       (paid > total && "Paid amount can't be more than the total.") ||
       (paid < total && !found.sale.customer && "This device was sold to a walk-in customer, so the service must be paid in full.");
     if (problem) return setError(problem);

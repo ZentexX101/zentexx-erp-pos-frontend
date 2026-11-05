@@ -61,7 +61,7 @@ const CreatePreOrder = () => {
       cartError(lines) ||
       ((Number(discount) || 0) > subTotal && "Discount can't be more than the sub total.") ||
       (advance < 1 && "Take an advance of at least ৳1.") ||
-      paymentLinesError(filled, methods, { checkBalance: false }) ||
+      paymentLinesError(filled) ||
       (remaining < 0 && "The advance can't be more than the grand total.");
     if (problem) return setError(problem);
 

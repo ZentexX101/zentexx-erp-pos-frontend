@@ -74,9 +74,7 @@ const PaymentMethodFormModal = ({ paymentMethod, onClose, onSaved }) => {
     };
 
     try {
-      const saved = isEdit
-        ? await updatePaymentMethod.mutateAsync({ id: paymentMethod._id, data: payload })
-        : await createPaymentMethod.mutateAsync(payload);
+      const saved = isEdit ? await updatePaymentMethod.mutateAsync({ id: paymentMethod._id, data: payload }) : await createPaymentMethod.mutateAsync(payload);
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) setErrors(err.details);
@@ -137,9 +135,7 @@ const PaymentMethodFormModal = ({ paymentMethod, onClose, onSaved }) => {
                 onChange={(e) => setField("initialBalance", toDecimal(e.target.value))}
                 error={errors.initialBalance}
               />
-              {isEdit && (
-                <p className="mt-1 text-xs text-slate-500">Changing it moves the current balance by the same difference.</p>
-              )}
+              {isEdit && <p className="mt-1 text-xs text-slate-500">Changing it moves the current balance by the same difference.</p>}
             </div>
             <Select label="Status" name="status" options={STATUS_OPTIONS} value={form.status} onChange={handleStatus} />
           </div>
@@ -149,9 +145,7 @@ const PaymentMethodFormModal = ({ paymentMethod, onClose, onSaved }) => {
           <ToggleField
             label="Set as Default Payment Method"
             description={
-              inactive
-                ? "Only an active method can be the default."
-                : "Picked automatically in POS sales and exchanges. Only one method can be the default."
+              inactive ? "Only an active method can be the default." : "Picked automatically in POS sales and exchanges. Only one method can be the default."
             }
             checked={form.isDefault}
             onChange={(value) => setField("isDefault", value)}

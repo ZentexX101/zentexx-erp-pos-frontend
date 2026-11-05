@@ -50,7 +50,7 @@ const SummaryRow = ({ label, value, tone = "text-slate-900", strong }) => (
   </p>
 );
 
-const methodOptions = (methods) => methods.map((m) => ({ value: m._id, label: `${m.name} (${formatTaka(m.balance)})` }));
+const methodOptions = (methods) => methods.map((m) => ({ value: m._id, label: m.name }));
 
 // Another advance from the customer
 export const PreOrderAdvanceModal = ({ methods, onClose, onSubmit }) => {
@@ -59,7 +59,7 @@ export const PreOrderAdvanceModal = ({ methods, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const problem = paymentLinesError(lines, methods, { checkBalance: false });
+    const problem = paymentLinesError(lines);
     if (problem) return setError(problem);
     run({ payments: toPaymentItems(lines) });
   };
@@ -142,12 +142,10 @@ export const PreOrderCancelModal = ({ row, methods, onClose, onSubmit }) => {
   const [refundMethod, setRefundMethod] = useState(defaultMethod?._id ?? "");
   const [note, setNote] = useState("");
   const { error, setError, saving, run } = useSubmit(onSubmit);
-  const from = methods.find((m) => m._id === refundMethod);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (row.paidAmount > 0 && !refundMethod) return setError("Pick the account to refund from.");
-    if (row.paidAmount > 0 && from && row.paidAmount > from.balance) return setError(`"${from.name}" doesn't have ${formatTaka(row.paidAmount)}.`);
     run({ refundMethod: row.paidAmount > 0 ? refundMethod : "", note: note.trim() });
   };
 
@@ -244,7 +242,6 @@ export const PreOrderSellModal = ({ row, methods, staff, onClose, onSubmit }) =>
   const lines = editedLines ?? [{ ...newPaymentLine(), key: "auto", paymentMethod: defaultMethod?._id ?? "", amount: toPay ? String(toPay) : "" }];
   const paidNow = toPay > 0 ? paymentLinesTotal(lines) : 0;
   const due = roundTaka(toPay - paidNow);
-  const refundFrom = methods.find((m) => m._id === refundMethod);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -253,11 +250,10 @@ export const PreOrderSellModal = ({ row, methods, staff, onClose, onSubmit }) =>
     const problem =
       (short && `Pick ${short.quantity} IMEI${short.quantity === 1 ? "" : "s"} for "${short.name}".`) ||
       ((Number(discount) || 0) > subTotal && "Discount can't be more than the sub total.") ||
-      (filled.length > 0 && paymentLinesError(filled, methods, { checkBalance: false })) ||
+      (filled.length > 0 && paymentLinesError(filled)) ||
       (paidNow > toPay && `Only ${formatTaka(toPay)} is left to pay.`) ||
       (due > 0 && !row.customer && "A walk-in customer must pay in full.") ||
-      (refund > 0 && !refundMethod && "Pick the account to refund from.") ||
-      (refund > 0 && refundFrom && refund > refundFrom.balance && `"${refundFrom.name}" doesn't have ${formatTaka(refund)}.`);
+      (refund > 0 && !refundMethod && "Pick the account to refund from.");
     if (problem) return setError(problem);
     run({
       items: row.items.map((item) => ({ product: item.product, serials: serials[item.product] ?? [], unitPrice: Number(prices[item.product]) || 0 })),

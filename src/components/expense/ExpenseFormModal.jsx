@@ -50,7 +50,7 @@ const ExpenseFormModal = ({ onClose, onSaved }) => {
     e.preventDefault();
     const problem =
       (form.title.trim().length < 2 && "Enter a title (at least 2 characters).") ||
-      (isGeneral ? paymentLinesError(payments, methods, { checkBalance: true }) : expenseLinesError(items));
+      (isGeneral ? paymentLinesError(payments) : expenseLinesError(items));
     if (problem) return setError(problem);
 
     const base = { type, title: form.title.trim(), category: form.category, date: form.date, note: form.note.trim() };
@@ -122,7 +122,6 @@ const ExpenseFormModal = ({ onClose, onSaved }) => {
               setPayments(next);
             }}
             methods={methods}
-            checkBalance
             title="Paid From"
             addLabel="Add Payment Method"
             totalLabel="Total Expense"

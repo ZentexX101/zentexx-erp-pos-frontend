@@ -14,7 +14,6 @@ import { formatTaka } from "../../utils/money";
 
 const PaymentMethods = () => {
   const { user } = useAuth();
-  const canCreate = hasPermission(user, "payment_method.create");
   const canEdit = hasPermission(user, "payment_method.edit");
   const canDelete = hasPermission(user, "payment_method.delete");
   const canTransact = hasPermission(user, "payment_method.transaction");
@@ -79,7 +78,7 @@ const PaymentMethods = () => {
 
   return (
     <div className="space-y-4">
-      <PaymentMethodHeader canCreate={canCreate} onCreate={() => openForm(null)} />
+      <PaymentMethodHeader />
 
       <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search payment methods..." className="max-w-sm pt-2" />
 

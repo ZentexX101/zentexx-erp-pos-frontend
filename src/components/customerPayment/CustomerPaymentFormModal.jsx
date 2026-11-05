@@ -44,7 +44,7 @@ const CustomerPaymentFormModal = ({ kind, onClose, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const problem = (!customer && "Select a customer.") || paymentLinesError(lines, methods, { checkBalance: copy.checkBalance });
+    const problem = (!customer && "Select a customer.") || paymentLinesError(lines);
     if (problem) return setError(problem);
 
     try {
@@ -97,7 +97,6 @@ const CustomerPaymentFormModal = ({ kind, onClose, onSaved }) => {
           lines={lines}
           onChange={changeLines}
           methods={methods}
-          checkBalance={copy.checkBalance}
           title={copy.linesTitle}
           addLabel={copy.addLabel}
           totalLabel={copy.totalLabel}

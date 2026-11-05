@@ -47,8 +47,6 @@ export const RepairCostModal = ({ methods, onClose, onSubmit }) => {
   const [form, setForm] = useState({ kind: "part", label: "", amount: "", paymentMethod: "" });
   const { error, setError, saving, run } = useSubmit(onSubmit);
   const set = (name, value) => setForm((prev) => ({ ...prev, [name]: value }));
-  const method = methods.find((m) => m._id === form.paymentMethod);
-  const short = method && Number(form.amount) > method.balance;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,21 +78,15 @@ export const RepairCostModal = ({ methods, onClose, onSubmit }) => {
         <Select
           label="Paid from"
           placeholder="No money moved now"
-          options={methods.map((m) => ({ value: m._id, label: `${m.name} (${formatTaka(m.balance)})` }))}
+          options={methods.map((m) => ({ value: m._id, label: m.name }))}
           value={form.paymentMethod}
           onChange={(e) => set("paymentMethod", e.target.value)}
         />
-        {short ? (
-          <p className="text-sm text-red-600">
-            Only {formatTaka(method.balance)} available in {method.name}.
-          </p>
-        ) : (
-          <p className="text-[13px] leading-relaxed text-slate-500">
-            {form.paymentMethod
-              ? "The money leaves this account now."
-              : "Pick an account if you paid for this now. Leave it empty if the part was already paid for or will be paid later."}
-          </p>
-        )}
+        <p className="text-[13px] leading-relaxed text-slate-500">
+          {form.paymentMethod
+            ? "The money leaves this account now."
+            : "Pick an account if you paid for this now. Leave it empty if the part was already paid for or will be paid later."}
+        </p>
       </form>
     </Modal>
   );
@@ -107,7 +99,7 @@ export const RepairAdvanceModal = ({ methods, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const problem = paymentLinesError(lines, methods, { checkBalance: false });
+    const problem = paymentLinesError(lines);
     if (problem) return setError(problem);
     run({ payments: toPaymentItems(lines) });
   };
@@ -196,17 +188,15 @@ export const RepairCloseModal = ({ job, outcome, methods, onClose, onSubmit }) =
   const lines = editedLines ?? [{ ...newPaymentLine(), key: "auto", paymentMethod: defaultMethod?._id ?? "", amount: toPay ? String(toPay) : "" }];
   const paidNow = toPay > 0 ? paymentLinesTotal(lines) : 0;
   const due = roundTaka(toPay - paidNow);
-  const refundFrom = methods.find((m) => m._id === refundMethod);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const filled = toPay > 0 ? lines.filter((line) => line.paymentMethod || Number(line.amount) > 0) : [];
     const problem =
-      (filled.length > 0 && paymentLinesError(filled, methods, { checkBalance: false })) ||
+      (filled.length > 0 && paymentLinesError(filled)) ||
       (paidNow > toPay && `Only ${formatTaka(toPay)} is left to pay.`) ||
       (due > 0 && !job.customer && "A walk-in customer must pay in full.") ||
-      (refund > 0 && !refundMethod && "Pick the account to refund from.") ||
-      (refund > 0 && refundFrom && refund > refundFrom.balance && `"${refundFrom.name}" doesn't have ${formatTaka(refund)}.`);
+      (refund > 0 && !refundMethod && "Pick the account to refund from.");
     if (problem) return setError(problem);
     run({
       outcome,
@@ -253,7 +243,7 @@ export const RepairCloseModal = ({ job, outcome, methods, onClose, onSubmit }) =
           <Select
             label={`Refund ${formatTaka(refund)} from`}
             required
-            options={methods.map((m) => ({ value: m._id, label: `${m.name} (${formatTaka(m.balance)})` }))}
+            options={methods.map((m) => ({ value: m._id, label: m.name }))}
             value={refundMethod}
             onChange={(e) => setRefundMethod(e.target.value)}
           />

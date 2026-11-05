@@ -85,7 +85,7 @@ const CreateReplacement = () => {
       (row.serial && !form.newSerial && "Select the new IMEI.") ||
       (!row.serial && (quantity < 1 || quantity > row.device.quantity) && `Enter 1 to ${row.device.quantity} pieces.`) ||
       (!form.reason.trim() && "Say what's wrong with it.") ||
-      (filled.length > 0 && paymentLinesError(filled, methods, { checkBalance: false })) ||
+      (filled.length > 0 && paymentLinesError(filled)) ||
       (paid > charge && "Paid amount can't be more than the charge.") ||
       (paid < charge && !found.sale.customer && "This was a walk-in sale, so the charge must be paid in full.");
     if (problem) return setError(problem);

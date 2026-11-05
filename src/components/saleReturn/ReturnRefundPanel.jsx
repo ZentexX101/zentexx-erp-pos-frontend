@@ -15,7 +15,6 @@ const ReturnRefundPanel = ({ sale, total, refund, suggested, lines, onLines, onS
         lines={lines}
         onChange={onLines}
         methods={methods}
-        checkBalance
         title="Refund (money given back now)"
         addLabel="Add Payment Method"
         totalLabel="Total Refund"

@@ -42,7 +42,7 @@ const SupplierPaymentFormModal = ({ onClose, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const problem = (!supplier && "Select a supplier.") || paymentLinesError(lines, methods, { checkBalance: true });
+    const problem = (!supplier && "Select a supplier.") || paymentLinesError(lines);
     if (problem) return setError(problem);
 
     try {
@@ -95,7 +95,6 @@ const SupplierPaymentFormModal = ({ onClose, onSaved }) => {
           lines={lines}
           onChange={changeLines}
           methods={methods}
-          checkBalance
           title="Payment Methods & Amounts"
           addLabel="Add Payment Method"
           totalLabel="Total Payment"
