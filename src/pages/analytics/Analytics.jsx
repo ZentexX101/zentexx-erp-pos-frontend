@@ -89,12 +89,11 @@ const Analytics = ({ scope = "main" }) => {
             {/* Headline numbers */}
             <SalesHeroCards
               sales={data.sales}
+              salesNow={data.salesNow}
               purchases={data.purchases}
               expenses={data.expenses}
-              profit={data.profit}
               trend={data.charts.trend}
               linkTo={linkTo}
-              showMoney={mainAdmin}
               periodLabel={periodLabel}
             />
 

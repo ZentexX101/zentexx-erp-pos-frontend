@@ -118,7 +118,7 @@ const Advances = () => {
         ) : (
           <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {balances.map((row) => (
-              <li key={row.user._id} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
+              <li key={row.user._id} className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
                 <PersonLink person={row.user} />
                 <span className="shrink-0 font-semibold tabular-nums text-slate-900">{formatTaka(row.amount)}</span>
               </li>

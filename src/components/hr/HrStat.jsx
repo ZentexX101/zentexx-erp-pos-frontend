@@ -15,11 +15,9 @@ const HrStat = ({ label, value, hint, tone = "text-slate-900", icon, accent = "s
   return (
     <div className="flex min-w-0 items-start justify-between gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/70 transition hover:shadow-md sm:p-5">
       <div className="min-w-0">
-        <p className="truncate text-[13px] font-medium text-slate-500">{label}</p>
-        <p className={`mt-1.5 truncate text-2xl font-bold tracking-tight tabular-nums ${tone}`} title={typeof value === "string" ? value : undefined}>
-          {value}
-        </p>
-        {hint && <p className="mt-0.5 truncate text-xs text-slate-500">{hint}</p>}
+        <p className="text-[13px] font-medium text-slate-500">{label}</p>
+        <p className={`mt-1.5 text-2xl font-bold tracking-tight tabular-nums break-all ${tone}`}>{value}</p>
+        {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
       </div>
       {Icon && (
         <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${ACCENTS[accent]}`} aria-hidden="true">

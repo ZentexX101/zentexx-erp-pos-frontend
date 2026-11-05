@@ -188,10 +188,12 @@ const PreOrderDetail = () => {
                   Print invoice
                 </Button>
               ) : (
-                <Button variant="secondary" onClick={() => setPrinting("slip")}>
-                  <LuPrinter className="size-4" aria-hidden="true" />
-                  Print slip
-                </Button>
+                booked && (
+                  <Button variant="secondary" onClick={() => setPrinting("slip")}>
+                    <LuPrinter className="size-4" aria-hidden="true" />
+                    Print slip
+                  </Button>
+                )
               )}
               {canEdit && booked && <Button onClick={() => setModal("sell")}>Sell</Button>}
             </div>
@@ -229,7 +231,7 @@ const PreOrderDetail = () => {
                 {row.items.map((item) => (
                   <li key={item.product} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2.5 text-sm first:pt-0 last:pb-0">
                     <span className="min-w-0">
-                      <span className="block font-medium uppercase text-slate-900">{item.name}</span>
+                      <span className="block font-medium uppercase text-slate-900 [overflow-wrap:anywhere]">{item.name}</span>
                       <span className="block text-xs text-slate-500">
                         {item.quantity} × {formatTaka(item.unitPrice)}
                         {booked && ` · ${item.inStock} in this branch`}
@@ -261,8 +263,8 @@ const PreOrderDetail = () => {
                   <li key={`${line.title}-${index}`} className="flex gap-3 text-sm">
                     <span className={`mt-1.5 size-2 shrink-0 rounded-full ${line.dot}`} aria-hidden="true" />
                     <span className="min-w-0">
-                      <span className="block font-medium text-slate-900">{line.title}</span>
-                      {line.note && <span className="block text-slate-600">{line.note}</span>}
+                      <span className="block font-medium text-slate-900 [overflow-wrap:anywhere]">{line.title}</span>
+                      {line.note && <span className="block text-slate-600 [overflow-wrap:anywhere]">{line.note}</span>}
                       <span className="block text-xs text-slate-500">
                         {formatDateTime(line.date)}
                         {line.by ? ` · ${line.by}` : ""}
@@ -301,7 +303,7 @@ const PreOrderDetail = () => {
                     <MoneyRow label="Advance used" value={invoice.advanceAmount} tone="text-emerald-700" />
                     <MoneyRow label="Paid at sale" value={roundTaka(invoice.paidAmount - invoice.advanceAmount)} tone="text-emerald-700" />
                     {row.refundAmount > 0 && <MoneyRow label="Refunded" value={row.refundAmount} tone="text-amber-700" />}
-                    {invoice.dueAmount > 0 && <MoneyRow label="Due" value={invoice.dueAmount} tone="text-red-600" strong />}
+                    {invoice.dueAmount > 0 && <MoneyRow label="Due at sale" value={invoice.dueAmount} tone="text-red-600" strong />}
                   </>
                 ) : (
                   <>

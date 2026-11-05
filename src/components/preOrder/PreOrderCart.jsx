@@ -32,7 +32,7 @@ const PreOrderCart = ({ lines, onChange }) => {
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:grid-cols-[minmax(0,1fr)_6.5rem_4rem_6.5rem_2rem]"
             >
               <span className="col-span-1 min-w-0 text-sm font-medium uppercase text-slate-900" title={line.product.name}>
-                <span className="line-clamp-2">{line.product.name}</span>
+                <span className="line-clamp-2 [overflow-wrap:anywhere]">{line.product.name}</span>
               </span>
               <button
                 type="button"

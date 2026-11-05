@@ -72,7 +72,7 @@ const Repairs = () => {
           <span className="block max-w-64 truncate font-medium text-slate-900" title={r.deviceName}>
             {r.deviceName}
           </span>
-          {r.imei && <span className="block font-mono text-xs text-slate-500">{r.imei}</span>}
+          {r.imei && <span className="block max-w-64 truncate font-mono text-xs text-slate-500">{r.imei}</span>}
           <span className="block max-w-64 truncate text-xs text-slate-500" title={r.problem}>
             {r.problem}
           </span>
@@ -95,9 +95,17 @@ const Repairs = () => {
     {
       key: "technician",
       header: "Technician",
-      className: "whitespace-nowrap text-slate-600",
-      render: (r) =>
-        r.technicianType === "outside" ? `${r.outsideName || "Outside"} (outside)` : (r.technician?.name ?? <span className="text-slate-400">Not set</span>),
+      className: "text-slate-600",
+      render: (r) => {
+        const name = r.technicianType === "outside" ? `${r.outsideName || "Outside"} (outside)` : r.technician?.name;
+        return name ? (
+          <span className="block max-w-40 truncate" title={name}>
+            {name}
+          </span>
+        ) : (
+          <span className="text-slate-400">Not set</span>
+        );
+      },
     },
     {
       key: "promise",
@@ -223,6 +231,7 @@ const Repairs = () => {
         <Select
           variant="filter"
           aria-label="Technician"
+          className="sm:w-44"
           placeholder="All technicians"
           options={(options?.staff ?? []).map((member) => ({ value: member._id, label: member.name }))}
           value={technician}

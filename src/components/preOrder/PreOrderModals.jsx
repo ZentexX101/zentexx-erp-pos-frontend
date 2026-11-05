@@ -187,7 +187,7 @@ const SellLine = ({ item, price, serials, onPrice, onSerials }) => {
   return (
     <div className="space-y-3 rounded-xl bg-slate-50 p-3.5">
       <div className="flex items-end justify-between gap-3">
-        <p className="min-w-0 pb-2 text-sm font-medium uppercase text-slate-900">
+        <p className="min-w-0 pb-2 text-sm font-medium uppercase text-slate-900 [overflow-wrap:anywhere]">
           {item.quantity} × {item.name}
         </p>
         <div className="w-32 shrink-0">
@@ -204,14 +204,14 @@ const SellLine = ({ item, price, serials, onPrice, onSerials }) => {
           ) : pieces.length === 0 ? (
             <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">None of this is in this branch's stock right now.</p>
           ) : (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex max-h-44 flex-wrap gap-2 overflow-y-auto p-0.5">
               {pieces.map((piece) => (
                 <button
                   key={piece.serial}
                   type="button"
                   aria-pressed={serials.includes(piece.serial)}
                   onClick={() => toggle(piece.serial)}
-                  className={`rounded-full px-3 py-1.5 font-mono text-xs font-medium ring-1 transition ${serials.includes(piece.serial) ? "bg-white text-slate-900 ring-slate-500" : "bg-white text-slate-600 ring-slate-200 hover:ring-slate-300"}`}
+                  className={`max-w-full rounded-full px-3 py-1.5 font-mono text-xs font-medium ring-1 transition [overflow-wrap:anywhere] ${serials.includes(piece.serial) ? "bg-white text-slate-900 ring-slate-500" : "bg-white text-slate-600 ring-slate-200 hover:ring-slate-300"}`}
                 >
                   {piece.serial}
                 </button>

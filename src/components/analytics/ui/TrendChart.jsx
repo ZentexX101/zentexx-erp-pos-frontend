@@ -26,7 +26,7 @@ const statsOf = (data, key) => {
 const Stat = ({ label, value, hint }) => (
   <div className="min-w-0 px-4 py-3">
     <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{label}</p>
-    <p className="mt-0.5 truncate text-sm font-bold tabular-nums text-slate-900" title={typeof value === "string" ? value : undefined}>
+    <p className="mt-0.5 break-all text-sm font-bold tabular-nums text-slate-900">
       {value}
     </p>
     {hint && <p className="truncate text-xs text-slate-500">{hint}</p>}
@@ -74,10 +74,10 @@ const TrendChart = ({ data, unit = "day" }) => {
                   <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: SERIES_COLORS[key] }} aria-hidden="true" />
                   <span className="truncate">{name}</span>
                 </span>
-                <span className="mt-1 block truncate text-sm font-bold tabular-nums text-slate-900 sm:text-base" title={formatTaka(stats[key].total)}>
+                <span className="mt-1 block break-all text-sm font-bold tabular-nums text-slate-900 sm:text-base">
                   {formatTaka(stats[key].total)}
                 </span>
-                <span className="hidden truncate text-[11px] tabular-nums text-slate-500 sm:block">
+                <span className="hidden break-all text-[11px] tabular-nums text-slate-500 sm:block">
                   Avg {formatTakaShort(stats[key].average)} / {per}
                 </span>
               </button>

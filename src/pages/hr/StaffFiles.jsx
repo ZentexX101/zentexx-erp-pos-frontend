@@ -20,6 +20,7 @@ import { useStaffListData } from "../../hooks/useHrApi";
 import { currentMonth } from "../../utils/hr";
 import { formatTaka } from "../../utils/money";
 
+const LEFT_OPTIONS = [{ value: "true", label: "Who left" }];
 const head = "px-3 py-3 text-right font-semibold";
 const count = "whitespace-nowrap px-3 py-3 text-right tabular-nums";
 
@@ -39,12 +40,13 @@ const StaffFiles = () => {
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [branchFilter, setBranchFilter] = useState("");
+  const [left, setLeft] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
   // call hr api (search, filters and paging run on the backend)
   const branch = inBranch ? activeBranch?._id : branchFilter;
-  const { data, isLoading, error } = useStaffListData({ branch: isMainAdmin(user) ? branch : undefined, search, month, page, limit });
+  const { data, isLoading, error } = useStaffListData({ branch: isMainAdmin(user) ? branch : undefined, search, month, left, page, limit });
   const { data: branches = [] } = useBranchNamesData();
   const rows = data?.data ?? [];
   const showBranch = pickBranch && !branchFilter;
@@ -66,6 +68,7 @@ const StaffFiles = () => {
         {pickBranch && (
           <Select
             variant="filter"
+            className="sm:w-52"
             aria-label="Branch"
             placeholder="All branches"
             options={branches.map((b) => ({ value: b._id, label: b.name }))}
@@ -73,6 +76,14 @@ const StaffFiles = () => {
             onChange={(e) => withPageReset(setBranchFilter)(e.target.value)}
           />
         )}
+        <Select
+          variant="filter"
+          aria-label="Working or left"
+          placeholder="Working now"
+          options={LEFT_OPTIONS}
+          value={left}
+          onChange={(e) => withPageReset(setLeft)(e.target.value)}
+        />
       </FilterBar>
 
       <Alert>{error?.message}</Alert>

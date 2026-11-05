@@ -18,7 +18,7 @@ const HeroCard = ({ icon, label, value, words, hint, badge, color, glow, spark, 
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ backgroundColor: `${color}1a`, color }}>
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
-        <p className="min-w-0 flex-1 truncate text-sm font-medium text-slate-500">{label}</p>
+        <p className="min-w-0 flex-1 text-sm font-medium leading-tight text-slate-500">{label}</p>
         {badge && (
           <span
             className="inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold tabular-nums text-slate-800"
@@ -29,7 +29,7 @@ const HeroCard = ({ icon, label, value, words, hint, badge, color, glow, spark, 
           </span>
         )}
       </div>
-      <p className={`truncate px-5 pt-3 text-2xl font-bold tracking-tight tabular-nums sm:text-[1.7rem] ${valueClass}`} title={value}>
+      <p className={`px-5 pt-3 text-2xl font-bold tracking-tight tabular-nums break-all sm:text-[1.7rem] ${valueClass}`}>
         {value}
       </p>
       {words && (
@@ -37,7 +37,7 @@ const HeroCard = ({ icon, label, value, words, hint, badge, color, glow, spark, 
           {words}
         </p>
       )}
-      {hint && <p className="truncate px-5 pt-1 text-sm text-slate-500">{hint}</p>}
+      {hint && <p className="px-5 pt-1 text-sm text-slate-500">{hint}</p>}
 
       <div className="mt-2 h-14" aria-hidden="true">
         {spark?.length > 1 && (

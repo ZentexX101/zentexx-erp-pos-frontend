@@ -12,7 +12,7 @@ export const StatTile = ({ icon, label, value, hint, tone = "#64748b", valueClas
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: `${tone}17`, color: tone }}>
           <Icon className="h-4 w-4" aria-hidden="true" />
         </span>
-        <p className="min-w-0 flex-1 truncate text-[13px] font-medium text-slate-600">{label}</p>
+        <p className="min-w-0 flex-1 text-[13px] font-medium leading-tight text-slate-600">{label}</p>
         {link && (
           <LuArrowUpRight
             className="h-4 w-4 shrink-0 text-slate-300 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-slate-700"
@@ -20,10 +20,10 @@ export const StatTile = ({ icon, label, value, hint, tone = "#64748b", valueClas
           />
         )}
       </div>
-      <p className={`mt-3 truncate text-xl font-bold tracking-tight tabular-nums ${valueClass}`} title={typeof value === "string" ? value : undefined}>
+      <p className={`mt-3 text-xl font-bold tracking-tight tabular-nums break-all ${valueClass}`}>
         {value}
       </p>
-      {hint && <p className="mt-0.5 truncate text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
     </>
   );
 

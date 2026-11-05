@@ -297,8 +297,8 @@ const RepairDetail = () => {
                   <li key={`${row.title}-${index}`} className="flex gap-3 text-sm">
                     <span className={`mt-1.5 size-2 shrink-0 rounded-full ${row.dot}`} aria-hidden="true" />
                     <span className="min-w-0">
-                      <span className="block font-medium text-slate-900">{row.title}</span>
-                      {row.note && <span className="block text-slate-600">{row.note}</span>}
+                      <span className="block font-medium text-slate-900 [overflow-wrap:anywhere]">{row.title}</span>
+                      {row.note && <span className="block text-slate-600 [overflow-wrap:anywhere]">{row.note}</span>}
                       <span className="block text-xs text-slate-500">
                         {formatDateTime(row.date)}
                         {row.by ? ` · ${row.by}` : ""}
@@ -355,7 +355,7 @@ const RepairDetail = () => {
                     <MoneyRow label={job.status === "cancelled" ? "Fee" : "Charge"} value={job.charge} />
                     <MoneyRow label="Paid" value={job.paidAmount} tone="text-emerald-700" />
                     {job.refundAmount > 0 && <MoneyRow label="Refunded" value={job.refundAmount} tone="text-amber-700" />}
-                    {job.dueAmount > 0 && <MoneyRow label="Due" value={job.dueAmount} tone="text-red-600" strong />}
+                    {job.dueAmount > 0 && <MoneyRow label="Due at delivery" value={job.dueAmount} tone="text-red-600" strong />}
                   </>
                 ) : (
                   <>

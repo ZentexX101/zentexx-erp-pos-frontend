@@ -7,15 +7,15 @@ import { formatPhone } from "../../utils/phone";
 
 const Row = ({ label, children, strong }) => (
   <tr className={strong ? "font-bold" : ""}>
-    <td className="py-0.5 pr-3 align-top text-slate-600">{label}</td>
-    <td className="py-0.5 text-right align-top tabular-nums">{children}</td>
+    <td className="py-0.5 pr-3 align-top text-slate-600 [overflow-wrap:anywhere]">{label}</td>
+    <td className="whitespace-nowrap py-0.5 text-right align-top tabular-nums">{children}</td>
   </tr>
 );
 
 const Fact = ({ label, children }) => (
   <div className="break-inside-avoid">
     <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-    <p className="font-medium">{children}</p>
+    <p className="font-medium [overflow-wrap:anywhere]">{children}</p>
   </div>
 );
 
@@ -30,7 +30,7 @@ const PreOrderSlip = ({ row }) => (
         {row.branch?.address && <p>{row.branch.address}</p>}
         {row.branch?.phone && <p>{formatPhone(row.branch.phone)}</p>}
       </div>
-      <div className="text-right">
+      <div className="shrink-0 text-right">
         <h1 className="text-base font-bold">Pre Order Slip</h1>
         <p className="font-mono font-semibold">{row.preOrderNo}</p>
         <p>{formatDateTime(row.bookedAt)}</p>

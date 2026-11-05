@@ -92,7 +92,7 @@ const PreOrderProductGrid = ({ onAdd, isAdded }) => {
                   )}
                 </span>
                 <span className="flex flex-1 flex-col gap-1 p-3">
-                  <span className="line-clamp-2 text-sm font-semibold uppercase text-slate-800">{product.name}</span>
+                  <span className="line-clamp-2 text-sm font-semibold uppercase text-slate-800 [overflow-wrap:anywhere]">{product.name}</span>
                   <span className="text-xs text-slate-500">
                     Available: <span className="font-semibold text-slate-700">0</span>
                     {product.trackSerial && " · IMEI"}

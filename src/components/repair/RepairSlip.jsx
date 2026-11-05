@@ -15,7 +15,7 @@ const Row = ({ label, children, strong }) => (
 const Fact = ({ label, children }) => (
   <div className="break-inside-avoid">
     <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-    <p className="font-medium">{children}</p>
+    <p className="font-medium [overflow-wrap:anywhere]">{children}</p>
   </div>
 );
 
@@ -32,7 +32,7 @@ const RepairSlip = ({ job }) => {
           {job.branch?.address && <p>{job.branch.address}</p>}
           {job.branch?.phone && <p>{formatPhone(job.branch.phone)}</p>}
         </div>
-        <div className="text-right">
+        <div className="shrink-0 text-right">
           <h1 className="text-base font-bold">{closed ? "Repair Bill" : "Repair Slip"}</h1>
           <p className="font-mono font-semibold">{job.repairNo}</p>
           <p>{formatDateTime(job.receivedAt)}</p>
