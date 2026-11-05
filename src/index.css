@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* Tailwind v4 leaves buttons on the default arrow. Everything clickable gets the hand here, so new ones do too;
+   a cursor-* class on an element still wins. Links already have it. */
+@layer base {
+  button:not(:disabled),
+  select:not(:disabled),
+  summary,
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  label:has(input[type="checkbox"]:not(:disabled)),
+  label:has(input[type="radio"]:not(:disabled)) {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  select:disabled {
+    @apply cursor-not-allowed;
+  }
+}
+
 /* App theme. Change the brand colour here and every button, active state and focus ring follows. */
 @theme inline {
   --color-brand: var(--color-slate-900);
