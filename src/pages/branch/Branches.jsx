@@ -115,7 +115,7 @@ const Branches = () => {
           <button
             type="button"
             onClick={() => handleLogin(b)}
-            className="inline-flex items-center gap-1.5 rounded-md bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-800"
+            className="inline-flex items-center gap-1.5 rounded-md bg-brand px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-hover"
           >
             <Icon name="login" className="h-3.5 w-3.5" />
             Login
