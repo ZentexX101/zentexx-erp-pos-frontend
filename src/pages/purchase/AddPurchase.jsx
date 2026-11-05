@@ -90,11 +90,7 @@ const AddPurchase = () => {
 
       <div className="grid gap-4 xl:grid-cols-[2fr_3fr]">
         <SupplierPicker selected={supplier} onSelect={setSupplier} canCreate={hasPermission(user, "supplier.create")} />
-        <ProductPicker
-          addedIds={new Set(lines.map((line) => line.product._id))}
-          onAdd={addLine}
-          canCreate={hasPermission(user, "product.create")}
-        />
+        <ProductPicker addedIds={new Set(lines.map((line) => line.product._id))} onAdd={addLine} canCreate={hasPermission(user, "product.create")} />
       </div>
 
       <PurchaseItemList lines={lines} onChange={changeLine} onRemove={removeLine} />

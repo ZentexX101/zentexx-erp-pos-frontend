@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import PageHeader from "../../components/common/layout/PageHeader";
@@ -32,7 +34,11 @@ const AllSupplierPayments = () => {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Supplier Payment Lists" subtitle="Supplier payments from every branch. Payments are made from inside a branch." />
+      <PageHeader
+        tools={<ExportPdfButton report={pdfReports.allSupplierPayments()} params={{ search, branch }} scope={branches.find((b) => b._id === branch)?.name} />}
+        title="Supplier Payment Lists"
+        subtitle="Supplier payments from every branch. Payments are made from inside a branch."
+      />
 
       <PaymentListFilters
         searchPlaceholder="Search payment no. or supplier..."

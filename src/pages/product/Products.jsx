@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import ProductDeleteModal from "../../components/product/ProductDeleteModal";
@@ -86,7 +88,11 @@ const Products = () => {
 
   return (
     <div className="space-y-4">
-      <ProductHeader canCreate={canCreate} onCreate={() => openForm(null)} />
+      <ProductHeader
+        tools={<ExportPdfButton report={pdfReports.products()} params={{ ...filters, search }} />}
+        canCreate={canCreate}
+        onCreate={() => openForm(null)}
+      />
 
       <ProductFilters
         searchInput={searchInput}
@@ -114,15 +120,7 @@ const Products = () => {
         onLimitChange={handleLimitChange}
       />
 
-      {form && (
-        <ProductFormModal
-          product={form.product}
-          categories={categories}
-          brands={brands}
-          onClose={() => setForm(null)}
-          onSaved={handleSaved}
-        />
-      )}
+      {form && <ProductFormModal product={form.product} categories={categories} brands={brands} onClose={() => setForm(null)} onSaved={handleSaved} />}
 
       <ProductDeleteModal product={deleting} onClose={() => setDeleting(null)} onConfirm={handleDelete} />
     </div>

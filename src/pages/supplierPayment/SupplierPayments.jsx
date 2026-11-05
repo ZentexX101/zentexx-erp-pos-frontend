@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -55,6 +57,7 @@ const SupplierPayments = () => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.supplierPayments()} params={{ search }} />}
         title="Supplier Payment"
         subtitle="Manage all supplier payments"
         actions={

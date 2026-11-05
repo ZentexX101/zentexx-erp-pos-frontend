@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import PageHeader from "../../components/common/layout/PageHeader";
@@ -35,7 +37,17 @@ const AllCustomerPaymentList = ({ kind }) => {
 
   return (
     <div className="space-y-4">
-      <PageHeader title={copy.listTitle} subtitle={`${copy.subtitle} in every branch. They are made from inside a branch.`} />
+      <PageHeader
+        tools={
+          <ExportPdfButton
+            report={pdfReports.allCustomerPayments(kind, copy.title)}
+            params={{ search, branch }}
+            scope={branches.find((b) => b._id === branch)?.name}
+          />
+        }
+        title={copy.listTitle}
+        subtitle={`${copy.subtitle} in every branch. They are made from inside a branch.`}
+      />
 
       <PaymentListFilters
         searchPlaceholder={`Search ${copy.noun} no., customer name or phone...`}

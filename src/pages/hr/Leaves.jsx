@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuCheck, LuX } from "react-icons/lu";
 import Alert from "../../components/common/alerts/Alert";
@@ -52,6 +54,7 @@ const Leaves = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.leaves()} params={{ status }} />}
         title="Leave"
         subtitle="Casual and sick leave are paid. Unpaid leave comes off the salary."
         actions={canManage && <Button onClick={() => setAdding(true)}>Add leave</Button>}

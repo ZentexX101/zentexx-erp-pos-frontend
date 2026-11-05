@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useCallback, useState } from "react";
 import { LuPrinter } from "react-icons/lu";
 import Alert from "../../components/common/alerts/Alert";
@@ -44,6 +46,7 @@ const Salaries = () => {
     <div>
       <div className="space-y-5 print:hidden">
         <PageHeader
+          tools={<ExportPdfButton report={pdfReports.salaries()} params={{}} />}
           title="Salary"
           subtitle="Worked out from attendance, leave, sales and advances"
           actions={<MonthSwitcher month={month} onChange={setMonth} />}

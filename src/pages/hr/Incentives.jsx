@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Badge from "../../components/common/data/Badge";
@@ -24,6 +26,7 @@ const Incentives = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.incentives()} params={{}} />}
         title="Incentive"
         subtitle="Earned from each sale and service sale. Paid with the month's salary."
         actions={<MonthSwitcher month={month} onChange={setMonth} />}

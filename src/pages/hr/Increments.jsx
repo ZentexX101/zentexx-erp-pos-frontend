@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuArrowDownRight, LuArrowRight, LuArrowUpRight } from "react-icons/lu";
 import Alert from "../../components/common/alerts/Alert";
@@ -104,6 +106,7 @@ const Increments = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.increments()} params={{}} />}
         title="Increment"
         subtitle="Every salary change, with what it was before"
         actions={canManage && <Button onClick={() => setChanging(true)}>Change salary</Button>}

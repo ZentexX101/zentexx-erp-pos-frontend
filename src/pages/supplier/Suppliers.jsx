@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import SearchInput from "../../components/common/forms/SearchInput";
@@ -66,7 +68,7 @@ const Suppliers = () => {
 
   return (
     <div className="space-y-4">
-      <SupplierHeader canCreate={canCreate} onCreate={() => openForm(null)} />
+      <SupplierHeader tools={<ExportPdfButton report={pdfReports.suppliers()} params={{ search }} />} canCreate={canCreate} onCreate={() => openForm(null)} />
 
       <SupplierBalanceNote />
 

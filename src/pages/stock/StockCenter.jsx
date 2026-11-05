@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuBoxes, LuCoins, LuPackage, LuPackageX, LuTag, LuTriangleAlert } from "react-icons/lu";
 import Alert from "../../components/common/alerts/Alert";
@@ -64,7 +66,17 @@ const StockCenter = () => {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Stock Center" subtitle="How much of every product each branch has, side by side" />
+      <PageHeader
+        tools={
+          <ExportPdfButton
+            report={pdfReports.stockCenter(filters.branch ? allBranches.filter((b) => b._id === filters.branch) : allBranches)}
+            params={{ search, ...filters }}
+            scope={allBranches.find((b) => b._id === filters.branch)?.name}
+          />
+        }
+        title="Stock Center"
+        subtitle="How much of every product each branch has, side by side"
+      />
 
       <BranchStockCards branches={allBranches} active={filters.branch} onPick={(id) => handleFilter("branch", id)} showValue />
 

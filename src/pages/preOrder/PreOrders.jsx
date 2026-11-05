@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuAlarmClock, LuChevronRight, LuClipboardList, LuPackageCheck, LuPhone, LuWallet } from "react-icons/lu";
 import { Link } from "react-router";
@@ -147,6 +149,7 @@ const PreOrders = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.preOrders()} params={{ search, status: tab, overdue }} />}
         title="Pre Orders"
         subtitle="Products booked before they arrive, and who's next when stock comes in"
         actions={

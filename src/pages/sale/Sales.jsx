@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
@@ -24,7 +26,13 @@ const DUE_OPTIONS = [{ value: "true", label: "Only with due" }];
 
 // What differs between the POS Orders List and the Exchange Orders List
 const KINDS = {
-  sale: { title: "POS Orders List", subtitle: "Every sale of this branch", createLabel: "Create POS", createPath: ROUTES.BRANCH_POS, permission: "sales.create" },
+  sale: {
+    title: "POS Orders List",
+    subtitle: "Every sale of this branch",
+    createLabel: "Create POS",
+    createPath: ROUTES.BRANCH_POS,
+    permission: "sales.create",
+  },
   exchange: {
     title: "Exchange Orders List",
     subtitle: "Every exchange of this branch: new items sold, old devices taken in",
@@ -70,7 +78,10 @@ const Sales = ({ kind = "sale" }) => {
 
   // call sale api (period, search, due and paging run on the backend)
   const { data, isLoading, error } = useSalesData({ search, due, ...periodRange(period.period, period), page, limit }, kind);
-  usePrintWhenReady(printSale, useCallback(() => setPrintSale(null), []));
+  usePrintWhenReady(
+    printSale,
+    useCallback(() => setPrintSale(null), []),
+  );
 
   // Any filter change starts again from page 1
   const withPageReset = (setter) => (value) => {
@@ -82,14 +93,12 @@ const Sales = ({ kind = "sale" }) => {
     <div>
       <div className="space-y-4 print:hidden">
         <PageHeader
+          tools={<ExportPdfButton report={pdfReports.sales(kind, isMainAdmin(user))} params={{ search, due }} />}
           title={copy.title}
           subtitle={copy.subtitle}
           actions={
             hasPermission(user, copy.permission) && (
-              <Link
-                to={copy.createPath}
-                className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-hover"
-              >
+              <Link to={copy.createPath} className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-hover">
                 <Icon name="plus" />
                 {copy.createLabel}
               </Link>

@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuArrowRight } from "react-icons/lu";
 import { Link } from "react-router";
@@ -166,6 +168,7 @@ const Replacements = () => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.replacements()} params={{ search, status }} />}
         title="Replacement List"
         subtitle="Faulty pieces swapped for new ones, and what became of them"
         actions={

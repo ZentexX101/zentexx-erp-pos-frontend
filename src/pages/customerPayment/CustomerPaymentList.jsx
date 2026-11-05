@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -42,14 +44,13 @@ const CustomerPaymentList = ({ kind }) => {
 
   const handleSaved = (saved) => {
     setCreating(false);
-    setNotice(
-      `${saved.paymentNo}: ${formatTaka(saved.totalAmount)} ${kind === "payment" ? "received from" : "paid to"} ${saved.customer?.name}.`
-    );
+    setNotice(`${saved.paymentNo}: ${formatTaka(saved.totalAmount)} ${kind === "payment" ? "received from" : "paid to"} ${saved.customer?.name}.`);
   };
 
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.customerPayments(kind, copy.title)} params={{ search }} />}
         title={copy.title}
         subtitle={copy.subtitle}
         actions={

@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuAlarmClock, LuChevronRight, LuHandCoins, LuPackageCheck, LuPhone, LuWrench } from "react-icons/lu";
 import { Link } from "react-router";
@@ -168,6 +170,7 @@ const Repairs = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.repairs()} params={{ search, status: tab, technician, overdue }} />}
         title="Repairs"
         subtitle="Every device in the shop, who's on it and when it was promised"
         actions={

@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -101,6 +103,7 @@ const Advances = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.advances()} params={{}} />}
         title="Advance Salary"
         subtitle="Money paid ahead, taken back from the salary when you pay it"
         actions={canManage && <Button onClick={() => setGiving(true)}>Give advance</Button>}

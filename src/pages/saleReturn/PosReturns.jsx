@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { Link } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
@@ -43,6 +45,7 @@ const PosReturns = () => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.posReturns()} params={{ search, customer: customer?._id }} />}
         title="POS Return Orders List"
         subtitle="Manage all POS return orders"
         actions={

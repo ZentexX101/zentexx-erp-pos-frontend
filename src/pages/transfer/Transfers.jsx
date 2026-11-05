@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -70,6 +72,13 @@ const Transfers = ({ scope = "main" }) => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={
+          <ExportPdfButton
+            report={pdfReports.transfers()}
+            params={{ search, branch, direction: branch ? direction : "" }}
+            scope={inBranch ? undefined : branches.find((b) => b._id === branch)?.name}
+          />
+        }
         title="Transfer"
         subtitle={inBranch ? `Stock sent from and received by ${activeBranch?.name ?? "this branch"}` : "Stock moved between branches"}
         actions={

@@ -3,8 +3,9 @@ import Icon from "../common/icons/Icon";
 import PageHeader from "../common/layout/PageHeader";
 
 // Page title with the "Create Supplier" button (only for users who can create)
-const SupplierHeader = ({ canCreate, onCreate }) => (
+const SupplierHeader = ({ canCreate, onCreate, tools }) => (
   <PageHeader
+    tools={tools}
     title="Supplier"
     subtitle="Manage all suppliers"
     actions={

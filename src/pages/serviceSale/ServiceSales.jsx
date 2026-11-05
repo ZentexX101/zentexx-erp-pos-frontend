@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuConciergeBell } from "react-icons/lu";
 import { Link } from "react-router";
@@ -88,6 +90,7 @@ const ServiceSales = () => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.serviceSales()} params={{ search, service, due }} />}
         title="Service Sales"
         subtitle="Coverage, warranty and other services sold for phones this branch already sold"
         actions={

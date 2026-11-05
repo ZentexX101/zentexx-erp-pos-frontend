@@ -12,6 +12,8 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-query": "^5.105.0",
+    "html2canvas-pro": "^2.6.3",
+    "jspdf": "^4.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.7.0",

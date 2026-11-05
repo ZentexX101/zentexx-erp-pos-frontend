@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -57,6 +59,7 @@ const Expenses = () => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.expenses()} params={{ search, type, category }} />}
         title="Expense"
         subtitle="Money spent and stock used up in this branch"
         actions={
@@ -76,7 +79,14 @@ const Expenses = () => {
 
       <FilterBar search={<SearchInput value={searchInput} onChange={withPageReset(setSearchInput)} placeholder="Search title, note or number..." />}>
         <PeriodFilter value={period} onChange={withPageReset(setPeriod)} />
-        <Select variant="filter" aria-label="Type" placeholder="Both types" options={TYPE_OPTIONS} value={type} onChange={(e) => withPageReset(setType)(e.target.value)} />
+        <Select
+          variant="filter"
+          aria-label="Type"
+          placeholder="Both types"
+          options={TYPE_OPTIONS}
+          value={type}
+          onChange={(e) => withPageReset(setType)(e.target.value)}
+        />
         <Select
           variant="filter"
           aria-label="Category"

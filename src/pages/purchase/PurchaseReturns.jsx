@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { Link } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
@@ -46,6 +48,7 @@ const PurchaseReturns = () => {
   return (
     <div className="space-y-4">
       <PageHeader
+        tools={<ExportPdfButton report={pdfReports.purchaseReturns()} params={{ search }} />}
         title="Purchase Return List"
         subtitle="Products sent back to suppliers from this branch"
         actions={

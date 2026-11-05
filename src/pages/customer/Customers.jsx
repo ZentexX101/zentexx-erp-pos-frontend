@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import Alert from "../../components/common/alerts/Alert";
 import SearchInput from "../../components/common/forms/SearchInput";
@@ -66,7 +68,7 @@ const Customers = () => {
 
   return (
     <div className="space-y-4">
-      <CustomerHeader canCreate={canCreate} onCreate={() => openForm(null)} />
+      <CustomerHeader tools={<ExportPdfButton report={pdfReports.customers()} params={{ search }} />} canCreate={canCreate} onCreate={() => openForm(null)} />
 
       <CustomerBalanceNote />
 

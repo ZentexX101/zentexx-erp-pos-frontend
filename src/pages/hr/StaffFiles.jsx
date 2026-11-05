@@ -1,3 +1,5 @@
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
 import { LuChevronRight } from "react-icons/lu";
 import { Link, useLocation } from "react-router";
@@ -59,6 +61,13 @@ const StaffFiles = () => {
   return (
     <div className="space-y-5">
       <PageHeader
+        tools={
+          <ExportPdfButton
+            report={pdfReports.staffHistory(showBranch)}
+            params={{ branch: isMainAdmin(user) ? branch : undefined, search, left }}
+            scope={pickBranch ? branches.find((b) => b._id === branchFilter)?.name : undefined}
+          />
+        }
         title="Staff History"
         subtitle="Open anyone to see their attendance, leave, salary, advances and incentive"
         actions={<MonthSwitcher month={month} onChange={withPageReset(setMonth)} />}
