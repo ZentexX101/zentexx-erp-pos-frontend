@@ -24,6 +24,7 @@ const toForm = (product) => ({
   category: product?.category?._id || "",
   brand: product?.brand?._id || "",
   status: product?.status || PRODUCT_STATUS.ACTIVE,
+  barcode: product?.barcode || "",
 });
 
 const validate = (form) => ({
@@ -152,6 +153,20 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
               error={errors.brand}
             />
             <Select label="Product Status" name="status" required options={STATUS_OPTIONS} value={form.status} onChange={handleChange} />
+            <Input
+              label="Barcode / SKU"
+              name="barcode"
+              placeholder="Scan the box barcode or type a code (optional)"
+              maxLength={60}
+              autoComplete="off"
+              spellCheck={false}
+              value={form.barcode}
+              // A scanner sends Enter after the code; that mustn't submit the form
+              onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
+              onChange={(e) => handleChange({ target: { name: "barcode", value: e.target.value.replace(/\s/g, "") } })}
+              error={errors.barcode}
+              className="sm:col-span-2"
+            />
           </div>
         </FormSection>
 

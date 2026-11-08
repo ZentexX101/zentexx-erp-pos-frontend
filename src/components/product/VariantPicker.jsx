@@ -45,7 +45,7 @@ const Attribute = ({ field, value, onChange }) => {
         </span>
         <span className="min-w-0">
           <span className="block text-sm font-medium text-slate-800">{label}</span>
-          <span className={`block truncate text-xs ${value ? "font-medium text-blue-700" : "text-slate-400"}`}>{value || hint || "Not set"}</span>
+          <span className={`block text-xs leading-snug [overflow-wrap:anywhere] ${value ? "font-medium text-blue-700" : "text-slate-400"}`}>{value || hint || "Not set"}</span>
         </span>
       </div>
 

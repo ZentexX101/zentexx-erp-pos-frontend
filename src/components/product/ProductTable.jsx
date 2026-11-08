@@ -22,17 +22,23 @@ const ProductTable = ({ products, meta, isLoading, hasFilters, canEdit, canDelet
   const columns = [
     { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
     { key: "image", header: "Image", render: (p) => <ProductImage product={p} /> },
-    { key: "name", header: "Name", className: "min-w-56 font-medium text-slate-900" },
+    {
+      key: "name",
+      header: "Name",
+      className: "min-w-56",
+      render: (p) => (
+        <>
+          <span className="block font-medium text-slate-900">{p.name}</span>
+          {p.barcode && <span className="mt-0.5 block font-mono text-xs text-slate-500">{p.barcode}</span>}
+        </>
+      ),
+    },
     { key: "category", header: "Category", className: "text-slate-600", render: (p) => p.category?.name ?? "—" },
     { key: "brand", header: "Brand", className: "text-slate-600", render: (p) => p.brand?.name ?? "—" },
     {
       key: "status",
       header: "Status",
-      render: (p) => (
-        <Badge tone={p.status === PRODUCT_STATUS.ACTIVE ? "green" : "slate"}>
-          {p.status === PRODUCT_STATUS.ACTIVE ? "Active" : "Inactive"}
-        </Badge>
-      ),
+      render: (p) => <Badge tone={p.status === PRODUCT_STATUS.ACTIVE ? "green" : "slate"}>{p.status === PRODUCT_STATUS.ACTIVE ? "Active" : "Inactive"}</Badge>,
     },
     { key: "createdAt", header: "Created", className: "whitespace-nowrap text-slate-600", render: (p) => formatShortDate(p.createdAt) },
   ];

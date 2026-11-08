@@ -53,8 +53,8 @@ const PosProductGrid = ({ onAdd, onScan, inCart }) => {
               setPage(1);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search product, or scan IMEI + Enter"
-            aria-label="Search product or scan IMEI"
+            placeholder="Search product, or scan barcode / IMEI + Enter"
+            aria-label="Search product or scan barcode or IMEI"
             className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-9 text-sm text-slate-900 shadow-xs outline-none placeholder:text-slate-500 hover:border-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-brand/10"
           />
           {scanning && <Spinner className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-indigo-600" />}

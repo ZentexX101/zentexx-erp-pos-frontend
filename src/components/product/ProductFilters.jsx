@@ -12,7 +12,7 @@ const STATUS_OPTIONS = [
 const ProductFilters = ({ searchInput, onSearch, filters, onFilter, onClear, categories, brands }) => (
   <FilterBar
     className="pt-2"
-    search={<SearchInput value={searchInput} onChange={onSearch} placeholder="Search product..." />}
+    search={<SearchInput value={searchInput} onChange={onSearch} placeholder="Search product or barcode..." />}
     onClear={Object.values(filters).some(Boolean) ? onClear : undefined}
   >
     <Select
