@@ -2,6 +2,7 @@ import { BUSINESS_NAME } from "../../constants/app";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
 import { formatPhone } from "../../utils/phone";
+import { variantDetails } from "../../utils/productVariant";
 
 const cell = "border-b border-slate-200 px-2 py-1";
 
@@ -63,7 +64,9 @@ const SaleInvoicePrint = ({ sale }) => (
             <td className={cell}>{i + 1}</td>
             <td className={cell}>
               {item.name}
-              {item.serials.length > 0 && <span className="block font-mono text-[10px] text-slate-500">IMEI: {item.serials.join(", ")}</span>}
+              {variantDetails(item.variant) && <span className="block text-[10px] text-slate-600">{variantDetails(item.variant)}</span>}
+              {item.serials.length > 0 && <span className="block font-mono text-[10px] text-slate-600">IMEI: {item.serials.join(", ")}</span>}
+              {item.productCode && <span className="block font-mono text-[10px] text-slate-600">IMEI / ID: {item.productCode}</span>}
             </td>
             <td className={`${cell} text-right`}>{item.quantity}</td>
             <td className={`${cell} text-right`}>{formatTaka(item.unitPrice)}</td>

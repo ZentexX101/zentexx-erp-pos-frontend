@@ -125,7 +125,7 @@ const CreatePos = () => {
           </Alert>
         )}
 
-        <div className="grid gap-4 xl:grid-cols-[3fr_2fr]">
+        <div className="grid gap-4 xl:grid-cols-[3fr_2fr] [&>*]:min-w-0">
           <PosProductGrid
             onAdd={(stock) => addStock(stock)}
             onScan={handleScan}

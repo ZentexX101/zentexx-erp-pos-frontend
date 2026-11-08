@@ -86,7 +86,7 @@ const PosProductGrid = ({ onAdd, onScan, inCart }) => {
           {search ? `No product matches "${search}".` : "No products in this branch yet. Use Sync Products on the Stock page."}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
           {rows.map((stock) => {
             const out = stock.quantity === 0;
             const added = inCart(stock);
@@ -100,23 +100,25 @@ const PosProductGrid = ({ onAdd, onScan, inCart }) => {
                   added ? "ring-2 ring-indigo-500" : "ring-slate-200 hover:ring-indigo-300"
                 } disabled:cursor-not-allowed disabled:opacity-70`}
               >
-                <span className="absolute right-2 top-2 z-10">
+                <span className="absolute right-1.5 top-1.5 z-10 origin-top-right scale-90">
                   {out ? <Badge tone="red">Out of stock</Badge> : added ? <Badge tone="blue">In cart</Badge> : null}
                 </span>
-                <span className="flex aspect-[4/3] items-center justify-center bg-slate-50">
+                <span className="flex h-28 items-center justify-center bg-slate-50 p-2">
                   {stock.product.image?.url ? (
-                    <img src={stock.product.image.url} alt="" className="h-full w-full object-cover" />
+                    <img src={stock.product.image.url} alt="" className="h-full w-full object-contain" />
                   ) : (
-                    <span className="text-sm text-slate-400">No Image</span>
+                    <span className="text-xs text-slate-400">No Image</span>
                   )}
                 </span>
-                <span className="flex flex-1 flex-col gap-1 p-3">
-                  <span className="line-clamp-2 text-sm font-semibold uppercase text-slate-800">{stock.product.name}</span>
-                  <span className="text-xs text-slate-500">
+                <span className="flex flex-1 flex-col gap-0.5 p-2.5">
+                  <span className="line-clamp-2 text-xs font-semibold uppercase leading-snug text-slate-800" title={stock.product.name}>
+                    {stock.product.name}
+                  </span>
+                  <span className="text-[11px] text-slate-500">
                     Available: <span className="font-semibold text-slate-700">{stock.quantity}</span>
                     {stock.product.trackSerial && " · IMEI"}
                   </span>
-                  <span className="mt-auto font-bold text-teal-600">{formatTaka(stock.salePrice)}</span>
+                  <span className="mt-auto pt-1 text-sm font-bold text-teal-600">{formatTaka(stock.salePrice)}</span>
                 </span>
               </button>
             );

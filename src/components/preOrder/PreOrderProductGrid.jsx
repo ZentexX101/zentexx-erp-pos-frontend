@@ -73,7 +73,7 @@ const PreOrderProductGrid = ({ onAdd, isAdded }) => {
             : "Every product is in stock right now. Sell from the POS."}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
           {rows.map((product) => {
             const added = isAdded(product);
             return (
@@ -83,21 +83,25 @@ const PreOrderProductGrid = ({ onAdd, isAdded }) => {
                 onClick={() => onAdd(product)}
                 className={`relative flex flex-col overflow-hidden rounded-xl bg-white text-left shadow-sm ring-1 transition hover:shadow-md ${added ? "ring-2 ring-slate-400" : "ring-slate-200/80 hover:ring-slate-300"}`}
               >
-                <span className="absolute right-2 top-2 z-10">{added ? <Badge tone="blue">Added</Badge> : <Badge tone="amber">No stock</Badge>}</span>
-                <span className="flex aspect-[4/3] items-center justify-center bg-slate-50">
+                <span className="absolute right-1.5 top-1.5 z-10 origin-top-right scale-90">
+                  {added ? <Badge tone="blue">Added</Badge> : <Badge tone="amber">No stock</Badge>}
+                </span>
+                <span className="flex h-28 items-center justify-center bg-slate-50 p-2">
                   {product.image?.url ? (
-                    <img src={product.image.url} alt="" className="h-full w-full object-cover" />
+                    <img src={product.image.url} alt="" className="h-full w-full object-contain" />
                   ) : (
-                    <span className="text-sm text-slate-400">No Image</span>
+                    <span className="text-xs text-slate-400">No Image</span>
                   )}
                 </span>
-                <span className="flex flex-1 flex-col gap-1 p-3">
-                  <span className="line-clamp-2 text-sm font-semibold uppercase text-slate-800 [overflow-wrap:anywhere]">{product.name}</span>
-                  <span className="text-xs text-slate-500">
+                <span className="flex flex-1 flex-col gap-0.5 p-2.5">
+                  <span className="line-clamp-2 text-xs font-semibold uppercase leading-snug text-slate-800 [overflow-wrap:anywhere]" title={product.name}>
+                    {product.name}
+                  </span>
+                  <span className="text-[11px] text-slate-500">
                     Available: <span className="font-semibold text-slate-700">0</span>
                     {product.trackSerial && " · IMEI"}
                   </span>
-                  <span className={`mt-auto text-sm font-bold ${product.salePrice ? "text-teal-600" : "font-medium text-slate-400"}`}>
+                  <span className={`mt-auto pt-1 text-sm font-bold ${product.salePrice ? "text-teal-600" : "font-medium text-slate-400"}`}>
                     {product.salePrice ? formatTaka(product.salePrice) : "No price yet"}
                   </span>
                 </span>

@@ -87,7 +87,7 @@ const CreatePreOrder = () => {
     <div className="space-y-5">
       <PageHeader title="New Pre Order" subtitle="Book products that aren't in this branch yet. The advance stays the customer's money until it's sold." />
 
-      <div className="grid items-start gap-5 xl:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-5 xl:grid-cols-[3fr_2fr] [&>*]:min-w-0">
         <PreOrderProductGrid
           onAdd={(product) => {
             setError("");

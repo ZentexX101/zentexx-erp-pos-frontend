@@ -2,6 +2,7 @@ import { LuPrinter } from "react-icons/lu";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
 import { formatPhone } from "../../utils/phone";
+import { variantDetails } from "../../utils/productVariant";
 import Button from "../common/buttons/Button";
 import Modal from "../common/modals/Modal";
 
@@ -60,7 +61,9 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
                 <tr key={item.product} className="align-top">
                   <td className="px-3 py-2">
                     <p className="font-medium text-slate-900">{item.name}</p>
-                    {item.serials.length > 0 && <p className="break-all font-mono text-xs text-slate-500">{item.serials.join(", ")}</p>}
+                    {variantDetails(item.variant) && <p className="text-xs text-slate-500">{variantDetails(item.variant)}</p>}
+                    {item.serials.length > 0 && <p className="break-all font-mono text-xs text-slate-500">IMEI: {item.serials.join(", ")}</p>}
+                    {item.productCode && <p className="break-all font-mono text-xs text-slate-500">IMEI / ID: {item.productCode}</p>}
                     {item.returnedQuantity > 0 && (
                       <p className="text-xs font-semibold text-orange-600">
                         Returned: {item.returnedQuantity}

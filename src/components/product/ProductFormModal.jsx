@@ -1,6 +1,8 @@
 import { useId, useState } from "react";
+import { LuTag } from "react-icons/lu";
 import { PRODUCT_STATUS } from "../../constants/product";
 import { useCreateProduct, useUpdateProduct } from "../../hooks/useProductApi";
+import { toVariant, variantName } from "../../utils/productVariant";
 import { isValid } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
 import Button from "../common/buttons/Button";
@@ -8,20 +10,20 @@ import FormSection from "../common/forms/FormSection";
 import ImageUpload from "../common/forms/ImageUpload";
 import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
-import ToggleField from "../common/forms/ToggleField";
 import Modal from "../common/modals/Modal";
+import VariantPicker from "./VariantPicker";
 
 const STATUS_OPTIONS = [
   { value: PRODUCT_STATUS.ACTIVE, label: "Active" },
   { value: PRODUCT_STATUS.INACTIVE, label: "Inactive" },
 ];
 
+// The name field holds the model ("iPhone 17 Pro Max"); the saved name adds the variant. Older products have no model yet.
 const toForm = (product) => ({
-  name: product?.name || "",
+  name: product?.model || product?.name || "",
   category: product?.category?._id || "",
   brand: product?.brand?._id || "",
   status: product?.status || PRODUCT_STATUS.ACTIVE,
-  trackSerial: product?.trackSerial || false,
 });
 
 const validate = (form) => ({
@@ -44,6 +46,9 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
   const isEdit = Boolean(product);
   const formId = useId();
   const [form, setForm] = useState(() => toForm(product));
+  const [variant, setVariant] = useState(() => toVariant(product?.variant));
+  const fullName = form.name.trim() ? variantName(form.name, toVariant(variant)) : "";
+  const variantChanged = JSON.stringify(toVariant(variant)) !== JSON.stringify(toVariant(product?.variant));
   const [image, setImage] = useState(null); // newly picked File
   const [removeImage, setRemoveImage] = useState(false);
   const [errors, setErrors] = useState({});
@@ -77,13 +82,15 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
     if (!isValid(newErrors)) return;
 
     const payload = { ...form, name: form.name.trim(), image };
+    // An old product without a model keeps its name unless the name or variant was changed
+    const renamed = !isEdit || product.model || variantChanged || payload.name !== product.name;
+    if (renamed) payload.variant = JSON.stringify(toVariant(variant));
+    else delete payload.name;
     // Tell the backend to drop the saved image only when there was one and no new image replaces it
     if (isEdit && removeImage && product.image && !image) payload.removeImage = true;
 
     try {
-      const saved = isEdit
-        ? await updateProduct.mutateAsync({ id: product._id, data: payload })
-        : await createProduct.mutateAsync(payload);
+      const saved = isEdit ? await updateProduct.mutateAsync({ id: product._id, data: payload }) : await createProduct.mutateAsync(payload);
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) setErrors(err.details);
@@ -115,11 +122,11 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
         <FormSection title="Basic Information" icon="settings">
           <div className="grid gap-4 sm:grid-cols-2">
             <Input
-              label="Product Name"
+              label="Product / Model Name"
               name="name"
               required
               autoFocus
-              placeholder="Enter product name"
+              placeholder="iPhone 17 Pro Max, Galaxy A55..."
               value={form.name}
               onChange={handleChange}
               error={errors.name}
@@ -146,13 +153,25 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
             />
             <Select label="Product Status" name="status" required options={STATUS_OPTIONS} value={form.status} onChange={handleChange} />
           </div>
-          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <ToggleField
-              label="Track IMEI / Serial number"
-              description="For phones, tablets, laptops: every piece is bought and sold by its IMEI. Leave off for covers, cables and other items counted by quantity. Can't be changed once the product has stock."
-              checked={form.trackSerial}
-              onChange={(value) => setForm((prev) => ({ ...prev, trackSerial: value }))}
-            />
+        </FormSection>
+
+        <FormSection title="Variant" icon="settings" description="Optional. Color, RAM, storage and region become part of the product name.">
+          <VariantPicker variant={variant} onChange={setVariant} />
+          <div className="mt-4 flex items-start gap-3 rounded-xl bg-blue-50/60 px-4 py-3.5 ring-1 ring-blue-100">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-600 ring-1 ring-blue-100">
+              <LuTag className="size-4" aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-slate-500">Will be saved as</p>
+              <p className={`mt-0.5 text-sm font-semibold [overflow-wrap:anywhere] ${fullName ? "text-slate-900" : "text-slate-400"}`}>
+                {fullName || "Type the product name above"}
+              </p>
+            </div>
+            {Object.values(toVariant(variant)).some(Boolean) && (
+              <button type="button" onClick={() => setVariant(toVariant())} className="shrink-0 text-xs font-semibold text-slate-500 hover:text-red-600">
+                Clear
+              </button>
+            )}
           </div>
         </FormSection>
 

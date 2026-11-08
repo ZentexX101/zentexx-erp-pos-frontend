@@ -1,11 +1,12 @@
 import { roundTaka } from "./number";
 
-// A POS cart line, from a stock row: { stock, quantity, serials, unitPrice } (inputs are strings)
-// IMEI products are counted by their picked serials; others by quantity.
+// A POS cart line, from a stock row: { stock, quantity, serials, productCode, unitPrice } (inputs are strings)
+// IMEI products are counted by their picked serials; others by quantity, with an optional typed IMEI / product ID.
 export const newCartLine = (stock, serial) => ({
   stock,
   quantity: "1",
   serials: serial ? [serial] : [],
+  productCode: "",
   unitPrice: String(stock.salePrice ?? ""),
 });
 
@@ -32,7 +33,7 @@ export const cartError = (lines) => {
 export const toSaleItems = (lines) =>
   lines.map((line) => ({
     product: line.stock.product._id,
-    ...(line.stock.product.trackSerial ? { serials: line.serials } : { quantity: Number(line.quantity) }),
+    ...(line.stock.product.trackSerial ? { serials: line.serials } : { quantity: Number(line.quantity), productCode: (line.productCode ?? "").trim() }),
     unitPrice: Number(line.unitPrice),
   }));
 

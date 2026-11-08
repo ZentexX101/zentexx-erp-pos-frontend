@@ -83,6 +83,18 @@ const PosCart = ({ lines, onChange, onRemove }) => (
                   <td className="px-3 py-2.5">
                     <p className="font-medium uppercase text-slate-900">{product.name}</p>
                     <p className="text-xs text-slate-500">In stock: {line.stock.quantity}</p>
+                    {!product.trackSerial && (
+                      <input
+                        aria-label={`IMEI / product ID of ${product.name}`}
+                        value={line.productCode ?? ""}
+                        onChange={(e) => onChange(index, "productCode", e.target.value)}
+                        placeholder="IMEI / Product ID (optional)"
+                        maxLength={300}
+                        spellCheck={false}
+                        autoComplete="off"
+                        className="mt-1.5 w-full min-w-40 rounded-md border border-dashed border-slate-300 bg-white px-2 py-1 font-mono text-xs text-slate-800 outline-none placeholder:font-sans placeholder:text-slate-400 focus:border-solid focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
+                      />
+                    )}
                   </td>
                   <td className="px-3 py-2.5">
                     {product.trackSerial ? (
