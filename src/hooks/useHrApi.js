@@ -23,6 +23,9 @@ export const useLeavesData = (params) => useList(["leaves", params], () => api.f
 export const usePayrollData = (month) => useList(["payroll", month], () => api.fetchPayrollData(month));
 export const useIncentivesData = (month) => useList(["incentives", month], () => api.fetchIncentivesData(month));
 export const useIncrementsData = (params) => useList(["increments", params], () => api.fetchIncrementsData(params));
+export const useIncrementGroupsData = (params) => useList(["increment-groups", params], () => api.fetchIncrementGroupsData(params));
+export const useSalaryOverviewData = (params) => useList(["salary-overview", params], () => api.fetchSalaryOverviewData(params));
+export const useSalaryHistoryData = (userId) => useList(["salary-history", userId], () => api.fetchSalaryHistoryData(userId), { enabled: Boolean(userId) });
 export const useAdvancesData = (params) => useList(["advances", params], () => api.fetchAdvancesData(params));
 
 // Money moves on salary and advance, so reports, balances and the dashboard refresh too

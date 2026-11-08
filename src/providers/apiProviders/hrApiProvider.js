@@ -38,6 +38,12 @@ export const paySalary = async (data) => (await apiRequest("/hr/salaries", { met
 // ✅ Incentive, increment, advance
 export const fetchIncentivesData = async (month) => (await apiRequest(`/hr/incentives${toQueryString({ month })}`)).data;
 export const fetchIncrementsData = async (params) => apiRequest(`/hr/increments${toQueryString(params)}`);
+// One row per staff member with their changes (newest first): { data: [{ user, count, fromSalary, toSalary, difference, percent, lastSetAt, hasUpcoming, changes }], meta }
+export const fetchIncrementGroupsData = async (params) => apiRequest(`/hr/increments/by-staff${toQueryString(params)}`);
+// { month, rows: [{ user, current, startingSalary, totalRaise, changes, last, upcoming }], summary }
+export const fetchSalaryOverviewData = async (params) => (await apiRequest(`/hr/increments/overview${toQueryString(params)}`)).data;
+// { user, startingSalary, current, totalRaise, totalPercent, changes: oldest first }
+export const fetchSalaryHistoryData = async (userId) => (await apiRequest(`/hr/increments/history/${userId}`)).data;
 export const createIncrement = async (data) => (await apiRequest("/hr/increments", { method: "POST", body: data })).data;
 export const fetchAdvancesData = async (params) => apiRequest(`/hr/advances${toQueryString(params)}`);
 export const giveAdvance = async (data) => (await apiRequest("/hr/advances", { method: "POST", body: data })).data;

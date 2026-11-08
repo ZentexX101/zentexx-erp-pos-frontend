@@ -1,173 +1,131 @@
-import ExportPdfButton from "../../components/common/export/ExportPdfButton";
-import { pdfReports } from "../../constants/pdfReports";
 import { useState } from "react";
-import { LuArrowDownRight, LuArrowRight, LuArrowUpRight } from "react-icons/lu";
+import { LuCalendarClock, LuTrendingUp, LuUsers, LuWallet } from "react-icons/lu";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
-import Pagination from "../../components/common/data/Pagination";
-import Input from "../../components/common/forms/Input";
-import Select from "../../components/common/forms/Select";
+import ExportPdfButton from "../../components/common/export/ExportPdfButton";
+import SearchInput from "../../components/common/forms/SearchInput";
 import PageHeader from "../../components/common/layout/PageHeader";
-import Modal from "../../components/common/modals/Modal";
-import MonthSwitcher from "../../components/hr/MonthSwitcher";
-import PersonLink from "../../components/hr/PersonLink";
+import HrStat from "../../components/hr/HrStat";
+import ChangeSalaryModal from "../../components/hr/increment/ChangeSalaryModal";
+import IncrementLog from "../../components/hr/increment/IncrementLog";
+import SalaryHistoryModal from "../../components/hr/increment/SalaryHistoryModal";
+import SalaryStaffList from "../../components/hr/increment/SalaryStaffList";
+import { pdfReports } from "../../constants/pdfReports";
 import { useAuth } from "../../hooks/useAuth";
-import { useCreateIncrement, useIncrementsData, usePayrollData } from "../../hooks/useHrApi";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { useCreateIncrement, useSalaryOverviewData } from "../../hooks/useHrApi";
 import { hasPermission } from "../../utils/access";
-import { currentMonth, monthLabel } from "../../utils/hr";
+import { monthLabel } from "../../utils/hr";
+import { changeText } from "../../utils/increment";
 import { formatTaka } from "../../utils/money";
-import { toDecimalInput } from "../../utils/number";
 
-// Change one person's salary: pick them, type the new salary, see the difference, choose the first month
-const ChangeSalaryModal = ({ staff, onClose, onSave, saving }) => {
-  const [user, setUser] = useState("");
-  const [newSalary, setNewSalary] = useState("");
-  const [effectiveMonth, setEffectiveMonth] = useState(currentMonth());
-  const [reason, setReason] = useState("");
-  const [error, setError] = useState("");
-  const person = staff.find((row) => row.user._id === user);
-  const difference = person && newSalary !== "" ? Number(newSalary) - person.basic : null;
+const VIEWS = [
+  { value: "staff", label: "Staff salaries" },
+  { value: "log", label: "Changes by staff" },
+];
 
-  const save = async () => {
-    if (!user) return setError("Pick a staff member.");
-    if (newSalary === "") return setError("Enter the new salary.");
-    try {
-      await onSave({ user, newSalary: Number(newSalary), effectiveMonth, reason: reason.trim() });
-      onClose();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  return (
-    <Modal
-      isOpen
-      onClose={onClose}
-      title="Change salary"
-      subtitle="The months before it keep the old salary"
-      footer={
-        <>
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={save} loading={saving}>
-            Save
-          </Button>
-        </>
-      }
-    >
-      <div className="space-y-4">
-        <Alert>{error}</Alert>
-        <Select
-          label="Staff member"
-          required
-          placeholder="Select"
-          options={staff.map((row) => ({ value: row.user._id, label: row.user.name }))}
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
-        />
-        {person && (
-          <p className="text-sm text-slate-600">
-            Salary now: <span className="font-semibold text-slate-900">{formatTaka(person.basic)}</span>
-          </p>
-        )}
-        <Input label="New salary" required inputMode="decimal" value={newSalary} onChange={(e) => setNewSalary(toDecimalInput(e.target.value))} />
-        {difference !== null && difference !== 0 && (
-          <p className={`text-sm font-semibold ${difference > 0 ? "text-emerald-700" : "text-red-600"}`}>
-            {difference > 0 ? "+" : "−"} {formatTaka(Math.abs(difference))} a month
-          </p>
-        )}
-        <div>
-          <p className="mb-1 text-sm font-medium text-slate-700">Starts from</p>
-          <MonthSwitcher month={effectiveMonth} onChange={setEffectiveMonth} allowFuture />
-        </div>
-        <Input label="Reason" maxLength={300} value={reason} onChange={(e) => setReason(e.target.value)} />
-      </div>
-    </Modal>
-  );
-};
-
-// Increment: every salary change, newest first
+// Increment: each staff member's salary now with their history, and every change by date
 const Increments = () => {
   const { user } = useAuth();
   const canManage = hasPermission(user, "hr.manage");
 
   // all states
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [changing, setChanging] = useState(false);
+  const [view, setView] = useState("staff");
+  const [searchInput, setSearchInput] = useState("");
+  const search = useDebouncedValue(searchInput.trim());
+  const [historyOf, setHistoryOf] = useState(null); // user id
+  const [changing, setChanging] = useState(null); // null, "" (pick a person) or a user id
+  const [notice, setNotice] = useState("");
 
-  // call hr api (paging runs on the backend)
-  const { data, isLoading, error } = useIncrementsData({ page, limit });
-  const { data: payroll } = usePayrollData(currentMonth());
+  // call hr api
+  const { data, isLoading, error } = useSalaryOverviewData({ search });
+  const { data: everyone } = useSalaryOverviewData({});
   const create = useCreateIncrement();
-  const rows = data?.data ?? [];
+  const rows = data?.rows ?? [];
+  const summary = data?.summary;
+
+  const save = async (values) => {
+    const saved = await create.mutateAsync(values);
+    const name = (everyone?.rows ?? []).find((row) => row.user._id === values.user)?.user.name ?? "The";
+    setNotice(`${name} salary set to ${formatTaka(saved.newSalary)} from ${monthLabel(saved.effectiveMonth)}.`);
+  };
 
   return (
     <div className="space-y-5">
       <PageHeader
-        tools={<ExportPdfButton report={pdfReports.increments()} params={{}} />}
         title="Increment"
-        subtitle="Every salary change, with what it was before"
-        actions={canManage && <Button onClick={() => setChanging(true)}>Change salary</Button>}
+        subtitle="Salary of every staff member, each change with its date and reason"
+        tools={<ExportPdfButton report={pdfReports.increments()} params={{}} />}
+        actions={canManage && <Button onClick={() => setChanging("")}>Change salary</Button>}
       />
 
+      {notice && <Alert type="success">{notice}</Alert>}
       <Alert>{error?.message}</Alert>
 
-      <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
-        {isLoading && !data ? (
-          <div className="h-40 animate-pulse bg-slate-100" aria-hidden="true" />
-        ) : rows.length === 0 ? (
-          <p className="px-5 py-12 text-center text-sm text-slate-500">No salary change yet.</p>
-        ) : (
-          <ul className="divide-y divide-slate-100">
-            {rows.map((row) => {
-              const raise = row.newSalary - row.oldSalary;
-              const Arrow = raise >= 0 ? LuArrowUpRight : LuArrowDownRight;
-              return (
-                <li key={row._id} className="flex flex-col gap-3 px-5 py-3.5 lg:flex-row lg:items-center">
-                  <div className="min-w-0 lg:w-56 lg:shrink-0">
-                    <PersonLink person={row.user} />
-                  </div>
-                  <div className="min-w-0 flex-1 text-sm">
-                    <p className="flex flex-wrap items-center gap-2 font-medium tabular-nums text-slate-800">
-                      {formatTaka(row.oldSalary)}
-                      <LuArrowRight className="size-3.5 text-slate-400" aria-hidden="true" />
-                      <span className="font-semibold text-slate-900">{formatTaka(row.newSalary)}</span>
-                      <span className={`inline-flex items-center text-xs font-semibold ${raise >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                        <Arrow className="size-3.5" aria-hidden="true" />
-                        {formatTaka(Math.abs(raise))}
-                      </span>
-                    </p>
-                    {row.reason && (
-                      <p className="truncate text-slate-500" title={row.reason}>
-                        {row.reason}
-                      </p>
-                    )}
-                  </div>
-                  <span className="shrink-0 text-sm text-slate-500">From {monthLabel(row.effectiveMonth)}</span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
-      <Pagination
-        meta={data?.meta}
-        onPageChange={setPage}
-        onLimitChange={(value) => {
-          setLimit(value);
-          setPage(1);
-        }}
-      />
-
-      {changing && (
-        <ChangeSalaryModal
-          staff={payroll?.rows ?? []}
-          onClose={() => setChanging(false)}
-          onSave={(values) => create.mutateAsync(values)}
-          saving={create.isPending}
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <HrStat
+          label="Salary bill this month"
+          value={summary ? formatTaka(summary.monthlyBill) : "—"}
+          hint={summary ? `${summary.staff} staff · ${monthLabel(data.month)}` : ""}
+          icon={LuWallet}
+          accent="blue"
         />
+        <HrStat label="Changes this year" value={summary?.changesThisYear ?? "—"} icon={LuCalendarClock} accent="purple" />
+        <HrStat
+          label="Raised this year"
+          value={summary ? changeText(summary.raiseThisYear) || formatTaka(0) : "—"}
+          hint="a month, all staff together"
+          tone={summary?.raiseThisYear < 0 ? "text-red-600" : "text-emerald-600"}
+          icon={LuTrendingUp}
+          accent="green"
+        />
+        <HrStat label="Upcoming changes" value={summary?.upcoming ?? "—"} hint="set for a later month" icon={LuUsers} accent="amber" />
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="inline-flex self-start rounded-xl bg-slate-100 p-1" role="tablist" aria-label="View">
+          {VIEWS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              role="tab"
+              aria-selected={view === option.value}
+              onClick={() => setView(option.value)}
+              className={`rounded-lg px-4 py-1.5 text-sm font-medium transition ${view === option.value ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        {view === "staff" && (
+          <div className="sm:w-72">
+            <SearchInput value={searchInput} onChange={setSearchInput} placeholder="Search name, ID or designation" />
+          </div>
+        )}
+      </div>
+
+      {view === "staff" ? (
+        <SalaryStaffList rows={rows} isLoading={isLoading && !data} onHistory={setHistoryOf} onChange={canManage ? (id) => setChanging(id) : null} />
+      ) : (
+        <IncrementLog staff={everyone?.rows ?? []} onHistory={setHistoryOf} />
+      )}
+
+      {historyOf && (
+        <SalaryHistoryModal
+          userId={historyOf}
+          onClose={() => setHistoryOf(null)}
+          onChange={
+            canManage
+              ? () => {
+                  setChanging(historyOf);
+                  setHistoryOf(null);
+                }
+              : null
+          }
+        />
+      )}
+      {changing !== null && (
+        <ChangeSalaryModal rows={everyone?.rows ?? []} userId={changing || null} onClose={() => setChanging(null)} onSave={save} saving={create.isPending} />
       )}
     </div>
   );
