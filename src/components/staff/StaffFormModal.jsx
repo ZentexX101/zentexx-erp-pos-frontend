@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import { BRANCH_STATUS } from "../../constants/branch";
-import { getAssignableRoles, ROLE_LABELS, ROLES, WEEK_DAYS } from "../../constants/roles";
+import { getAssignableRoles, ROLES, WEEK_DAYS } from "../../constants/roles";
+import { positionByValue, positionOf, POSITIONS } from "../../constants/staffPositions";
 import { useAuth } from "../../hooks/useAuth";
 import { useCreateStaff, useUpdateStaff } from "../../hooks/useStaffApi";
 import { fromE164, toE164, validateBdMobile } from "../../utils/phone";
@@ -34,6 +35,7 @@ const toForm = (staff) => ({
   password: "",
   confirmPassword: "",
   role: staff?.role || ROLES.SUB_ADMIN,
+  position: positionOf(staff),
   branch: staff?.branch?._id || "",
   salary: staff?.salary ?? "",
   status: staff && !staff.isActive ? "inactive" : "active",
@@ -55,6 +57,7 @@ const validate = (form, isEdit) => {
   const passwordGiven = !isEdit || form.password || form.confirmPassword;
   return {
     name: form.name.trim().length >= 2 ? "" : "Name must be at least 2 characters",
+    position: form.position ? "" : "Select a role / position",
     phone: validateBdMobile(form.phone),
     email: form.email.trim() ? validateEmail(form.email) : "",
     password: passwordGiven ? validateNewPassword(form.password) : "",
@@ -104,7 +107,27 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
   const submitting = createStaff.isPending || updateStaff.isPending;
 
   const isSubAdmin = form.role === ROLES.SUB_ADMIN;
-  const roleOptions = getAssignableRoles(actor).map((role) => ({ value: role, label: ROLE_LABELS[role] }));
+  const canGiveAdmin = getAssignableRoles(actor).includes(ROLES.ADMIN) || form.role === ROLES.ADMIN;
+  const positionOptions = POSITIONS.filter((position) => !position.admin || canGiveAdmin).map((position) => ({ value: position.value, label: position.label }));
+  const position = positionByValue(form.position);
+
+  // A position fills the role, designation and a starting set of permissions (all still editable)
+  const choosePosition = (value) => {
+    const next = positionByValue(value);
+    setErrors((prev) => ({ ...prev, position: "", branch: "" }));
+    if (!next) return setForm((prev) => ({ ...prev, position: "" }));
+    const known = catalog ? new Set(catalog.modules.flatMap((m) => m.actions.map((a) => `${m.key}.${a}`))) : null;
+    const isKnownTitle = POSITIONS.some((p) => p.label.toLowerCase() === form.designation.trim().toLowerCase());
+    setForm((prev) => ({
+      ...prev,
+      position: value,
+      role: next.admin ? ROLES.ADMIN : ROLES.SUB_ADMIN,
+      designation: next.value === "other" ? (isKnownTitle ? "" : prev.designation) : next.admin ? prev.designation : next.label,
+      isManager: Boolean(next.isManager),
+      showDashboard: Boolean(next.showDashboard),
+      permissions: next.admin ? [] : (next.permissions ?? []).filter((key) => !known || known.has(key)),
+    }));
+  };
 
   // New assignments go to active branches; keep showing the current one even if it's inactive now
   const branchOptions = branches
@@ -127,9 +150,7 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
 
     try {
       const payload = toPayload(form, isEdit);
-      const saved = isEdit
-        ? await updateStaff.mutateAsync({ id: staff._id, data: payload })
-        : await createStaff.mutateAsync(payload);
+      const saved = isEdit ? await updateStaff.mutateAsync({ id: staff._id, data: payload }) : await createStaff.mutateAsync(payload);
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) setErrors(err.details);
@@ -203,14 +224,19 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
               onChange={handleChange}
               error={errors.confirmPassword}
             />
-            <Select
-              label="Staff / Admin Type"
-              name="role"
-              required
-              options={roleOptions}
-              value={form.role}
-              onChange={handleChange}
-            />
+            <div>
+              <Select
+                label="Role / Position"
+                name="position"
+                required
+                placeholder="Select a role"
+                options={positionOptions}
+                value={form.position}
+                onChange={(e) => choosePosition(e.target.value)}
+                error={errors.position}
+              />
+              {position && !errors.position && <p className="mt-1 text-xs text-slate-500">{position.hint}</p>}
+            </div>
             {isSubAdmin ? (
               <Select
                 label="Branch"
@@ -240,18 +266,11 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
             <Select label="Status" name="status" options={STATUS_OPTIONS} value={form.status} onChange={handleChange} />
           </div>
           {isEdit && (
-            <p className="mt-3 text-xs text-amber-700">
-              Changing the type, branch or password, or deactivating, logs this person out of all devices.
-            </p>
+            <p className="mt-3 text-xs text-amber-700">Changing the type, branch or password, or deactivating, logs this person out of all devices.</p>
           )}
         </FormSection>
 
-        <FormSection
-          title="HRM & Attendance"
-          description="Staff ID / PIN for the biometric machine and duty timing"
-          icon="calendar"
-          muted
-        >
+        <FormSection title="HRM & Attendance" description="Staff ID / PIN for the biometric machine and duty timing" icon="calendar" muted>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Input
@@ -270,26 +289,14 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
             <Input
               label="Designation"
               name="designation"
-              placeholder="e.g. Sales Executive, Cashier"
+              placeholder="e.g. Senior Sales Executive"
               value={form.designation}
               onChange={handleChange}
               error={errors.designation}
             />
             <Input label="Joining Date" name="joiningDate" type="date" value={form.joiningDate} onChange={handleChange} />
-            <ChipSelect
-              label="Weekly Off Days"
-              options={WEEK_DAYS}
-              value={form.weeklyOffDays}
-              onChange={(v) => setField("weeklyOffDays", v)}
-            />
-            <Input
-              label="Duty Start Time"
-              name="dutyStart"
-              type="time"
-              value={form.dutyStart}
-              onChange={handleChange}
-              error={errors.dutyStart}
-            />
+            <ChipSelect label="Weekly Off Days" options={WEEK_DAYS} value={form.weeklyOffDays} onChange={(v) => setField("weeklyOffDays", v)} />
+            <Input label="Duty Start Time" name="dutyStart" type="time" value={form.dutyStart} onChange={handleChange} error={errors.dutyStart} />
             <Input label="Duty End Time" name="dutyEnd" type="time" value={form.dutyEnd} onChange={handleChange} error={errors.dutyEnd} />
             <Textarea
               label="Staff Note"
@@ -327,6 +334,9 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
                   onChange={(v) => setField("showDashboard", v)}
                 />
               </div>
+              {position && !position.admin && position.value !== "other" && (
+                <p className="rounded-lg bg-blue-50 px-4 py-2.5 text-sm text-blue-700">Ticked for a {position.label}. Add or remove any permission below.</p>
+              )}
               {catalog ? (
                 <PermissionPicker catalog={catalog} value={form.permissions} onChange={(v) => setField("permissions", v)} />
               ) : (

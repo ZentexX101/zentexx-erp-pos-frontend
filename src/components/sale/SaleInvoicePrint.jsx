@@ -73,6 +73,18 @@ const SaleInvoicePrint = ({ sale }) => (
             <td className={`${cell} text-right`}>{formatTaka(item.total)}</td>
           </tr>
         ))}
+        {(sale.externalItems ?? []).map((item, i) => (
+          <tr key={`external-${i}`} className="align-top">
+            <td className={cell}>{sale.items.length + i + 1}</td>
+            <td className={cell}>
+              {item.name}
+              {item.productCode && <span className="block font-mono text-[10px] text-slate-600">IMEI / ID: {item.productCode}</span>}
+            </td>
+            <td className={`${cell} text-right`}>{item.quantity}</td>
+            <td className={`${cell} text-right`}>{formatTaka(item.unitPrice)}</td>
+            <td className={`${cell} text-right`}>{formatTaka(item.total)}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
 

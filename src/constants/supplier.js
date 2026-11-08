@@ -18,6 +18,7 @@ export const LEDGER_TYPE = {
   PURCHASE: "purchase",
   PURCHASE_RETURN: "purchase_return",
   PAYMENT: "payment",
+  EXTERNAL_PRODUCT: "external_product",
 };
 
 export const LEDGER_TYPE_LABELS = {
@@ -26,4 +27,5 @@ export const LEDGER_TYPE_LABELS = {
   [LEDGER_TYPE.PURCHASE]: { label: "Purchase", tone: "blue" },
   [LEDGER_TYPE.PURCHASE_RETURN]: { label: "Purchase Return", tone: "amber" },
   [LEDGER_TYPE.PAYMENT]: { label: "Payment", tone: "green" },
+  [LEDGER_TYPE.EXTERNAL_PRODUCT]: { label: "External Product", tone: "amber" },
 };

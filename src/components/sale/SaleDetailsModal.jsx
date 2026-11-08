@@ -76,6 +76,28 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
                   <td className="whitespace-nowrap px-3 py-2 text-right font-semibold">{formatTaka(item.total)}</td>
                 </tr>
               ))}
+              {(sale.externalItems ?? []).map((item, i) => (
+                <tr key={`external-${i}`} className="align-top">
+                  <td className="px-3 py-2">
+                    <p className="font-medium text-slate-900">{item.name}</p>
+                    <div className="mt-1.5 space-y-0.5 rounded-lg bg-amber-50 px-2.5 py-2 text-xs ring-1 ring-amber-100">
+                      <p className="font-semibold text-amber-800">External product (not from our stock)</p>
+                      <p className="text-slate-700">
+                        Brought from: <span className="font-semibold text-slate-900">{item.supplierName || item.source || "Not recorded"}</span>
+                        {item.supplierName && <span className="text-slate-500"> (supplier, due added)</span>}
+                      </p>
+                      <p className="text-slate-700">
+                        Bought at: <span className="font-semibold text-slate-900">{formatTaka(item.unitCost)}</span> each · profit{" "}
+                        <span className="font-semibold text-emerald-700">{formatTaka(item.total - item.cost)}</span>
+                      </p>
+                    </div>
+                    {item.productCode && <p className="break-all font-mono text-xs text-slate-500">IMEI / ID: {item.productCode}</p>}
+                  </td>
+                  <td className="px-3 py-2 text-right">{item.quantity}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-right">{formatTaka(item.unitPrice)}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-right font-semibold">{formatTaka(item.total)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

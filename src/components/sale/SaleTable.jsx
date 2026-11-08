@@ -15,14 +15,13 @@ const SaleTable = ({ sales, meta, isLoading, hasFilters, showExchange = false, o
     {
       key: "customer",
       header: "Customer",
-      render: (s) =>
-        s.customer ? <span className="font-medium text-slate-900">{s.customer.name}</span> : <span className="text-slate-400">Walk-in</span>,
+      render: (s) => (s.customer ? <span className="font-medium text-slate-900">{s.customer.name}</span> : <span className="text-slate-400">Walk-in</span>),
     },
     {
       key: "items",
       header: "Items",
       className: "text-slate-600",
-      render: (s) => `${s.items.reduce((sum, item) => sum + item.quantity, 0)} pcs`,
+      render: (s) => `${[...s.items, ...(s.externalItems ?? [])].reduce((sum, item) => sum + item.quantity, 0)} pcs`,
     },
     { key: "grandTotal", header: "Total", ...money("font-semibold text-slate-900"), render: (s) => formatTaka(s.grandTotal) },
     ...(showExchange

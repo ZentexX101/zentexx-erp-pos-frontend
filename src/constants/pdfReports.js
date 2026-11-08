@@ -65,7 +65,7 @@ export const pdfReports = {
       when("Invoice", (s) => s.invoiceNo),
       when("Date", (s) => formatDateTime(s.date)),
       { header: "Customer", value: customerOf },
-      when("Items", (s) => `${pieces(s.items)} pcs`),
+      when("Items", (s) => `${pieces([...s.items, ...(s.externalItems ?? [])])} pcs`),
       money("Total", (s) => taka(s.grandTotal), { strong: true }),
       ...(kind === "exchange" ? [money("Old Device", (s) => taka(s.exchangeValue)), money("Paid Out", (s) => orDash(s.payoutAmount))] : []),
       money("Paid", (s) => taka(s.paidAmount)),

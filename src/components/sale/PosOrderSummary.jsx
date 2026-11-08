@@ -45,7 +45,14 @@ const PosOrderSummary = ({
         <span className="w-36 rounded-md bg-slate-50 px-3 py-2 text-right text-sm font-bold text-slate-900">{formatTaka(subTotal)}</span>
       </Row>
       <Row label="Discount (ছাড়):">
-        <input inputMode="decimal" aria-label="Discount" value={discount} onChange={(e) => onAmount("discount", toDecimalInput(e.target.value))} placeholder="0" className={amountClass} />
+        <input
+          inputMode="decimal"
+          aria-label="Discount"
+          value={discount}
+          onChange={(e) => onAmount("discount", toDecimalInput(e.target.value))}
+          placeholder="0"
+          className={amountClass}
+        />
       </Row>
       <Row label="Delivery Charge (ডেলিভারি চার্জ):">
         <input

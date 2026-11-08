@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { LuTrash2, LuX } from "react-icons/lu";
+import { LuPencil, LuPlus, LuStore, LuTrash2, LuX } from "react-icons/lu";
 import { useStockSerialsData } from "../../hooks/useStockApi";
+import { externalQuantity, externalTotal, sourceOf } from "../../utils/externalProduct";
 import { formatTaka } from "../../utils/money";
 import { toDecimalInput, toIntegerInput } from "../../utils/number";
 import { cartLineQuantity, cartLineTotal } from "../../utils/sale";
@@ -54,25 +55,26 @@ const SerialPicker = ({ productId, selected, onChange }) => {
 };
 
 // The cart: quantity (or IMEIs), selling price and line total. onChange(index, field, value), onRemove(index).
-const PosCart = ({ lines, onChange, onRemove }) => (
+// externals: products brought in from elsewhere (not in stock), added / edited in a modal (onAddExternal, onEditExternal(index), onRemoveExternal(index)).
+const PosCart = ({ lines, onChange, onRemove, externals = [], onAddExternal, onEditExternal, onRemoveExternal }) => (
   <section className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[520px] text-left text-sm">
+      <table className="w-full min-w-[520px] text-left text-sm xl:min-w-0">
         <thead className="bg-slate-50 text-slate-600">
           <tr>
             <th className="px-3 py-2.5 font-semibold">Product</th>
-            <th className="w-44 px-3 py-2.5 font-semibold">Qty / IMEIs</th>
-            <th className="w-28 px-3 py-2.5 font-semibold">Price</th>
+            <th className="w-20 px-3 py-2.5 font-semibold">Qty</th>
+            <th className="w-24 px-3 py-2.5 font-semibold">Price</th>
             <th className="px-3 py-2.5 text-right font-semibold">Total</th>
             <th className="px-2 py-2.5" />
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {lines.length === 0 ? (
+          {lines.length === 0 && externals.length === 0 ? (
             <tr>
               <td colSpan={5} className="px-3 py-10 text-center text-slate-500">
                 No products added yet.
-                <span className="block text-xs">Click a product or scan an IMEI to begin the sale.</span>
+                <span className="block text-xs">Click a product or scan an IMEI to begin the sale. Not in stock? Add it as an external product.</span>
               </td>
             </tr>
           ) : (
@@ -92,7 +94,7 @@ const PosCart = ({ lines, onChange, onRemove }) => (
                         maxLength={300}
                         spellCheck={false}
                         autoComplete="off"
-                        className="mt-1.5 w-full min-w-40 rounded-md border border-dashed border-slate-300 bg-white px-2 py-1 font-mono text-xs text-slate-800 outline-none placeholder:font-sans placeholder:text-slate-400 focus:border-solid focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
+                        className="mt-1.5 w-full min-w-0 rounded-md border border-dashed border-slate-300 bg-white px-2 py-1 font-mono text-xs text-slate-800 outline-none placeholder:font-sans placeholder:text-slate-400 focus:border-solid focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
                       />
                     )}
                   </td>
@@ -136,9 +138,60 @@ const PosCart = ({ lines, onChange, onRemove }) => (
               );
             })
           )}
+          {externals.map((line, index) => (
+            <tr key={line.key} className="align-top bg-amber-50/40">
+              <td className="px-3 py-2.5">
+                <p className="font-medium uppercase text-slate-900 [overflow-wrap:anywhere]">{line.name}</p>
+                <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800">
+                    <LuStore className="size-3" aria-hidden="true" />
+                    External
+                  </span>
+                  <span>Buy {formatTaka(Number(line.unitCost) || 0)}</span>
+                  {sourceOf(line) && <span className="[overflow-wrap:anywhere]">from {sourceOf(line)}</span>}
+                </p>
+                {line.productCode.trim() && <p className="mt-0.5 font-mono text-xs text-slate-500 [overflow-wrap:anywhere]">{line.productCode}</p>}
+              </td>
+              <td className="px-3 py-2.5 text-slate-700">{externalQuantity(line)}</td>
+              <td className="whitespace-nowrap px-3 py-2.5 text-slate-700">{formatTaka(Number(line.unitPrice) || 0)}</td>
+              <td className="whitespace-nowrap px-3 py-2.5 text-right font-semibold text-slate-900">{formatTaka(externalTotal(line))}</td>
+              <td className="px-2 py-2.5">
+                <div className="flex flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => onEditExternal(index)}
+                    className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                    aria-label={`Edit ${line.name}`}
+                  >
+                    <LuPencil className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveExternal(index)}
+                    className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                    aria-label={`Remove ${line.name}`}
+                  >
+                    <LuTrash2 className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
+    {onAddExternal && (
+      <div className="border-t border-slate-100 p-2.5">
+        <button
+          type="button"
+          onClick={onAddExternal}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-3 py-2.5 text-sm font-semibold text-amber-800 transition hover:border-amber-400 hover:bg-amber-50"
+        >
+          <LuPlus className="size-4" aria-hidden="true" />
+          External product (not in stock)
+        </button>
+      </div>
+    )}
   </section>
 );
 

@@ -6,6 +6,7 @@ import PosCart from "../../components/sale/PosCart";
 import PosCustomerPanel from "../../components/sale/PosCustomerPanel";
 import PosOrderSummary from "../../components/sale/PosOrderSummary";
 import PosProductGrid from "../../components/sale/PosProductGrid";
+import ExternalProductModal from "../../components/sale/ExternalProductModal";
 import SaleInvoicePrint from "../../components/sale/SaleInvoicePrint";
 import { useAuth } from "../../hooks/useAuth";
 import { usePaymentMethodOptionsData } from "../../hooks/usePaymentMethodApi";
@@ -15,6 +16,7 @@ import { hasPermission } from "../../utils/access";
 import { formatTaka } from "../../utils/money";
 import { roundTaka } from "../../utils/number";
 import { paymentLinesTotal, toPaymentItems } from "../../utils/paymentLines";
+import { externalQuantity, externalsTotal, toExternalItems } from "../../utils/externalProduct";
 import { addToCart, cartError, cartLineQuantity, cartSubTotal, toSaleItems } from "../../utils/sale";
 
 const NO_AMOUNTS = { discount: "", deliveryCharge: "" };
@@ -24,6 +26,9 @@ const CreatePos = () => {
 
   // all states
   const [lines, setLines] = useState([]);
+  // Products brought in from elsewhere for this sale; editingExternal: null, "new", or the index being edited
+  const [externals, setExternals] = useState([]);
+  const [editingExternal, setEditingExternal] = useState(null);
   const [customer, setCustomer] = useState(null);
   const [soldBy, setSoldBy] = useState("");
   const [amounts, setAmounts] = useState(NO_AMOUNTS);
@@ -38,9 +43,12 @@ const CreatePos = () => {
   const { data: methods = [] } = usePaymentMethodOptionsData();
   const createSale = useCreateSale();
   const findSerial = useFindSerial();
-  usePrintWhenReady(printSale, useCallback(() => setPrintSale(null), []));
+  usePrintWhenReady(
+    printSale,
+    useCallback(() => setPrintSale(null), []),
+  );
 
-  const subTotal = cartSubTotal(lines);
+  const subTotal = roundTaka(cartSubTotal(lines) + externalsTotal(externals));
   const grandTotal = Math.max(0, roundTaka(subTotal - (Number(amounts.discount) || 0) + (Number(amounts.deliveryCharge) || 0)));
   const defaultMethod = methods.find((m) => m.isDefault) ?? methods[0];
   const paymentLines = payments ?? [{ key: "auto", paymentMethod: defaultMethod?._id ?? "", amount: grandTotal ? String(grandTotal) : "" }];
@@ -75,6 +83,7 @@ const CreatePos = () => {
 
   const resetSale = () => {
     setLines([]);
+    setExternals([]);
     setCustomer(null);
     setAmounts(NO_AMOUNTS);
     setPayments(null);
@@ -84,7 +93,7 @@ const CreatePos = () => {
     clearMessages();
     const filledPayments = paymentLines.filter((line) => line.paymentMethod || Number(line.amount) > 0);
     const problem =
-      cartError(lines) ||
+      ((lines.length > 0 || externals.length === 0) && cartError(lines)) ||
       ((Number(amounts.discount) || 0) > subTotal && "Discount can't be more than the sub total.") ||
       (filledPayments.some((line) => !line.paymentMethod) && "Select the payment method for every paid amount.") ||
       (paid > grandTotal && "Paid amount can't be more than the grand total.") ||
@@ -96,6 +105,7 @@ const CreatePos = () => {
         customer: customer?._id ?? "",
         soldBy,
         items: toSaleItems(lines),
+        externalItems: toExternalItems(externals),
         discount: Number(amounts.discount) || 0,
         deliveryCharge: Number(amounts.deliveryCharge) || 0,
         payments: toPaymentItems(filledPayments.filter((line) => Number(line.amount) > 0)),
@@ -140,10 +150,18 @@ const CreatePos = () => {
               onCustomer={setCustomer}
               canCreateCustomer={hasPermission(user, "customer.create")}
             />
-            <PosCart lines={lines} onChange={changeLine} onRemove={removeLine} />
+            <PosCart
+              lines={lines}
+              onChange={changeLine}
+              onRemove={removeLine}
+              externals={externals}
+              onAddExternal={() => setEditingExternal("new")}
+              onEditExternal={(index) => setEditingExternal(index)}
+              onRemoveExternal={(index) => setExternals((prev) => prev.filter((_, i) => i !== index))}
+            />
             <Alert>{error}</Alert>
             <PosOrderSummary
-              itemCount={lines.reduce((sum, line) => sum + cartLineQuantity(line), 0)}
+              itemCount={lines.reduce((sum, line) => sum + cartLineQuantity(line), 0) + externals.reduce((sum, line) => sum + externalQuantity(line), 0)}
               subTotal={subTotal}
               discount={amounts.discount}
               deliveryCharge={amounts.deliveryCharge}
@@ -157,11 +175,23 @@ const CreatePos = () => {
               onPayFull={() => setPayments(null)}
               onSubmit={handleSubmit}
               submitting={createSale.isPending}
-              disabled={!lines.length}
+              disabled={!lines.length && !externals.length}
             />
           </div>
         </div>
       </div>
+
+      {editingExternal !== null && (
+        <ExternalProductModal
+          line={editingExternal === "new" ? null : externals[editingExternal]}
+          onClose={() => setEditingExternal(null)}
+          onSave={(line) => {
+            clearMessages();
+            setExternals((prev) => (editingExternal === "new" ? [...prev, line] : prev.map((old, i) => (i === editingExternal ? line : old))));
+            setEditingExternal(null);
+          }}
+        />
+      )}
 
       {printSale && <SaleInvoicePrint sale={printSale} />}
     </div>

@@ -43,8 +43,7 @@ const PosCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, canCreateCus
 
       {customer && (
         <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm">
-          Balance: <CustomerBalance amount={customer.balance} />{" "}
-          <span className="text-xs text-slate-500">({customerBalanceMeaning(customer.balance)})</span>
+          Balance: <CustomerBalance amount={customer.balance} /> <span className="text-xs text-slate-500">({customerBalanceMeaning(customer.balance)})</span>
         </p>
       )}
 
