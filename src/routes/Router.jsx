@@ -10,7 +10,6 @@ import ComingSoon from "../pages/ComingSoon";
 import NotFound from "../pages/NotFound";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
-import Home from "../pages/public/Home";
 import Settings from "../pages/settings/Settings";
 import AccessRoute from "./AccessRoute";
 import BranchRoute from "./BranchRoute";
@@ -40,15 +39,15 @@ const renderPanelPages = (panel) =>
 const Router = () => {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
+      <Route element={<MainLayout />}>
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
       </Route>
 
-      {/* Only for logged-out users */}
+      {/* Only for logged-out users. The site root is the login screen; a logged-in user goes to their dashboard. */}
       <Route element={<GuestRoute />}>
         <Route element={<AuthLayout />}>
+          <Route index element={<Login />} />
           <Route path="login" element={<Login />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
         </Route>
