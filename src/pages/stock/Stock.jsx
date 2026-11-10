@@ -26,7 +26,6 @@ const Stock = () => {
   const canExport = hasPermission(user, "stock.export");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [actionError, setActionError] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -49,7 +48,6 @@ const Stock = () => {
   const fetchFullStock = useFetchFullStock();
 
   const resetMessages = () => {
-    setNotice("");
     setActionError("");
   };
 
@@ -83,16 +81,14 @@ const Stock = () => {
   const handleSync = async () => {
     resetMessages();
     try {
-      const { added } = await syncProducts.mutateAsync();
-      setNotice(added ? `${added} product${added > 1 ? "s" : ""} added to stock with quantity 0.` : "Stock already lists every active product.");
+      await syncProducts.mutateAsync();
     } catch (err) {
       setActionError(err.message);
     }
   };
 
-  const handleSaved = (saved) => {
+  const handleSaved = () => {
     setEditing(null);
-    setNotice(`Prices of "${saved.product?.name}" updated.`);
   };
 
   // Download PDF: load every filtered row, then open the browser's print / save-as-PDF dialog
@@ -143,7 +139,6 @@ const Stock = () => {
 
         <StockSummary summary={data?.meta?.summary} />
 
-        <Alert type="success">{notice}</Alert>
         <Alert>{error?.message || actionError}</Alert>
 
         <StockTable

@@ -50,16 +50,17 @@ export const useFetchFullSupplierLedger = () => {
 };
 
 // ✅ Create / update / delete — each refreshes every supplier query (lists, options, ledgers)
-const useSupplierMutation = (mutationFn) => {
+const useSupplierMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [SUPPLIER_KEY] }),
   });
 };
 
-export const useCreateSupplier = () => useSupplierMutation((data) => createSupplier(data));
+export const useCreateSupplier = () => useSupplierMutation((data) => createSupplier(data), (saved) => `"${saved?.name ?? "Supplier"}" created.`);
 
-export const useUpdateSupplier = () => useSupplierMutation(({ id, data }) => updateSupplier(id, data));
+export const useUpdateSupplier = () => useSupplierMutation(({ id, data }) => updateSupplier(id, data), (saved) => `"${saved?.name ?? "Supplier"}" updated.`);
 
-export const useDeleteSupplier = () => useSupplierMutation((id) => deleteSupplier(id));
+export const useDeleteSupplier = () => useSupplierMutation((id) => deleteSupplier(id), "Supplier deleted.");

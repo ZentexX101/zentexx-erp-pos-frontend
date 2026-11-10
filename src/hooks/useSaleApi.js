@@ -49,15 +49,16 @@ export const useSalesData = (params, kind = "sale") => {
 };
 
 // ✅ A sale / exchange changes stock, the customer's balance and payment method balances too
-const useSaleMutation = (mutationFn) => {
+const useSaleMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () =>
       [SALE_KEY, STOCK_KEY, "customers", "paymentMethods"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
 
-export const useCreateSale = () => useSaleMutation((data) => createSale(data));
+export const useCreateSale = () => useSaleMutation((data) => createSale(data), (sale) => `Sale ${sale?.invoiceNo ?? ""} completed.`);
 
-export const useCreateExchange = () => useSaleMutation((data) => createExchange(data));
+export const useCreateExchange = () => useSaleMutation((data) => createExchange(data), (sale) => `Exchange ${sale?.invoiceNo ?? ""} completed.`);

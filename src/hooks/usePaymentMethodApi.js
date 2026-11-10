@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatTaka } from "../utils/money";
 import {
   addPaymentMethodTransaction,
   createPaymentMethod,
@@ -43,20 +44,24 @@ export const usePaymentMethodStatementData = (methodId, params) => {
 };
 
 // ✅ Create / update / in / out / delete — each refreshes every payment method query
-const usePaymentMethodMutation = (mutationFn) => {
+const usePaymentMethodMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [PAYMENT_METHOD_KEY] }),
   });
 };
 
-export const useCreatePaymentMethod = () => usePaymentMethodMutation((data) => createPaymentMethod(data));
+export const useCreatePaymentMethod = () => usePaymentMethodMutation((data) => createPaymentMethod(data), (saved) => `"${saved?.name ?? "Payment method"}" created.`);
 
-export const useUpdatePaymentMethod = () => usePaymentMethodMutation(({ id, data }) => updatePaymentMethod(id, data));
+export const useUpdatePaymentMethod = () => usePaymentMethodMutation(({ id, data }) => updatePaymentMethod(id, data), (saved) => `"${saved?.name ?? "Payment method"}" updated.`);
 
 // direction: "in" | "out"
 export const usePaymentMethodTransaction = () =>
-  usePaymentMethodMutation(({ id, direction, data }) => addPaymentMethodTransaction(id, direction, data));
+  usePaymentMethodMutation(({ id, direction, data }) => addPaymentMethodTransaction(id, direction, data),
+    (saved, { direction, data }) =>
+      `${formatTaka(data?.amount)} ${direction === "in" ? "added to" : "taken out of"} "${saved?.name ?? "payment method"}". Balance: ${formatTaka(saved?.balance)}.`
+  );
 
-export const useDeletePaymentMethod = () => usePaymentMethodMutation((id) => deletePaymentMethod(id));
+export const useDeletePaymentMethod = () => usePaymentMethodMutation((id) => deletePaymentMethod(id), "Payment method deleted.");

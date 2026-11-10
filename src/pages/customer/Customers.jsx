@@ -20,7 +20,6 @@ const Customers = () => {
   const canDelete = hasPermission(user, "customer.delete");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [page, setPage] = useState(1);
@@ -44,23 +43,19 @@ const Customers = () => {
   };
 
   const openForm = (customer) => {
-    setNotice("");
     setForm({ customer });
   };
 
   const openDelete = (customer) => {
-    setNotice("");
     setDeleting(customer);
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
   };
 
   const handleDelete = async () => {
     await deleteCustomer.mutateAsync(deleting._id);
-    setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (customers.length === 1 && page > 1) setPage(page - 1);
@@ -74,7 +69,6 @@ const Customers = () => {
 
       <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search name, phone, address..." className="max-w-sm" />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <CustomerTable

@@ -34,7 +34,6 @@ const Transfers = ({ scope = "main" }) => {
   const inBranch = scope === "branch";
 
   // all states
-  const [notice, setNotice] = useState("");
   const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -64,9 +63,8 @@ const Transfers = ({ scope = "main" }) => {
     setPage(1);
   };
 
-  const handleSaved = (transfer) => {
+  const handleSaved = () => {
     setCreating(false);
-    setNotice(`${transfer.transferNo}: ${transfer.totalQuantity} pcs moved from ${transfer.fromBranch?.name} to ${transfer.toBranch?.name}.`);
   };
 
   return (
@@ -85,7 +83,6 @@ const Transfers = ({ scope = "main" }) => {
           hasPermission(user, "transfer.create") && (
             <Button
               onClick={() => {
-                setNotice("");
                 setCreating(true);
               }}
             >
@@ -127,7 +124,6 @@ const Transfers = ({ scope = "main" }) => {
         )}
       </div>
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <TransferTable

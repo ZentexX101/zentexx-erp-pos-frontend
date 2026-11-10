@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatTaka } from "../utils/money";
 import {
   createSupplierPayment,
   fetchAllSupplierPaymentsData,
@@ -34,6 +35,7 @@ export const useCreateSupplierPayment = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => createSupplierPayment(data),
+    meta: { success: (saved) => `${saved?.paymentNo ?? "Payment"}: ${formatTaka(saved?.totalAmount)} paid to ${saved?.supplier?.name ?? "supplier"}.` },
     onSuccess: () =>
       [SUPPLIER_PAYMENT_KEY, "suppliers", "paymentMethods"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });

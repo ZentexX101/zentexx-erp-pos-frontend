@@ -28,6 +28,7 @@ export const useCreateSaleReturn = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => createSaleReturn(data),
+    meta: { success: (saved) => `Return ${saved?.returnNo ?? ""} saved.` },
     onSuccess: () =>
       [SALE_RETURN_KEY, "sales", STOCK_KEY, "customers", "paymentMethods"].forEach((queryKey) =>
         queryClient.invalidateQueries({ queryKey: [queryKey] })

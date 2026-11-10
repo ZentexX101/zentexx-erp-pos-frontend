@@ -10,7 +10,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useDeletePaymentMethod, usePaymentMethodsData } from "../../hooks/usePaymentMethodApi";
 import { hasPermission } from "../../utils/access";
-import { formatTaka } from "../../utils/money";
 
 const PaymentMethods = () => {
   const { user } = useAuth();
@@ -19,7 +18,6 @@ const PaymentMethods = () => {
   const canTransact = hasPermission(user, "payment_method.transaction");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [page, setPage] = useState(1);
@@ -44,33 +42,27 @@ const PaymentMethods = () => {
   };
 
   const openForm = (paymentMethod) => {
-    setNotice("");
     setForm({ paymentMethod });
   };
 
   const openTransaction = (paymentMethod, direction) => {
-    setNotice("");
     setMoving({ paymentMethod, direction });
   };
 
   const openDelete = (paymentMethod) => {
-    setNotice("");
     setDeleting(paymentMethod);
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
   };
 
-  const handleMoved = (saved, direction, amount) => {
+  const handleMoved = () => {
     setMoving(null);
-    setNotice(`${formatTaka(amount)} ${direction === "in" ? "added to" : "taken out of"} "${saved.name}". Balance: ${formatTaka(saved.balance)}.`);
   };
 
   const handleDelete = async () => {
     await deletePaymentMethod.mutateAsync(deleting._id);
-    setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (paymentMethods.length === 1 && page > 1) setPage(page - 1);
@@ -82,7 +74,6 @@ const PaymentMethods = () => {
 
       <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search payment methods..." className="max-w-sm pt-2" />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <PaymentMethodTable

@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatTaka } from "../utils/money";
 import { createExpense, fetchExpensesData } from "../providers/apiProviders/expenseApiProvider";
 import { branchStorage } from "../services/branchStorage";
 import { STOCK_KEY } from "./useStockApi";
@@ -22,6 +23,7 @@ export const useCreateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => createExpense(data),
+    meta: { success: (e) => `${e?.expenseNo ?? "Expense"}: ${e?.title ?? ""} — ${formatTaka(e?.amount)} saved.` },
     onSuccess: () => [EXPENSE_KEY, STOCK_KEY, "paymentMethods"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };

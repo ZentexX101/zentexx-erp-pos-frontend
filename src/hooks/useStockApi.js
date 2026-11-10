@@ -64,14 +64,19 @@ export const useStockSerialsData = (productId, supplier, { enabled = true } = {}
 };
 
 // ✅ Sync products / update prices — each refreshes every stock query
-const useStockMutation = (mutationFn) => {
+const useStockMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [STOCK_KEY] }),
   });
 };
 
-export const useSyncStockProducts = () => useStockMutation(() => syncStockProducts());
+export const useSyncStockProducts = () =>
+  useStockMutation(
+    () => syncStockProducts(),
+    ({ added } = {}) => (added ? `${added} product${added > 1 ? "s" : ""} added to stock with quantity 0.` : "Stock already lists every active product.")
+  );
 
-export const useUpdateStockPrices = () => useStockMutation(({ id, data }) => updateStockPrices(id, data));
+export const useUpdateStockPrices = () => useStockMutation(({ id, data }) => updateStockPrices(id, data), (saved) => `Prices of "${saved?.product?.name ?? "product"}" updated.`);

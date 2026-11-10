@@ -33,15 +33,16 @@ export const usePurchaseReturnsData = (params) => {
 };
 
 // ✅ A purchase / return changes stock, the supplier's balance and payment method balances too
-const usePurchaseMutation = (mutationFn, key) => {
+const usePurchaseMutation = (mutationFn, key, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () =>
       [key, STOCK_KEY, "suppliers", "paymentMethods"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
 
-export const useCreatePurchase = () => usePurchaseMutation((data) => createPurchase(data), PURCHASE_KEY);
+export const useCreatePurchase = () => usePurchaseMutation((data) => createPurchase(data), PURCHASE_KEY, (saved) => `Purchase ${saved?.invoiceNo ?? ""} saved.`);
 
-export const useCreatePurchaseReturn = () => usePurchaseMutation((data) => createPurchaseReturn(data), PURCHASE_RETURN_KEY);
+export const useCreatePurchaseReturn = () => usePurchaseMutation((data) => createPurchaseReturn(data), PURCHASE_RETURN_KEY, (saved) => `Purchase return ${saved?.returnNo ?? ""} saved.`);

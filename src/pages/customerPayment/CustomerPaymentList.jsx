@@ -14,7 +14,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useCustomerPaymentsData } from "../../hooks/useCustomerPaymentApi";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { hasPermission } from "../../utils/access";
-import { formatTaka } from "../../utils/money";
 import { periodRange } from "../../utils/period";
 
 // Branch panel: this branch's customer payments (kind "payment") or payouts ("payout")
@@ -24,7 +23,6 @@ const CustomerPaymentList = ({ kind }) => {
   const canCreate = hasPermission(user, "payment.create");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [period, setPeriod] = useState({ period: "today", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -42,9 +40,8 @@ const CustomerPaymentList = ({ kind }) => {
     setPage(1);
   };
 
-  const handleSaved = (saved) => {
+  const handleSaved = () => {
     setCreating(false);
-    setNotice(`${saved.paymentNo}: ${formatTaka(saved.totalAmount)} ${kind === "payment" ? "received from" : "paid to"} ${saved.customer?.name}.`);
   };
 
   return (
@@ -57,7 +54,6 @@ const CustomerPaymentList = ({ kind }) => {
           canCreate && (
             <Button
               onClick={() => {
-                setNotice("");
                 setCreating(true);
               }}
             >
@@ -78,7 +74,6 @@ const CustomerPaymentList = ({ kind }) => {
         noun={copy.noun}
       />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <PaymentTable

@@ -82,7 +82,6 @@ const Registrations = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
   const [busyId, setBusyId] = useState(null);
   const [rejecting, setRejecting] = useState(null);
   const [reason, setReason] = useState("");
@@ -99,7 +98,6 @@ const Registrations = () => {
   const loadError = (listError || branchError)?.message;
 
   const changeTab = (next) => {
-    setNotice("");
     setStatus(next);
     setPage(1);
   };
@@ -117,12 +115,9 @@ const Registrations = () => {
   const handleApprove = async (user, role, branchId) => {
     setBusyId(user._id);
     setError("");
-    setNotice("");
     try {
-      const approved = await approveRegistration.mutateAsync({ userId: user._id, role, branchId });
+      await approveRegistration.mutateAsync({ userId: user._id, role, branchId });
       afterReview();
-      const where = approved.branch ? ` at ${approved.branch.name}` : " (main admin)";
-      setNotice(`${user.name} approved as ${ROLE_LABELS[role]}${where}. They can sign in now.`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -139,11 +134,9 @@ const Registrations = () => {
     const user = rejecting;
     setBusyId(user._id);
     setError("");
-    setNotice("");
     try {
       await rejectRegistration.mutateAsync({ userId: user._id, reason: reason.trim() });
       afterReview();
-      setNotice(`${user.name}'s registration was rejected.`);
       closeRejectModal();
     } catch (err) {
       setError(err.message);
@@ -178,7 +171,6 @@ const Registrations = () => {
       </div>
 
       <div className="mt-4 space-y-2">
-        <Alert type="success">{notice}</Alert>
         <Alert>{error || loadError}</Alert>
       </div>
 

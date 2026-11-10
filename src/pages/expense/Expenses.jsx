@@ -18,7 +18,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useExpensesData } from "../../hooks/useExpenseApi";
 import { hasPermission } from "../../utils/access";
-import { formatTaka } from "../../utils/money";
 import { periodRange } from "../../utils/period";
 
 const TYPE_OPTIONS = [
@@ -31,7 +30,6 @@ const Expenses = () => {
   const { user } = useAuth();
 
   // all states
-  const [notice, setNotice] = useState("");
   const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -51,9 +49,8 @@ const Expenses = () => {
     setPage(1);
   };
 
-  const handleSaved = (expense) => {
+  const handleSaved = () => {
     setCreating(false);
-    setNotice(`${expense.expenseNo}: ${expense.title} — ${formatTaka(expense.amount)} saved.`);
   };
 
   return (
@@ -66,7 +63,6 @@ const Expenses = () => {
           hasPermission(user, "expense.create") && (
             <Button
               onClick={() => {
-                setNotice("");
                 setCreating(true);
               }}
             >
@@ -99,7 +95,6 @@ const Expenses = () => {
 
       <ExpenseSummary summary={data?.meta?.summary} activeCategory={category} onCategory={withPageReset(setCategory)} />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <ExpenseTable

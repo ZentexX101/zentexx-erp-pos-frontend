@@ -24,10 +24,11 @@ export const useReplacementsData = (params) => {
 };
 
 // ✅ A replacement moves stock and the invoice, and a charge moves money
-const useReplacementMutation = (mutationFn) => {
+const useReplacementMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () =>
       [REPLACEMENT_KEY, "sales", "serviceSales", STOCK_KEY, "customers", "paymentMethods", "reports", "analytics"].forEach((queryKey) =>
         queryClient.invalidateQueries({ queryKey: [queryKey] }),
@@ -35,5 +36,5 @@ const useReplacementMutation = (mutationFn) => {
   });
 };
 
-export const useCreateReplacement = () => useReplacementMutation(createReplacement);
-export const useResolveReplacement = () => useReplacementMutation(resolveReplacement);
+export const useCreateReplacement = () => useReplacementMutation(createReplacement, (saved) => `Replacement ${saved?.replacementNo ?? ""} saved.`);
+export const useResolveReplacement = () => useReplacementMutation(resolveReplacement, "Faulty piece resolved.");

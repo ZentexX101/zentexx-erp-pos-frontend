@@ -13,16 +13,17 @@ export const useProductsData = (params) => {
 };
 
 // ✅ Create / update / delete — each refreshes the product lists
-const useProductMutation = (mutationFn) => {
+const useProductMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [PRODUCT_KEY] }),
   });
 };
 
-export const useCreateProduct = () => useProductMutation((data) => createProduct(data));
+export const useCreateProduct = () => useProductMutation((data) => createProduct(data), (saved) => `"${saved?.name ?? "Product"}" created.`);
 
-export const useUpdateProduct = () => useProductMutation(({ id, data }) => updateProduct(id, data));
+export const useUpdateProduct = () => useProductMutation(({ id, data }) => updateProduct(id, data), (saved) => `"${saved?.name ?? "Product"}" updated.`);
 
-export const useDeleteProduct = () => useProductMutation((id) => deleteProduct(id));
+export const useDeleteProduct = () => useProductMutation((id) => deleteProduct(id), "Product deleted.");

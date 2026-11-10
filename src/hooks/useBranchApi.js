@@ -45,10 +45,11 @@ export const useCurrentBranchData = (branchId) => {
 };
 
 // ✅ Create / update / delete — refresh every branch query, and staff (they show branch names)
-const useBranchMutation = (mutationFn) => {
+const useBranchMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [BRANCH_KEY] });
       queryClient.invalidateQueries({ queryKey: ["staff"] });
@@ -56,8 +57,8 @@ const useBranchMutation = (mutationFn) => {
   });
 };
 
-export const useCreateBranch = () => useBranchMutation((data) => createBranch(data));
+export const useCreateBranch = () => useBranchMutation((data) => createBranch(data), (saved) => `"${saved?.name ?? "Branch"}" created.`);
 
-export const useUpdateBranch = () => useBranchMutation(({ id, data }) => updateBranch(id, data));
+export const useUpdateBranch = () => useBranchMutation(({ id, data }) => updateBranch(id, data), (saved) => `"${saved?.name ?? "Branch"}" updated.`);
 
-export const useDeleteBranch = () => useBranchMutation((id) => deleteBranch(id));
+export const useDeleteBranch = () => useBranchMutation((id) => deleteBranch(id), "Branch deleted.");

@@ -22,18 +22,19 @@ export const useRepairDevice = (imei) =>
   useQuery({ queryKey: [REPAIR_KEY, branchKey(), "device", imei], queryFn: () => api.fetchRepairDevice(imei), enabled: Boolean(imei) });
 
 // ✅ A job's money touches payment methods, the customer's balance and the dashboard
-const useRepairMutation = (mutationFn) => {
+const useRepairMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => [REPAIR_KEY, "customers", "paymentMethods", "analytics"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
 
-export const useCreateRepair = () => useRepairMutation(api.createRepair);
-export const useUpdateRepair = () => useRepairMutation(api.updateRepair);
-export const useUpdateRepairStatus = () => useRepairMutation(api.updateRepairStatus);
-export const useAddRepairCost = () => useRepairMutation(api.addRepairCost);
-export const useRemoveRepairCost = () => useRepairMutation(api.removeRepairCost);
-export const useAddRepairPayment = () => useRepairMutation(api.addRepairPayment);
-export const useCloseRepair = () => useRepairMutation(api.closeRepair);
+export const useCreateRepair = () => useRepairMutation(api.createRepair, "Repair job created.");
+export const useUpdateRepair = () => useRepairMutation(api.updateRepair, "Repair job updated.");
+export const useUpdateRepairStatus = () => useRepairMutation(api.updateRepairStatus, "Repair status updated.");
+export const useAddRepairCost = () => useRepairMutation(api.addRepairCost, "Repair cost added.");
+export const useRemoveRepairCost = () => useRepairMutation(api.removeRepairCost, "Repair cost removed.");
+export const useAddRepairPayment = () => useRepairMutation(api.addRepairPayment, "Repair payment added.");
+export const useCloseRepair = () => useRepairMutation(api.closeRepair, "Repair job closed.");

@@ -27,10 +27,11 @@ export const useBrandOptionsData = () => {
 };
 
 // ✅ Create / update / delete — refresh every brand query, and products (they show brand names)
-const useBrandMutation = (mutationFn) => {
+const useBrandMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [BRAND_KEY] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -38,8 +39,8 @@ const useBrandMutation = (mutationFn) => {
   });
 };
 
-export const useCreateBrand = () => useBrandMutation((data) => createBrand(data));
+export const useCreateBrand = () => useBrandMutation((data) => createBrand(data), (saved) => `"${saved?.name ?? "Brand"}" created.`);
 
-export const useUpdateBrand = () => useBrandMutation(({ id, data }) => updateBrand(id, data));
+export const useUpdateBrand = () => useBrandMutation(({ id, data }) => updateBrand(id, data), (saved) => `"${saved?.name ?? "Brand"}" updated.`);
 
-export const useDeleteBrand = () => useBrandMutation((id) => deleteBrand(id));
+export const useDeleteBrand = () => useBrandMutation((id) => deleteBrand(id), "Brand deleted.");

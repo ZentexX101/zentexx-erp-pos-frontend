@@ -33,7 +33,6 @@ const Staff = () => {
   const navigate = useNavigate();
 
   // all states
-  const [notice, setNotice] = useState("");
   const [actionError, setActionError] = useState("");
   // id of the staff member being entered with "Login as"
   const [enteringId, setEnteringId] = useState(null);
@@ -81,19 +80,16 @@ const Staff = () => {
   };
 
   const openForm = (target) => {
-    setNotice("");
     setActionError("");
     setForm({ staff: target });
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `${saved.name} updated.` : `${saved.name} created (Staff ID #${saved.staffCode}). They can sign in now.`);
   };
 
   // Opens the app as this staff member; the banner on top brings the admin back
   const handleLoginAs = async (target) => {
-    setNotice("");
     setActionError("");
     setEnteringId(target._id);
     try {
@@ -107,7 +103,6 @@ const Staff = () => {
 
   const handleDelete = async () => {
     await deleteStaff.mutateAsync(deleting._id);
-    setNotice(`${deleting.name} deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (staff.length === 1 && page > 1) setPage(page - 1);
@@ -223,7 +218,6 @@ const Staff = () => {
               label={`Delete ${s.name}`}
               variant="danger"
               onClick={() => {
-                setNotice("");
                 setDeleting(s);
               }}
             />
@@ -284,7 +278,6 @@ const Staff = () => {
       </FilterBar>
 
       <div className="mt-4 space-y-2">
-        <Alert type="success">{notice}</Alert>
         <Alert>{error}</Alert>
       </div>
 

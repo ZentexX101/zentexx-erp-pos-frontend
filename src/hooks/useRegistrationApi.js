@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ROLE_LABELS } from "../constants/roles";
 import {
   approveRegistration,
   fetchRegistrationsData,
@@ -17,10 +18,11 @@ export const useRegistrationsData = (params) => {
 };
 
 // ✅ Approve / reject — refresh the requests, and staff (an approved user becomes staff)
-const useRegistrationMutation = (mutationFn) => {
+const useRegistrationMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [REGISTRATION_KEY] });
       queryClient.invalidateQueries({ queryKey: ["staff", "list"] });
@@ -29,6 +31,10 @@ const useRegistrationMutation = (mutationFn) => {
 };
 
 export const useApproveRegistration = () =>
-  useRegistrationMutation(({ userId, role, branchId }) => approveRegistration(userId, role, branchId));
+  useRegistrationMutation(
+    ({ userId, role, branchId }) => approveRegistration(userId, role, branchId),
+    (approved, { role }) =>
+      `${approved?.name ?? "User"} approved as ${ROLE_LABELS[role] ?? role}${approved?.branch ? ` at ${approved.branch.name}` : " (main admin)"}. They can sign in now.`
+  );
 
-export const useRejectRegistration = () => useRegistrationMutation(({ userId, reason }) => rejectRegistration(userId, reason));
+export const useRejectRegistration = () => useRegistrationMutation(({ userId, reason }) => rejectRegistration(userId, reason), "Registration rejected.");

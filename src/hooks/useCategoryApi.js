@@ -27,10 +27,11 @@ export const useCategoryOptionsData = () => {
 };
 
 // ✅ Create / update / delete — refresh every category query, and products (they show category names)
-const useCategoryMutation = (mutationFn) => {
+const useCategoryMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CATEGORY_KEY] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -38,8 +39,8 @@ const useCategoryMutation = (mutationFn) => {
   });
 };
 
-export const useCreateCategory = () => useCategoryMutation((data) => createCategory(data));
+export const useCreateCategory = () => useCategoryMutation((data) => createCategory(data), (saved) => `"${saved?.name ?? "Category"}" created.`);
 
-export const useUpdateCategory = () => useCategoryMutation(({ id, data }) => updateCategory(id, data));
+export const useUpdateCategory = () => useCategoryMutation(({ id, data }) => updateCategory(id, data), (saved) => `"${saved?.name ?? "Category"}" updated.`);
 
-export const useDeleteCategory = () => useCategoryMutation((id) => deleteCategory(id));
+export const useDeleteCategory = () => useCategoryMutation((id) => deleteCategory(id), "Category deleted.");

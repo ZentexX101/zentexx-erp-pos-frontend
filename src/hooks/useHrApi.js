@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatTaka } from "../utils/money";
 import * as api from "../providers/apiProviders/hrApiProvider";
 import { branchStorage } from "../services/branchStorage";
 
@@ -29,22 +30,23 @@ export const useSalaryHistoryData = (userId) => useList(["salary-history", userI
 export const useAdvancesData = (params) => useList(["advances", params], () => api.fetchAdvancesData(params));
 
 // Money moves on salary and advance, so reports, balances and the dashboard refresh too
-const useHrMutation = (mutationFn, also = []) => {
+const useHrMutation = (mutationFn, success, also = []) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => [HR_KEY, ...also].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
 const MONEY = ["paymentMethods", "reports", "analytics"];
 
-export const useCheckIn = () => useHrMutation(api.checkIn);
-export const useCheckOut = () => useHrMutation(api.checkOut);
-export const useRequestLeave = () => useHrMutation(api.requestLeave);
-export const useCancelLeave = () => useHrMutation(api.cancelLeave);
-export const useMarkAttendance = () => useHrMutation(api.markAttendance);
-export const useAddLeave = () => useHrMutation(api.addLeave);
-export const useReviewLeave = () => useHrMutation(api.reviewLeave);
-export const usePaySalary = () => useHrMutation(api.paySalary, MONEY);
-export const useCreateIncrement = () => useHrMutation(api.createIncrement, ["staff"]);
-export const useGiveAdvance = () => useHrMutation(api.giveAdvance, MONEY);
+export const useCheckIn = () => useHrMutation(api.checkIn, "Checked in.");
+export const useCheckOut = () => useHrMutation(api.checkOut, "Checked out.");
+export const useRequestLeave = () => useHrMutation(api.requestLeave, "Leave request sent.");
+export const useCancelLeave = () => useHrMutation(api.cancelLeave, "Leave request cancelled.");
+export const useMarkAttendance = () => useHrMutation(api.markAttendance, "Attendance saved.");
+export const useAddLeave = () => useHrMutation(api.addLeave, "Leave added.");
+export const useReviewLeave = () => useHrMutation(api.reviewLeave, (_, { status }) => `Leave ${status === "approved" || status === "rejected" ? status : "updated"}.`);
+export const usePaySalary = () => useHrMutation(api.paySalary, "Salary paid.", MONEY);
+export const useCreateIncrement = () => useHrMutation(api.createIncrement, (saved) => `Salary set to ${formatTaka(saved?.newSalary)}.`, ["staff"]);
+export const useGiveAdvance = () => useHrMutation(api.giveAdvance, "Advance given.", MONEY);

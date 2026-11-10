@@ -28,16 +28,17 @@ export const usePermissionCatalogData = () => {
 };
 
 // ✅ Create / update / delete — each refreshes the staff lists
-const useStaffMutation = (mutationFn) => {
+const useStaffMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [STAFF_KEY, "list"] }),
   });
 };
 
-export const useCreateStaff = () => useStaffMutation((data) => createStaff(data));
+export const useCreateStaff = () => useStaffMutation((data) => createStaff(data), (saved) => `${saved?.name ?? "Staff"} created${saved?.staffCode ? ` (Staff ID #${saved.staffCode})` : ""}.`);
 
-export const useUpdateStaff = () => useStaffMutation(({ id, data }) => updateStaff(id, data));
+export const useUpdateStaff = () => useStaffMutation(({ id, data }) => updateStaff(id, data), (saved) => `${saved?.name ?? "Staff"} updated.`);
 
-export const useDeleteStaff = () => useStaffMutation((id) => deleteStaff(id));
+export const useDeleteStaff = () => useStaffMutation((id) => deleteStaff(id), "Staff deleted.");

@@ -50,16 +50,17 @@ export const useFetchFullCustomerLedger = () => {
 };
 
 // ✅ Create / update / delete — each refreshes every customer query (lists, options, ledgers)
-const useCustomerMutation = (mutationFn) => {
+const useCustomerMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [CUSTOMER_KEY] }),
   });
 };
 
-export const useCreateCustomer = () => useCustomerMutation((data) => createCustomer(data));
+export const useCreateCustomer = () => useCustomerMutation((data) => createCustomer(data), (saved) => `"${saved?.name ?? "Customer"}" created.`);
 
-export const useUpdateCustomer = () => useCustomerMutation(({ id, data }) => updateCustomer(id, data));
+export const useUpdateCustomer = () => useCustomerMutation(({ id, data }) => updateCustomer(id, data), (saved) => `"${saved?.name ?? "Customer"}" updated.`);
 
-export const useDeleteCustomer = () => useCustomerMutation((id) => deleteCustomer(id));
+export const useDeleteCustomer = () => useCustomerMutation((id) => deleteCustomer(id), "Customer deleted.");

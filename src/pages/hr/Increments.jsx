@@ -35,7 +35,6 @@ const Increments = () => {
   const search = useDebouncedValue(searchInput.trim());
   const [historyOf, setHistoryOf] = useState(null); // user id
   const [changing, setChanging] = useState(null); // null, "" (pick a person) or a user id
-  const [notice, setNotice] = useState("");
 
   // call hr api
   const { data, isLoading, error } = useSalaryOverviewData({ search });
@@ -45,9 +44,7 @@ const Increments = () => {
   const summary = data?.summary;
 
   const save = async (values) => {
-    const saved = await create.mutateAsync(values);
-    const name = (everyone?.rows ?? []).find((row) => row.user._id === values.user)?.user.name ?? "The";
-    setNotice(`${name} salary set to ${formatTaka(saved.newSalary)} from ${monthLabel(saved.effectiveMonth)}.`);
+    await create.mutateAsync(values);
   };
 
   return (
@@ -59,7 +56,6 @@ const Increments = () => {
         actions={canManage && <Button onClick={() => setChanging("")}>Change salary</Button>}
       />
 
-      {notice && <Alert type="success">{notice}</Alert>}
       <Alert>{error?.message}</Alert>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

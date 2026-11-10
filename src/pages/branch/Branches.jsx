@@ -24,7 +24,6 @@ const Branches = () => {
   const { enterBranch } = useBranch();
 
   // all states
-  const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [page, setPage] = useState(1);
@@ -50,13 +49,11 @@ const Branches = () => {
   };
 
   const openForm = (branch) => {
-    setNotice("");
     setForm({ branch });
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
   };
 
   const handleLogin = (branch) => {
@@ -66,7 +63,6 @@ const Branches = () => {
 
   const handleDelete = async () => {
     await deleteBranch.mutateAsync(deleting._id);
-    setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (branches.length === 1 && page > 1) setPage(page - 1);
@@ -126,7 +122,6 @@ const Branches = () => {
             label={`Delete ${b.name}`}
             variant="danger"
             onClick={() => {
-              setNotice("");
               setDeleting(b);
             }}
           />
@@ -151,7 +146,6 @@ const Branches = () => {
       <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search branch..." className="mt-6 max-w-sm" />
 
       <div className="mt-4 space-y-2">
-        <Alert type="success">{notice}</Alert>
         <Alert>{error?.message}</Alert>
       </div>
 

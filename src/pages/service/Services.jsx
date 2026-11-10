@@ -17,7 +17,6 @@ const Services = () => {
   const canDelete = hasPermission(user, "service.delete");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [page, setPage] = useState(1);
@@ -41,23 +40,19 @@ const Services = () => {
   };
 
   const openForm = (service) => {
-    setNotice("");
     setForm({ service });
   };
 
   const openDelete = (service) => {
-    setNotice("");
     setDeleting(service);
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
   };
 
   const handleDelete = async () => {
     await deleteService.mutateAsync(deleting._id);
-    setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (services.length === 1 && page > 1) setPage(page - 1);
@@ -69,7 +64,6 @@ const Services = () => {
 
       <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search service..." className="max-w-sm pt-2" />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <ServiceTable

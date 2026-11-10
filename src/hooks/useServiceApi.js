@@ -27,16 +27,17 @@ export const useServiceOptionsData = () => {
 };
 
 // ✅ Create / update / delete — refresh every service query (lists and options)
-const useServiceMutation = (mutationFn) => {
+const useServiceMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [SERVICE_KEY] }),
   });
 };
 
-export const useCreateService = () => useServiceMutation((data) => createService(data));
+export const useCreateService = () => useServiceMutation((data) => createService(data), (saved) => `"${saved?.name ?? "Service"}" created.`);
 
-export const useUpdateService = () => useServiceMutation(({ id, data }) => updateService(id, data));
+export const useUpdateService = () => useServiceMutation(({ id, data }) => updateService(id, data), (saved) => `"${saved?.name ?? "Service"}" updated.`);
 
-export const useDeleteService = () => useServiceMutation((id) => deleteService(id));
+export const useDeleteService = () => useServiceMutation((id) => deleteService(id), "Service deleted.");

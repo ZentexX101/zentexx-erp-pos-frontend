@@ -27,6 +27,7 @@ export const useCreateServiceSale = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => createServiceSale(data),
+    meta: { success: (saved) => `Service sale ${saved?.saleNo ?? ""} saved.` },
     onSuccess: () =>
       [SERVICE_SALE_KEY, "services", "customers", "paymentMethods", "analytics"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });

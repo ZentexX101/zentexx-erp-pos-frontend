@@ -17,7 +17,6 @@ const Brands = () => {
   const canDelete = hasPermission(user, "brand.delete");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [page, setPage] = useState(1);
@@ -41,23 +40,19 @@ const Brands = () => {
   };
 
   const openForm = (brand) => {
-    setNotice("");
     setForm({ brand });
   };
 
   const openDelete = (brand) => {
-    setNotice("");
     setDeleting(brand);
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
   };
 
   const handleDelete = async () => {
     await deleteBrand.mutateAsync(deleting._id);
-    setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (brands.length === 1 && page > 1) setPage(page - 1);
@@ -69,7 +64,6 @@ const Brands = () => {
 
       <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search brand..." className="max-w-sm pt-2" />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <BrandTable

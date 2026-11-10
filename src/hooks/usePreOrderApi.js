@@ -22,10 +22,11 @@ export const usePreOrderProducts = (params) =>
   useQuery({ queryKey: [PRE_ORDER_KEY, branchKey(), "products", params], queryFn: () => api.fetchPreOrderProducts(params), placeholderData: keepPreviousData });
 
 // ✅ A booking touches payment methods and the customer's balance; selling it also stock, sales and the dashboard
-const usePreOrderMutation = (mutationFn) => {
+const usePreOrderMutation = (mutationFn, success) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn,
+    meta: { success },
     onSuccess: () =>
       [PRE_ORDER_KEY, "stock", "sales", "customers", "paymentMethods", "analytics"].forEach((queryKey) =>
         queryClient.invalidateQueries({ queryKey: [queryKey] }),
@@ -33,9 +34,9 @@ const usePreOrderMutation = (mutationFn) => {
   });
 };
 
-export const useCreatePreOrder = () => usePreOrderMutation(api.createPreOrder);
-export const useUpdatePreOrder = () => usePreOrderMutation(api.updatePreOrder);
-export const useAddPreOrderPayment = () => usePreOrderMutation(api.addPreOrderPayment);
-export const useMarkPreOrderNotified = () => usePreOrderMutation(api.markPreOrderNotified);
-export const useSellPreOrder = () => usePreOrderMutation(api.sellPreOrder);
-export const useCancelPreOrder = () => usePreOrderMutation(api.cancelPreOrder);
+export const useCreatePreOrder = () => usePreOrderMutation(api.createPreOrder, "Pre-order created.");
+export const useUpdatePreOrder = () => usePreOrderMutation(api.updatePreOrder, "Pre-order updated.");
+export const useAddPreOrderPayment = () => usePreOrderMutation(api.addPreOrderPayment, "Payment added to the pre-order.");
+export const useMarkPreOrderNotified = () => usePreOrderMutation(api.markPreOrderNotified, "Customer marked as notified.");
+export const useSellPreOrder = () => usePreOrderMutation(api.sellPreOrder, "Pre-order sold.");
+export const useCancelPreOrder = () => usePreOrderMutation(api.cancelPreOrder, "Pre-order cancelled.");

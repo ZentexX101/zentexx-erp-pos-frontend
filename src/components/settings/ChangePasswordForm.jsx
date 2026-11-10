@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { useState } from "react";
 import { LuCheck } from "react-icons/lu";
 import { changePassword } from "../../providers/apiProviders/authApiProvider";
@@ -27,20 +28,17 @@ const ChangePasswordForm = () => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
-    setSuccess("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError("");
-    setSuccess("");
 
     const newErrors = {
       currentPassword: form.currentPassword ? "" : "Current password is required",
@@ -55,7 +53,7 @@ const ChangePasswordForm = () => {
     setSubmitting(true);
     try {
       const res = await changePassword(form);
-      setSuccess(res.message);
+      toast.success(res.message || "Password changed.");
       setForm(EMPTY_FORM);
     } catch (err) {
       setServerError(err.message);
@@ -77,7 +75,6 @@ const ChangePasswordForm = () => {
       }
     >
       <form id={FORM_ID} onSubmit={handleSubmit} noValidate className="max-w-md space-y-4">
-        <Alert type="success">{success}</Alert>
         <Alert>{serverError}</Alert>
 
         <Input

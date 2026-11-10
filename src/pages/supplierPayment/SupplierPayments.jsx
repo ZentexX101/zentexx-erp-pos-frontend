@@ -13,7 +13,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useSupplierPaymentsData } from "../../hooks/useSupplierPaymentApi";
 import { hasPermission } from "../../utils/access";
-import { formatTaka } from "../../utils/money";
 import { periodRange } from "../../utils/period";
 
 // Branch panel: this branch's supplier payments
@@ -22,7 +21,6 @@ const SupplierPayments = () => {
   const canCreate = hasPermission(user, "payment.create");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [period, setPeriod] = useState({ period: "today", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -49,9 +47,8 @@ const SupplierPayments = () => {
     setPage(1);
   };
 
-  const handleSaved = (saved) => {
+  const handleSaved = () => {
     setCreating(false);
-    setNotice(`${saved.paymentNo}: ${formatTaka(saved.totalAmount)} paid to ${saved.supplier?.name}.`);
   };
 
   return (
@@ -64,7 +61,6 @@ const SupplierPayments = () => {
           canCreate && (
             <Button
               onClick={() => {
-                setNotice("");
                 setCreating(true);
               }}
             >
@@ -84,7 +80,6 @@ const SupplierPayments = () => {
         summary={data?.meta?.summary}
       />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error?.message}</Alert>
 
       <PaymentTable

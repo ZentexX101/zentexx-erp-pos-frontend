@@ -42,6 +42,7 @@ export const useCreateTransfer = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => createTransfer(data),
+    meta: { success: (t) => `${t?.transferNo ?? "Transfer"}: ${t?.totalQuantity ?? 0} pcs moved from ${t?.fromBranch?.name ?? ""} to ${t?.toBranch?.name ?? ""}.` },
     onSuccess: () => [TRANSFER_KEY, STOCK_KEY].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };

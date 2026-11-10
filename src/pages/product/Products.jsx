@@ -23,7 +23,6 @@ const Products = () => {
   const canDelete = hasPermission(user, "product.delete");
 
   // all states
-  const [notice, setNotice] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [filters, setFilters] = useState(NO_FILTERS);
@@ -64,23 +63,19 @@ const Products = () => {
   };
 
   const openForm = (product) => {
-    setNotice("");
     setForm({ product });
   };
 
   const openDelete = (product) => {
-    setNotice("");
     setDeleting(product);
   };
 
-  const handleSaved = (saved, isEdit) => {
+  const handleSaved = () => {
     setForm(null);
-    setNotice(isEdit ? `"${saved.name}" updated.` : `"${saved.name}" created.`);
   };
 
   const handleDelete = async () => {
     await deleteProduct.mutateAsync(deleting._id);
-    setNotice(`"${deleting.name}" deleted.`);
     setDeleting(null);
     // The page's last row is gone: go back a page
     if (products.length === 1 && page > 1) setPage(page - 1);
@@ -104,7 +99,6 @@ const Products = () => {
         brands={brands}
       />
 
-      <Alert type="success">{notice}</Alert>
       <Alert>{error}</Alert>
 
       <ProductTable
