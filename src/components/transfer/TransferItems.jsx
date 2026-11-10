@@ -58,15 +58,15 @@ const TransferItems = ({ fromBranch, lines, onChange }) => {
       {lines.map((line, index) => {
         const { product } = line.stock;
         return (
-          <div key={product._id} className="flex flex-wrap items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
-            <div className="min-w-48 flex-1">
-              <p className="font-medium uppercase text-slate-900">{product.name}</p>
-              <p className="text-xs text-slate-500">
+          <div key={product._id} className="grid grid-cols-[1fr_auto] items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-[1fr_14rem_auto]">
+            <div className="min-w-0">
+              <p className="break-words font-medium uppercase text-slate-900">{product.name}</p>
+              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
                 In stock: {line.stock.quantity}
-                {product.trackSerial && <Badge tone="purple" className="ml-2">IMEI · {line.serials.length} picked</Badge>}
+                {product.trackSerial && <Badge tone="purple">IMEI · {line.serials.length} picked</Badge>}
               </p>
             </div>
-            <div className="w-56">
+            <div className="col-span-2 row-start-2 sm:col-span-1 sm:col-start-2 sm:row-start-1">
               {product.trackSerial ? (
                 <SerialChecklist branch={fromBranch} productId={product._id} selected={line.serials} onChange={(serials) => set(index, { serials })} />
               ) : (
@@ -84,7 +84,7 @@ const TransferItems = ({ fromBranch, lines, onChange }) => {
             <button
               type="button"
               onClick={() => onChange(lines.filter((_, i) => i !== index))}
-              className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+              className="col-start-2 row-start-1 rounded-md p-1.5 text-slate-400 sm:col-start-3 hover:bg-red-50 hover:text-red-600"
               aria-label={`Remove ${product.name}`}
             >
               <LuTrash2 className="h-4 w-4" aria-hidden="true" />

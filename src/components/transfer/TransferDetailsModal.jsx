@@ -15,13 +15,13 @@ const TransferDetailsModal = ({ transfer, showCost, onClose }) => (
   >
     {transfer && (
       <div className="space-y-5">
-        <div className="flex items-center justify-center gap-4 rounded-lg bg-slate-50 p-4">
-          <div className="text-center">
+        <div className="flex items-center justify-center gap-3 rounded-lg bg-slate-50 p-4 sm:gap-4">
+          <div className="min-w-0 flex-1 break-words text-center sm:flex-none">
             <p className="text-xs text-slate-500">From</p>
             <p className="font-semibold text-slate-900">{transfer.fromBranch?.name}</p>
           </div>
-          <LuArrowRight className="h-5 w-5 text-indigo-500" aria-hidden="true" />
-          <div className="text-center">
+          <LuArrowRight className="h-5 w-5 shrink-0 text-indigo-500" aria-hidden="true" />
+          <div className="min-w-0 flex-1 break-words text-center sm:flex-none">
             <p className="text-xs text-slate-500">To</p>
             <p className="font-semibold text-slate-900">{transfer.toBranch?.name}</p>
           </div>

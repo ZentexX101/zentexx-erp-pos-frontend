@@ -71,7 +71,7 @@ const Modal = ({ isOpen, onClose, title, subtitle, children, footer, size = "md"
         <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
 
         {footer !== false && (
-          <footer className="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-3 sm:px-6">
+          <footer className="flex flex-wrap justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-3 sm:px-6">
             {footer ?? (
               <button
                 type="button"

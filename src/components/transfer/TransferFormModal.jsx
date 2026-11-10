@@ -71,13 +71,19 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
       size="xl"
       footer={
         <>
-          <span className="mr-auto text-sm text-slate-500">
+          <span className="w-full self-center text-sm text-slate-500 sm:mr-auto sm:w-auto">
             {units ? `${lines.length} product${lines.length === 1 ? "" : "s"} · ${units} pcs` : "Select products to begin transfer."}
           </span>
-          <Button variant="secondary" onClick={onClose} disabled={createTransfer.isPending}>
+          <Button variant="secondary" onClick={onClose} disabled={createTransfer.isPending} className="flex-1 sm:flex-none">
             Cancel
           </Button>
-          <Button type="submit" form={formId} loading={createTransfer.isPending} disabled={!units} className="min-w-40">
+          <Button
+            type="submit"
+            form={formId}
+            loading={createTransfer.isPending}
+            disabled={!units}
+            className="flex-1 whitespace-nowrap sm:min-w-40 sm:flex-none"
+          >
             Create Transfer
             <LuArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
@@ -87,7 +93,7 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
       <form id={formId} onSubmit={handleSubmit} noValidate className="space-y-5">
         <Alert>{error}</Alert>
 
-        <div className="grid items-end gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 sm:grid-cols-[1fr_auto_1fr]">
+        <div className="grid items-end gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-[1fr_auto_1fr] sm:p-4">
           {fixedFrom ? (
             <div>
               <p className="mb-1 text-sm font-medium text-slate-700">From Branch</p>
@@ -128,9 +134,11 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
             }}
           />
         ) : (
-          <p className="flex items-center gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            <LuPackage className="h-4 w-4" aria-hidden="true" />
-            Select a <span className="font-semibold">From Branch</span> to see its stock and pick products to send.
+          <p className="flex items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <LuPackage className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>
+              Select a <span className="font-semibold">From Branch</span> to see its stock and pick products to send.
+            </span>
           </p>
         )}
 
