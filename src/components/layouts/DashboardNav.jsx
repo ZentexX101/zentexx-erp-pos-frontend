@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { PANELS } from "../../routes/panels";
 import { canAccess } from "../../utils/access";
 import BrandLogo from "../common/brand/BrandLogo";
+import BackToAdminButton from "./BackToAdminButton";
 import UserMenu from "./UserMenu";
 
 const iconButtonClass =
@@ -65,6 +66,7 @@ const DashboardNav = ({ mode, setSidebarOpen }) => {
       )}
 
       <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
+        <BackToAdminButton />
         <button
           type="button"
           onClick={toggleFullscreen}

@@ -6,7 +6,7 @@ import Select from "../../components/common/forms/Select";
 import Spinner from "../../components/common/loaders/Spinner";
 import Modal from "../../components/common/modals/Modal";
 import { BRANCH_STATUS } from "../../constants/branch";
-import { ROLE_LABELS, ROLES, USER_STATUS } from "../../constants/roles";
+import { BRANCH_ROLES, isBranchRole, ROLE_LABELS, ROLES, USER_STATUS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
 import { useBranchOptionsData } from "../../hooks/useBranchApi";
 import { useApproveRegistration, useRegistrationsData, useRejectRegistration } from "../../hooks/useRegistrationApi";
@@ -21,13 +21,13 @@ const TABS = [
 
 const REASON_MAX = 300;
 
-// Approve as a sub admin (needs a branch) or, owner only, as an admin (all branches).
+// Approve with a branch role (needs a branch) or, owner only, as an admin (all branches).
 const ApproveControls = ({ user, branches, canGrantAdmin, busy, onApprove }) => {
-  const [role, setRole] = useState(ROLES.SUB_ADMIN);
+  const [role, setRole] = useState(ROLES.STAFF);
   const [branchId, setBranchId] = useState("");
   const [branchError, setBranchError] = useState(false);
-  const roles = [canGrantAdmin && ROLES.ADMIN, ROLES.SUB_ADMIN].filter(Boolean);
-  const branchRequired = role !== ROLES.ADMIN;
+  const roles = [canGrantAdmin && ROLES.ADMIN, ...BRANCH_ROLES].filter(Boolean);
+  const branchRequired = isBranchRole(role);
 
   const handleApprove = () => {
     if (branchRequired && !branchId) {

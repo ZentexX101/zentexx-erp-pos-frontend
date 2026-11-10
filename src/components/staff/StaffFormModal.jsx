@@ -1,7 +1,6 @@
 import { useId, useState } from "react";
 import { BRANCH_STATUS } from "../../constants/branch";
-import { getAssignableRoles, ROLES, WEEK_DAYS } from "../../constants/roles";
-import { positionByValue, positionOf, POSITIONS } from "../../constants/staffPositions";
+import { getAssignableRoles, isBranchRole, ROLE_LABELS, ROLES, WEEK_DAYS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
 import { useCreateStaff, useUpdateStaff } from "../../hooks/useStaffApi";
 import { fromE164, toE164, validateBdMobile } from "../../utils/phone";
@@ -14,8 +13,8 @@ import Input from "../common/forms/Input";
 import PhoneInput from "../common/forms/PhoneInput";
 import Select from "../common/forms/Select";
 import Textarea from "../common/forms/Textarea";
-import ToggleField from "../common/forms/ToggleField";
 import Modal from "../common/modals/Modal";
+import { roleInfo } from "../../utils/permissions";
 import PermissionPicker from "./PermissionPicker";
 
 const STATUS_OPTIONS = [
@@ -34,61 +33,52 @@ const toForm = (staff) => ({
   email: staff?.email || "",
   password: "",
   confirmPassword: "",
-  role: staff?.role || ROLES.SUB_ADMIN,
-  position: positionOf(staff),
+  role: staff?.role || "",
   branch: staff?.branch?._id || "",
   salary: staff?.salary ?? "",
   status: staff && !staff.isActive ? "inactive" : "active",
   staffCode: staff?.staffCode || "",
-  designation: staff?.designation || "",
   joiningDate: staff ? staff.joiningDate?.slice(0, 10) || "" : todayIso(),
   weeklyOffDays: staff?.weeklyOffDays || ["friday"],
   dutyStart: staff ? staff.dutyStart || "" : "09:00",
   dutyEnd: staff ? staff.dutyEnd || "" : "18:00",
   note: staff?.note || "",
-  isManager: staff?.isManager || false,
-  onlyOwnData: staff?.onlyOwnData || false,
-  showDashboard: staff?.showDashboard || false,
   permissions: staff?.permissions || [],
 });
 
 const validate = (form, isEdit) => {
-  const isSubAdmin = form.role === ROLES.SUB_ADMIN;
+  const branchRole = isBranchRole(form.role);
   const passwordGiven = !isEdit || form.password || form.confirmPassword;
   return {
     name: form.name.trim().length >= 2 ? "" : "Name must be at least 2 characters",
-    position: form.position ? "" : "Select a role / position",
+    role: form.role ? "" : "Select a role",
     phone: validateBdMobile(form.phone),
     email: form.email.trim() ? validateEmail(form.email) : "",
     password: passwordGiven ? validateNewPassword(form.password) : "",
     confirmPassword: passwordGiven ? validateConfirmPassword(form.password, form.confirmPassword) : "",
-    branch: isSubAdmin && !form.branch ? "Select a branch for a sub admin" : "",
+    branch: branchRole && !form.branch ? "Select a branch for this role" : "",
     salary: form.salary === "" || Number(form.salary) >= 0 ? "" : "Salary can't be negative",
     staffCode: !form.staffCode || /^\d{4}$/.test(form.staffCode) ? "" : "Staff ID must be exactly 4 digits",
   };
 };
 
 const toPayload = (form, isEdit) => {
-  const isSubAdmin = form.role === ROLES.SUB_ADMIN;
+  const branchRole = isBranchRole(form.role);
   return {
     name: form.name.trim(),
     phone: toE164(form.phone),
     email: form.email.trim(),
     role: form.role,
-    branch: isSubAdmin ? form.branch : null,
+    branch: branchRole ? form.branch : null,
     salary: form.salary === "" ? null : Number(form.salary),
     isActive: form.status === "active",
     staffCode: form.staffCode,
-    designation: form.designation.trim(),
     joiningDate: form.joiningDate,
     weeklyOffDays: form.weeklyOffDays,
     dutyStart: form.dutyStart,
     dutyEnd: form.dutyEnd,
     note: form.note.trim(),
-    isManager: isSubAdmin && form.isManager,
-    onlyOwnData: isSubAdmin && form.onlyOwnData,
-    showDashboard: !isSubAdmin || form.showDashboard,
-    permissions: isSubAdmin ? form.permissions : [],
+    permissions: branchRole ? form.permissions : [],
     ...((!isEdit || form.password) && { password: form.password }),
   };
 };
@@ -106,26 +96,25 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
   const updateStaff = useUpdateStaff();
   const submitting = createStaff.isPending || updateStaff.isPending;
 
-  const isSubAdmin = form.role === ROLES.SUB_ADMIN;
-  const canGiveAdmin = getAssignableRoles(actor).includes(ROLES.ADMIN) || form.role === ROLES.ADMIN;
-  const positionOptions = POSITIONS.filter((position) => !position.admin || canGiveAdmin).map((position) => ({ value: position.value, label: position.label }));
-  const position = positionByValue(form.position);
+  const branchRole = isBranchRole(form.role);
+  const assignable = getAssignableRoles(actor);
+  // An admin being edited keeps showing their role even if this actor couldn't give it
+  const roleOptions = [...assignable, ...(form.role && !assignable.includes(form.role) ? [form.role] : [])].map((value) => ({
+    value,
+    label: ROLE_LABELS[value],
+  }));
+  const role = roleInfo(catalog, form.role);
+  const roleLabel = ROLE_LABELS[form.role] || "";
+  const roleChanged = isEdit && form.role !== staff.role;
 
-  // A position fills the role, designation and a starting set of permissions (all still editable)
-  const choosePosition = (value) => {
-    const next = positionByValue(value);
-    setErrors((prev) => ({ ...prev, position: "", branch: "" }));
-    if (!next) return setForm((prev) => ({ ...prev, position: "" }));
-    const known = catalog ? new Set(catalog.modules.flatMap((m) => m.actions.map((a) => `${m.key}.${a}`))) : null;
-    const isKnownTitle = POSITIONS.some((p) => p.label.toLowerCase() === form.designation.trim().toLowerCase());
+  // A role brings its default permissions; they can still be changed one by one below.
+  // Going back to the person's saved role brings back their saved permissions.
+  const chooseRole = (value) => {
+    setErrors((prev) => ({ ...prev, role: "", branch: "" }));
     setForm((prev) => ({
       ...prev,
-      position: value,
-      role: next.admin ? ROLES.ADMIN : ROLES.SUB_ADMIN,
-      designation: next.value === "other" ? (isKnownTitle ? "" : prev.designation) : next.admin ? prev.designation : next.label,
-      isManager: Boolean(next.isManager),
-      showDashboard: Boolean(next.showDashboard),
-      permissions: next.admin ? [] : (next.permissions ?? []).filter((key) => !known || known.has(key)),
+      role: value,
+      permissions: !isBranchRole(value) ? [] : value === staff?.role ? staff.permissions : (roleInfo(catalog, value)?.permissions ?? []),
     }));
   };
 
@@ -226,18 +215,18 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
             />
             <div>
               <Select
-                label="Role / Position"
-                name="position"
+                label="Role"
+                name="role"
                 required
                 placeholder="Select a role"
-                options={positionOptions}
-                value={form.position}
-                onChange={(e) => choosePosition(e.target.value)}
-                error={errors.position}
+                options={roleOptions}
+                value={form.role}
+                onChange={(e) => chooseRole(e.target.value)}
+                error={errors.role}
               />
-              {position && !errors.position && <p className="mt-1 text-xs text-slate-500">{position.hint}</p>}
+              {role && !errors.role && <p className="mt-1 text-xs text-slate-500">{role.hint}</p>}
             </div>
-            {isSubAdmin ? (
+            {branchRole || !form.role ? (
               <Select
                 label="Branch"
                 name="branch"
@@ -266,7 +255,7 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
             <Select label="Status" name="status" options={STATUS_OPTIONS} value={form.status} onChange={handleChange} />
           </div>
           {isEdit && (
-            <p className="mt-3 text-xs text-amber-700">Changing the type, branch or password, or deactivating, logs this person out of all devices.</p>
+            <p className="mt-3 text-xs text-amber-700">Changing the role, branch or password, or deactivating, logs this person out of all devices.</p>
           )}
         </FormSection>
 
@@ -286,14 +275,6 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
               />
               {!errors.staffCode && <p className="mt-1 text-xs text-slate-500">A unique 4-digit code.</p>}
             </div>
-            <Input
-              label="Designation"
-              name="designation"
-              placeholder="e.g. Senior Sales Executive"
-              value={form.designation}
-              onChange={handleChange}
-              error={errors.designation}
-            />
             <Input label="Joining Date" name="joiningDate" type="date" value={form.joiningDate} onChange={handleChange} />
             <ChipSelect label="Weekly Off Days" options={WEEK_DAYS} value={form.weeklyOffDays} onChange={(v) => setField("weeklyOffDays", v)} />
             <Input label="Duty Start Time" name="dutyStart" type="time" value={form.dutyStart} onChange={handleChange} error={errors.dutyStart} />
@@ -311,42 +292,37 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
           </div>
         </FormSection>
 
-        <FormSection title="Access & Permissions" icon="shield">
-          {isSubAdmin ? (
-            <div className="space-y-5">
-              <div className="grid gap-4 rounded-lg bg-slate-50 p-4 sm:grid-cols-3">
-                <ToggleField
-                  label="Is Manager"
-                  description="Manager of this branch. A branch can have only one."
-                  checked={form.isManager}
-                  onChange={(v) => setField("isManager", v)}
-                />
-                <ToggleField
-                  label="Only His Data Access"
-                  description="Sees only the records they created"
-                  checked={form.onlyOwnData}
-                  onChange={(v) => setField("onlyOwnData", v)}
-                />
-                <ToggleField
-                  label="Show Dashboard"
-                  description="Can see the branch overview metrics"
-                  checked={form.showDashboard}
-                  onChange={(v) => setField("showDashboard", v)}
-                />
-              </div>
-              {position && !position.admin && position.value !== "other" && (
-                <p className="rounded-lg bg-blue-50 px-4 py-2.5 text-sm text-blue-700">Ticked for a {position.label}. Add or remove any permission below.</p>
+        <FormSection
+          title="Access & Permissions"
+          description={branchRole ? `What this ${roleLabel} can see and do in their branch` : undefined}
+          icon="shield"
+        >
+          {!form.role ? (
+            <p className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-500">Choose a role first. Its usual permissions are ticked for you.</p>
+          ) : !branchRole ? (
+            <p className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              {roleLabel} has full access to every module in every branch, so there are no permissions to choose.
+            </p>
+          ) : catalog ? (
+            <div className="space-y-4">
+              {roleChanged && (
+                <p className="rounded-lg bg-blue-50 px-4 py-2.5 text-sm text-blue-700">
+                  Role changed to {roleLabel}: the permissions below are now that role's defaults.
+                </p>
               )}
-              {catalog ? (
-                <PermissionPicker catalog={catalog} value={form.permissions} onChange={(v) => setField("permissions", v)} />
-              ) : (
-                <p className="text-sm text-slate-500">Loading permissions...</p>
+              {form.role === ROLES.BRANCH_MANAGER && (
+                <p className="rounded-lg bg-amber-50 px-4 py-2.5 text-sm text-amber-800">A branch can have only one Branch Manager.</p>
               )}
+              <PermissionPicker
+                catalog={catalog}
+                value={form.permissions}
+                onChange={(v) => setField("permissions", v)}
+                defaults={role?.permissions ?? null}
+                roleLabel={roleLabel}
+              />
             </div>
           ) : (
-            <p className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-700">
-              An admin has full access to every module in every branch, so there are no permissions to choose.
-            </p>
+            <p className="text-sm text-slate-500">Loading permissions...</p>
           )}
         </FormSection>
       </form>

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import IconButton from "../../components/common/buttons/IconButton";
@@ -13,7 +14,8 @@ import PageHeader from "../../components/common/layout/PageHeader";
 import ConfirmModal from "../../components/common/modals/ConfirmModal";
 import PermissionsViewModal from "../../components/staff/PermissionsViewModal";
 import StaffFormModal from "../../components/staff/StaffFormModal";
-import { canManageUser, ROLE_LABELS, ROLES } from "../../constants/roles";
+import { canManageUser, isBranchRole, ROLE_LABELS, ROLE_TONES, ROLES } from "../../constants/roles";
+import { getHomePath } from "../../constants/routes";
 import { useAuth } from "../../hooks/useAuth";
 import { useBranchOptionsData } from "../../hooks/useBranchApi";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
@@ -22,17 +24,19 @@ import { formatShortDate } from "../../utils/formatDate";
 import { rowNumber } from "../../utils/pagination";
 import { formatPhone } from "../../utils/phone";
 
-const ROLE_TONES = { [ROLES.SUPER_ADMIN]: "purple", [ROLES.ADMIN]: "blue", [ROLES.SUB_ADMIN]: "slate" };
-
 const NO_FILTERS = { branch: "", role: "", status: "" };
 
 const formatTaka = (amount) => (amount === null || amount === undefined ? "—" : `৳${Number(amount).toLocaleString("en-IN")}`);
 
 const Staff = () => {
-  const { user: actor } = useAuth();
+  const { user: actor, loginAs } = useAuth();
+  const navigate = useNavigate();
 
   // all states
   const [notice, setNotice] = useState("");
+  const [actionError, setActionError] = useState("");
+  // id of the staff member being entered with "Login as"
+  const [enteringId, setEnteringId] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [filters, setFilters] = useState(NO_FILTERS);
@@ -52,7 +56,7 @@ const Staff = () => {
 
   const staff = data?.data ?? [];
   const meta = data?.meta;
-  const error = (staffError || branchError || catalogError)?.message;
+  const error = actionError || (staffError || branchError || catalogError)?.message;
 
   const branchById = useMemo(() => Object.fromEntries(branches.map((b) => [b._id, b])), [branches]);
 
@@ -78,12 +82,27 @@ const Staff = () => {
 
   const openForm = (target) => {
     setNotice("");
+    setActionError("");
     setForm({ staff: target });
   };
 
   const handleSaved = (saved, isEdit) => {
     setForm(null);
     setNotice(isEdit ? `${saved.name} updated.` : `${saved.name} created (Staff ID #${saved.staffCode}). They can sign in now.`);
+  };
+
+  // Opens the app as this staff member; the banner on top brings the admin back
+  const handleLoginAs = async (target) => {
+    setNotice("");
+    setActionError("");
+    setEnteringId(target._id);
+    try {
+      const entered = await loginAs(target);
+      navigate(getHomePath(entered), { replace: true });
+    } catch (err) {
+      setActionError(err.message);
+      setEnteringId(null);
+    }
   };
 
   const handleDelete = async () => {
@@ -120,15 +139,13 @@ const Staff = () => {
       ),
     },
     { key: "phone", header: "Phone", className: "whitespace-nowrap text-slate-700", render: (s) => formatPhone(s.phone) },
-    { key: "designation", header: "Designation", className: "text-slate-600", render: (s) => s.designation || "—" },
     {
       key: "role",
-      header: "Type",
+      header: "Role",
       render: (s) => (
-        <div className="flex flex-col items-start gap-1">
-          <Badge tone={ROLE_TONES[s.role]}>{ROLE_LABELS[s.role] || s.role}</Badge>
-          {s.isManager && <Badge tone="amber">Manager</Badge>}
-        </div>
+        <Badge tone={ROLE_TONES[s.role] || "slate"} className="whitespace-nowrap">
+          {ROLE_LABELS[s.role] || s.role}
+        </Badge>
       ),
     },
     {
@@ -138,7 +155,7 @@ const Staff = () => {
       render: (s) =>
         s.branch ? (
           <span className="text-slate-800">{s.branch.name}</span>
-        ) : s.role === ROLES.SUB_ADMIN ? (
+        ) : isBranchRole(s.role) ? (
           <span className="font-medium text-red-600">Not assigned</span>
         ) : (
           <span className="text-slate-500">All branches</span>
@@ -161,7 +178,10 @@ const Staff = () => {
     {
       key: "dashboard",
       header: "Dashboard",
-      render: (s) => <Badge tone={s.showDashboard ? "green" : "outline"}>{s.showDashboard ? "Allowed" : "Hidden"}</Badge>,
+      render: (s) => {
+        const allowed = !isBranchRole(s.role) || s.permissions.includes("dashboard.view");
+        return <Badge tone={allowed ? "green" : "outline"}>{allowed ? "Allowed" : "Hidden"}</Badge>;
+      },
     },
     {
       key: "permissions",
@@ -175,7 +195,7 @@ const Staff = () => {
           className="inline-flex items-center gap-1 rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
         >
           <Icon name="shield" className="h-3.5 w-3.5" />
-          {s.role === ROLES.SUB_ADMIN ? s.permissions.length : "Full"}
+          {isBranchRole(s.role) ? s.permissions.length : "Full"}
         </button>
       ),
     },
@@ -187,6 +207,16 @@ const Staff = () => {
       render: (s) =>
         canManageUser(actor, s) ? (
           <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => handleLoginAs(s)}
+              disabled={!s.isActive || Boolean(enteringId)}
+              title={s.isActive ? `Use the app as ${s.name}, without their password` : "Inactive staff can't be logged in as"}
+              className="inline-flex items-center gap-1 whitespace-nowrap rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name="login" className="h-3.5 w-3.5" />
+              {enteringId === s._id ? "Opening..." : "Login"}
+            </button>
             <IconButton icon="edit" label={`Edit ${s.name}`} onClick={() => openForm(s)} />
             <IconButton
               icon="trash"
@@ -219,7 +249,7 @@ const Staff = () => {
 
       <FilterBar
         className="mt-6"
-        search={<SearchInput value={searchInput} onChange={handleSearch} placeholder="Search name, phone, ID, designation..." />}
+        search={<SearchInput value={searchInput} onChange={handleSearch} placeholder="Search name, phone, ID, role..." />}
         onClear={Object.values(filters).some(Boolean) ? handleClearFilters : undefined}
       >
         <Select
@@ -236,8 +266,8 @@ const Staff = () => {
           variant="filter"
           value={filters.role}
           onChange={(e) => handleFilter("role", e.target.value)}
-          aria-label="Filter by type"
-          placeholder="All types"
+          aria-label="Filter by role"
+          placeholder="All roles"
           options={Object.values(ROLES).map((role) => ({ value: role, label: ROLE_LABELS[role] }))}
         />
         <Select

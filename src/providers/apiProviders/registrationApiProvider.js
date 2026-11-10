@@ -9,7 +9,7 @@ export const fetchRegistrationsData = async (params) => {
 };
 
 // ✅ Approve registration
-// branchId is required for a sub admin; null makes an admin a main admin
+// branchId is required for every branch role; null makes an admin a main admin
 export const approveRegistration = async (userId, role, branchId = null) => {
   const response = await apiRequest(`/auth/registrations/${userId}/approve`, {
     method: "PATCH",

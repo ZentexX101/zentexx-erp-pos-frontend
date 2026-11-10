@@ -2,9 +2,9 @@
 // otherwise sessionStorage, so closing the browser logs the user out.
 const KEY = "zentexx_auth";
 
-const safeGet = (storage) => {
+const safeGet = (storage, key = KEY) => {
   try {
-    const raw = storage.getItem(KEY);
+    const raw = storage.getItem(key);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -46,6 +46,36 @@ export const tokenStorage = {
     try {
       localStorage.removeItem(KEY);
       sessionStorage.removeItem(KEY);
+    } catch {
+      // ignore
+    }
+  },
+};
+
+// "Login as": the main admin's own tokens wait here while they use the app as a staff member.
+// Kept in the same storage the admin's tokens were in, so "remember me" still holds when they come back.
+const ADMIN_KEY = "zentexx_admin_auth";
+
+export const adminStash = {
+  // { accessToken, refreshToken, rememberMe, admin: { _id, name } } or null
+  get: () => safeGet(localStorage, ADMIN_KEY) || safeGet(sessionStorage, ADMIN_KEY),
+
+  // Moves the current tokens aside; returns false when there are none
+  save: (admin) => {
+    const store = findStore();
+    if (!store) return false;
+    try {
+      store.setItem(ADMIN_KEY, JSON.stringify({ ...safeGet(store), rememberMe: store === localStorage, admin }));
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  clear: () => {
+    try {
+      localStorage.removeItem(ADMIN_KEY);
+      sessionStorage.removeItem(ADMIN_KEY);
     } catch {
       // ignore
     }

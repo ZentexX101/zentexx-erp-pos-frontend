@@ -32,3 +32,9 @@ export const deleteStaff = async (id) => {
   const response = await apiRequest(`/staff/${id}`, { method: "DELETE" });
   return response;
 };
+
+// ✅ "Login as" a staff member — returns { user, accessToken, refreshToken } for a new session as them
+export const impersonateStaff = async (id) => {
+  const response = await apiRequest(`/staff/${id}/impersonate`, { method: "POST" });
+  return response.data;
+};

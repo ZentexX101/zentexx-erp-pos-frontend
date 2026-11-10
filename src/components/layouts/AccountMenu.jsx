@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LuLogOut, LuSettings } from "react-icons/lu";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ROLE_LABELS } from "../../constants/roles";
 import { ROUTES } from "../../constants/routes";
 import { useAuth } from "../../hooks/useAuth";
@@ -10,13 +10,17 @@ const menuItemClass = "flex w-full items-center gap-2.5 rounded-md px-3 py-2 tex
 
 // The account dropdown panel (user details + settings / logout). Position and size it with className.
 const AccountMenu = ({ mode, onClose, className = "" }) => {
-  const { user, logout, logoutAll } = useAuth();
+  const { user, impersonator, logout, logoutAll } = useAuth();
+  const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // RoleBasedRoute redirects to login once user is cleared
+  // RoleBasedRoute redirects to login once user is cleared. Inside "Login as", logging out goes back to
+  // the admin's own account, so take them back to the staff list.
   const handleLogout = async (action) => {
     setLoggingOut(true);
-    await action();
+    const wasImpersonating = Boolean(impersonator);
+    const result = await action();
+    if (wasImpersonating) navigate(result ? ROUTES.STAFF : ROUTES.LOGIN, { replace: true });
   };
 
   return (
