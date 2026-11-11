@@ -61,16 +61,19 @@ const StaffFiles = () => {
   return (
     <div className="space-y-5">
       <PageHeader
-        tools={
-          <ExportPdfButton
-            report={pdfReports.staffHistory(showBranch)}
-            params={{ branch: isMainAdmin(user) ? branch : undefined, search, left }}
-            scope={pickBranch ? branches.find((b) => b._id === branchFilter)?.name : undefined}
-          />
-        }
         title="Staff History"
         subtitle="Open anyone to see their attendance, leave, salary, advances and incentive"
-        actions={<MonthSwitcher month={month} onChange={withPageReset(setMonth)} />}
+        actions={
+          // Phones: one row, the month taking the room left by Export PDF
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <ExportPdfButton
+              report={pdfReports.staffHistory(showBranch)}
+              params={{ branch: isMainAdmin(user) ? branch : undefined, search, left }}
+              scope={pickBranch ? branches.find((b) => b._id === branchFilter)?.name : undefined}
+            />
+            <MonthSwitcher month={month} onChange={withPageReset(setMonth)} className="min-w-0 flex-1 sm:flex-none" />
+          </div>
+        }
       />
 
       <FilterBar search={<SearchInput value={searchInput} onChange={withPageReset(setSearchInput)} placeholder="Name, job, ID or phone..." />}>
@@ -104,11 +107,11 @@ const StaffFiles = () => {
           <p className="px-5 py-12 text-center text-sm text-slate-500">{search ? "No staff found." : "No staff yet. Add them from the Staff page."}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px] text-left text-sm">
-              <thead className="bg-slate-50/70 text-xs uppercase tracking-wide text-slate-500">
+            <table className="w-full min-w-[900px] text-left text-sm">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Staff</th>
-                  {showBranch && <th className="px-3 py-3 font-semibold">Branch</th>}
+                  <th className="px-3 py-3 font-semibold sm:px-5">Staff</th>
+                  {showBranch && <th className="hidden px-3 py-3 font-semibold lg:table-cell">Branch</th>}
                   <th className={head}>Came</th>
                   <th className={head}>Late</th>
                   <th className={head}>Leave</th>
@@ -123,13 +126,16 @@ const StaffFiles = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {rows.map((row) => (
-                  <tr key={row.user._id} className="transition-colors hover:bg-slate-50/60">
-                    <td className="px-5 py-3">
-                      <Link to={staffFilePath(row.user._id, inBranch)} className="block hover:opacity-80">
+                  <tr key={row.user._id} className="group transition-colors hover:bg-slate-50">
+                    <td className="px-3 py-3 sm:px-5">
+                      {/* Narrower on phones so more numbers show beside it */}
+                      <Link to={staffFilePath(row.user._id, inBranch)} className="block w-40 hover:opacity-80 sm:w-auto">
                         <PersonCell person={row.user} />
                       </Link>
+                      {/* Below lg the Branch column is hidden, so the branch sits under the name */}
+                      {showBranch && <p className="mt-0.5 w-40 truncate pl-12 text-[11px] font-medium text-slate-400 sm:w-auto lg:hidden">{row.branch ?? "—"}</p>}
                     </td>
-                    {showBranch && <td className="whitespace-nowrap px-3 py-3 text-slate-600">{row.branch ?? "—"}</td>}
+                    {showBranch && <td className="hidden whitespace-nowrap px-3 py-3 text-slate-600 lg:table-cell">{row.branch ?? "—"}</td>}
                     <td className={count}>
                       <Count value={row.counts.present} tone="text-emerald-600" />
                     </td>

@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { BRANCH_STATUS, ZKTECO_DEFAULT_PORT } from "../../constants/branch";
+import { BRANCH_STATUS } from "../../constants/branch";
 import { useCreateBranch, useUpdateBranch } from "../../hooks/useBranchApi";
 import { isValid, validateEmail } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
@@ -7,7 +7,6 @@ import FormSection from "../common/forms/FormSection";
 import Button from "../common/buttons/Button";
 import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
-import Toggle from "../common/forms/Toggle";
 import Modal from "../common/modals/Modal";
 
 const STATUS_OPTIONS = [
@@ -15,40 +14,20 @@ const STATUS_OPTIONS = [
   { value: BRANCH_STATUS.INACTIVE, label: "Inactive" },
 ];
 
-const IPV4 = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
-
 const toForm = (branch) => ({
   name: branch?.name || "",
   address: branch?.address || "",
   phone: branch?.phone || "",
   email: branch?.email || "",
   status: branch?.status || BRANCH_STATUS.ACTIVE,
-  zktecoEnabled: branch?.zkteco?.enabled || false,
-  zktecoIp: branch?.zkteco?.ip || "",
-  zktecoPort: String(branch?.zkteco?.port || ZKTECO_DEFAULT_PORT),
-  zktecoSerial: branch?.zkteco?.serialNumber || "",
 });
 
-const validate = (form) => {
-  const port = Number(form.zktecoPort);
-  return {
+const validate = (form) => ({
     name: form.name.trim().length >= 2 ? "" : "Name must be at least 2 characters",
     address: form.address.trim() ? "" : "Address is required",
     phone: /^\+?[0-9\s-]{6,20}$/.test(form.phone.trim()) ? "" : "Enter a valid phone number",
     email: form.email.trim() ? validateEmail(form.email) : "",
-    zktecoIp: !form.zktecoEnabled
-      ? ""
-      : !form.zktecoIp.trim()
-        ? "IP address is required when the machine is enabled"
-        : IPV4.test(form.zktecoIp.trim())
-          ? ""
-          : "Enter a valid IP address, e.g. 192.168.1.201",
-    zktecoPort: !form.zktecoEnabled || (Number.isInteger(port) && port >= 1 && port <= 65535) ? "" : "Port must be 1–65535",
-  };
-};
-
-// Backend field names → form field names, for showing server validation errors on the right input
-const SERVER_FIELD = { "zkteco.ip": "zktecoIp", "zkteco.port": "zktecoPort", "zkteco.serialNumber": "zktecoSerial" };
+});
 
 // branch: the branch to edit, or null to create one
 const BranchFormModal = ({ branch, onClose, onSaved }) => {
@@ -82,12 +61,6 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
       phone: form.phone.trim(),
       email: form.email.trim(),
       status: form.status,
-      zkteco: {
-        enabled: form.zktecoEnabled,
-        ip: form.zktecoIp.trim(),
-        port: Number(form.zktecoPort) || ZKTECO_DEFAULT_PORT,
-        serialNumber: form.zktecoSerial.trim(),
-      },
     };
 
     try {
@@ -97,9 +70,7 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
       onSaved(saved, isEdit);
     } catch (err) {
       if (err.details) {
-        setErrors(
-          Object.fromEntries(Object.entries(err.details).map(([field, message]) => [SERVER_FIELD[field] || field, message]))
-        );
+        setErrors(err.details);
       }
       setServerError(err.message);
     }
@@ -171,52 +142,6 @@ const BranchFormModal = ({ branch, onClose, onSaved }) => {
           </div>
         </FormSection>
 
-        <FormSection
-          title="ZKTeco Biometric Machine"
-          description="Configure the attendance machine for this branch (optional)"
-          icon="chip"
-          muted
-          actions={
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500">{form.zktecoEnabled ? "Enabled" : "Disabled"}</span>
-              <Toggle
-                checked={form.zktecoEnabled}
-                onChange={(value) => setField("zktecoEnabled", value)}
-                label="Enable ZKTeco machine"
-              />
-            </div>
-          }
-        >
-          {form.zktecoEnabled && (
-            <div className="grid gap-4 sm:grid-cols-3">
-              <Input
-                label="IP address"
-                name="zktecoIp"
-                required
-                placeholder="192.168.1.201"
-                value={form.zktecoIp}
-                onChange={handleChange}
-                error={errors.zktecoIp}
-              />
-              <Input
-                label="Port"
-                name="zktecoPort"
-                inputMode="numeric"
-                value={form.zktecoPort}
-                onChange={(e) => setField("zktecoPort", e.target.value.replace(/\D/g, ""))}
-                error={errors.zktecoPort}
-              />
-              <Input
-                label="Serial number"
-                name="zktecoSerial"
-                placeholder="Optional"
-                value={form.zktecoSerial}
-                onChange={handleChange}
-                error={errors.zktecoSerial}
-              />
-            </div>
-          )}
-        </FormSection>
       </form>
     </Modal>
   );

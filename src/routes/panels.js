@@ -23,7 +23,6 @@ import {
   LuWallet,
   LuWrench,
 } from "react-icons/lu";
-import { REVIEWER_ROLES } from "../constants/roles";
 import { ROUTES } from "../constants/routes";
 import Brands from "../pages/brand/Brands";
 import BranchHome from "../pages/branch/BranchHome";
@@ -55,7 +54,6 @@ import AddPurchaseReturn from "../pages/purchase/AddPurchaseReturn";
 import PurchaseReturns from "../pages/purchase/PurchaseReturns";
 import Purchases from "../pages/purchase/Purchases";
 import Services from "../pages/service/Services";
-import Registrations from "../pages/dashboard/Registrations";
 import Staff from "../pages/staff/Staff";
 import AllSupplierPayments from "../pages/supplierPayment/AllSupplierPayments";
 import SupplierPayments from "../pages/supplierPayment/SupplierPayments";
@@ -124,7 +122,6 @@ export const MAIN_PANEL = {
           icon: LuUsers,
           children: [
             { label: "Staff List", path: ROUTES.STAFF, page: Staff },
-            { label: "Registration Requests", path: ROUTES.REGISTRATIONS, page: Registrations, roles: REVIEWER_ROLES },
           ],
         },
         { label: "HR", icon: LuBadgeDollarSign, path: ROUTES.HR_STAFF, page: StaffFiles, permission: "hr.view" },

@@ -31,23 +31,25 @@ const Pagination = ({ meta, onPageChange, onLimitChange, limitOptions = PAGE_SIZ
   const from = (page - 1) * limit + 1;
   const to = Math.min(page * limit, total);
 
+  // Phones / tablets: range and page size on one row, the pages under them. lg: all three in one row
   return (
-    <div className="mt-3 flex flex-col items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200 lg:flex-row lg:justify-between">
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white px-3 py-3 shadow-sm ring-1 ring-slate-200 sm:px-4 lg:flex-nowrap">
       {/* Range */}
       <span className={`${boxClass} border-slate-200 bg-slate-50 px-3 text-slate-700`}>
         {from}–{to} of {total}
       </span>
 
       {/* Pages */}
-      <nav className="flex flex-wrap items-center justify-center gap-1.5" aria-label="Pagination">
+      <nav className="order-last flex w-full flex-wrap items-center justify-center gap-1.5 lg:order-none lg:w-auto" aria-label="Pagination">
         <button
           type="button"
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
+          aria-label="Previous page"
           className={`${boxClass} gap-0.5 border-slate-200 px-2.5 text-slate-600 hover:bg-slate-50`}
         >
           <LuChevronLeft className="h-4 w-4" aria-hidden="true" />
-          Back
+          <span className="hidden sm:inline">Back</span>
         </button>
 
         {getPages(page, totalPages).map((p, i) =>
@@ -77,9 +79,10 @@ const Pagination = ({ meta, onPageChange, onLimitChange, limitOptions = PAGE_SIZ
           type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
+          aria-label="Next page"
           className={`${boxClass} gap-0.5 border-slate-200 px-2.5 text-slate-600 hover:bg-slate-50`}
         >
-          Next
+          <span className="hidden sm:inline">Next</span>
           <LuChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </nav>
@@ -87,7 +90,8 @@ const Pagination = ({ meta, onPageChange, onLimitChange, limitOptions = PAGE_SIZ
       {/* Page size */}
       {onLimitChange ? (
         <label className="flex items-center gap-2 text-sm text-slate-600">
-          Result per page
+          <span className="hidden sm:inline">Result per page</span>
+          <span className="sm:hidden">Per page</span>
           <span className="relative">
             <select
               value={limit}

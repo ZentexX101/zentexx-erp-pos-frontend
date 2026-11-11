@@ -15,7 +15,7 @@ const TABS = [
   { key: "overview", label: "Overview", icon: LuLayoutDashboard },
   { key: "attendance", label: "Attendance", icon: LuCalendarDays },
   { key: "leave", label: "Leave", icon: LuPlane },
-  { key: "payments", label: "Salary & Payments", icon: LuWallet },
+  { key: "payments", label: "Salary & Payments", short: "Salary", icon: LuWallet },
   { key: "incentive", label: "Incentive", icon: LuGift },
 ];
 
@@ -37,9 +37,10 @@ const PersonFile = ({ data, staffId, title, branchName }) => {
   return (
     <div>
       <div className="space-y-5 print:hidden">
-        <MyHeader user={data.user} today={data.today} branchName={branchName} title={title} />
+        <MyHeader user={data.user} today={data.today} branchName={branchName} title={title} online={Boolean(data.attendance && !data.attendance.checkOut)} />
 
-        <div className="flex max-w-full gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1 [scrollbar-width:none] sm:w-fit" role="tablist" aria-label="HR file">
+        {/* Phones: all five in one grid row, icon over a short label; from sm a row of pills */}
+        <div className="grid grid-cols-5 gap-1 rounded-2xl bg-white p-1 shadow-sm ring-1 ring-slate-200/70 sm:flex sm:w-fit sm:max-w-full sm:overflow-x-auto sm:rounded-full sm:[scrollbar-width:none]" role="tablist" aria-label="HR file">
           {TABS.map((item) => (
             <button
               key={item.key}
@@ -47,10 +48,11 @@ const PersonFile = ({ data, staffId, title, branchName }) => {
               role="tab"
               aria-selected={tab === item.key}
               onClick={() => openTab(item.key)}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${tab === item.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+              className={`flex min-w-0 flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-[10.5px] font-semibold tracking-tight transition sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-5 sm:py-2.5 sm:text-sm sm:tracking-normal ${tab === item.key ? "bg-brand text-white shadow-md shadow-slate-900/20" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
-              <item.icon className="size-4" aria-hidden="true" />
-              {item.label}
+              <item.icon className="size-[18px] sm:size-4" aria-hidden="true" />
+              <span className="max-w-full truncate sm:hidden">{item.short ?? item.label}</span>
+              <span className="hidden sm:inline">{item.label}</span>
             </button>
           ))}
         </div>

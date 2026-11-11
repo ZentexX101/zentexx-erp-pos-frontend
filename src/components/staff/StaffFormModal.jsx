@@ -259,7 +259,7 @@ const StaffFormModal = ({ staff, branches, catalog, onClose, onSaved }) => {
           )}
         </FormSection>
 
-        <FormSection title="HRM & Attendance" description="Staff ID / PIN for the biometric machine and duty timing" icon="calendar" muted>
+        <FormSection title="HRM & Attendance" description="Staff ID and duty timing" icon="calendar" muted>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Input

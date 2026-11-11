@@ -1,6 +1,8 @@
 import Spinner from "../loaders/Spinner";
 
-// columns: [{ key, header, render(row, index), className, headerClassName }]
+// columns: [{ key, header, render(row, index), className, headerClassName, sticky }]
+// sticky: "right" pins that column (e.g. the actions) to the right edge while the table scrolls sideways.
+const STICKY_RIGHT = "sticky right-0 z-10 shadow-[-8px_0_8px_-8px_rgba(15,23,42,0.15)]";
 const DataTable = ({ columns, rows, loading, emptyMessage = "No records found.", rowKey = "_id", minWidth = 900 }) => {
   const colSpan = columns.length;
 
@@ -10,7 +12,11 @@ const DataTable = ({ columns, rows, loading, emptyMessage = "No records found.",
         <thead className="border-b border-slate-200 bg-slate-50 text-slate-700">
           <tr>
             {columns.map((col) => (
-              <th key={col.key} scope="col" className={`whitespace-nowrap px-4 py-3 font-semibold ${col.headerClassName || ""}`}>
+              <th
+                key={col.key}
+                scope="col"
+                className={`whitespace-nowrap px-4 py-3 font-semibold ${col.sticky === "right" ? `${STICKY_RIGHT} bg-slate-50` : ""} ${col.headerClassName || ""}`}
+              >
                 {col.header}
               </th>
             ))}
@@ -33,9 +39,12 @@ const DataTable = ({ columns, rows, loading, emptyMessage = "No records found.",
             </tr>
           ) : (
             rows.map((row, index) => (
-              <tr key={row[rowKey]} className="hover:bg-slate-50">
+              <tr key={row[rowKey]} className="group hover:bg-slate-50">
                 {columns.map((col) => (
-                  <td key={col.key} className={`px-4 py-3 align-middle ${col.className || ""}`}>
+                  <td
+                    key={col.key}
+                    className={`px-4 py-3 align-middle ${col.sticky === "right" ? `${STICKY_RIGHT} bg-white group-hover:bg-slate-50` : ""} ${col.className || ""}`}
+                  >
                     {col.render ? col.render(row, index) : row[col.key]}
                   </td>
                 ))}

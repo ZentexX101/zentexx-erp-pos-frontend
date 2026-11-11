@@ -21,9 +21,6 @@ export const BRANCH_ROLES = Object.values(ROLES).filter((role) => !ADMIN_ROLES.i
 
 export const isBranchRole = (role) => BRANCH_ROLES.includes(role);
 
-// Must match REVIEWER_ROLES in the backend — who can approve / reject registrations
-export const REVIEWER_ROLES = ADMIN_ROLES;
-
 // Main admin = an admin not tied to a branch (same rule as the backend's isMainAdmin).
 // Everyone with a branch works only inside that branch.
 export const isMainAdmin = (user) => Boolean(user) && ADMIN_ROLES.includes(user.role) && !user.branch;
@@ -34,12 +31,6 @@ export const getAssignableRoles = (actor) => [actor?.role === ROLES.SUPER_ADMIN 
 
 // The owner manages everyone; an admin manages branch staff only; nobody edits themselves here
 export const canManageUser = (actor, target) => actor._id !== target._id && (actor.role === ROLES.SUPER_ADMIN || isBranchRole(target.role));
-
-export const USER_STATUS = {
-  PENDING: "pending",
-  APPROVED: "approved",
-  REJECTED: "rejected",
-};
 
 // Must match ROLE_LABELS in the backend
 export const ROLE_LABELS = {

@@ -3,5 +3,3 @@ export const BRANCH_STATUS = {
   ACTIVE: "active",
   INACTIVE: "inactive",
 };
-
-export const ZKTECO_DEFAULT_PORT = 4370;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import BranchCards from "../../components/branch/BranchCards";
 import BranchFormModal from "../../components/branch/BranchFormModal";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -68,10 +69,12 @@ const Branches = () => {
     if (branches.length === 1 && page > 1) setPage(page - 1);
   };
 
+  const emptyMessage = search ? `No branch matches "${search}".` : "No branches yet. Create your first branch.";
+
   const columns = [
     { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
-    { key: "name", header: "Branch Name", className: "font-medium text-slate-900" },
-    { key: "address", header: "Address", className: "text-slate-600" },
+    { key: "name", header: "Branch Name", className: "min-w-40 font-medium text-slate-900" },
+    { key: "address", header: "Address", className: "min-w-48 text-slate-600" },
     { key: "phone", header: "Phone", className: "whitespace-nowrap text-slate-700" },
     {
       key: "status",
@@ -82,29 +85,11 @@ const Branches = () => {
         </Badge>
       ),
     },
-    {
-      key: "terminal",
-      header: "ZKTeco Terminal",
-      render: (b) =>
-        b.zkteco?.enabled ? (
-          <span className="font-mono text-xs text-slate-700">
-            {b.zkteco.ip}:{b.zkteco.port}
-          </span>
-        ) : (
-          <span className="italic text-slate-400">Not configured</span>
-        ),
-    },
-    {
-      key: "connection",
-      header: "Connection",
-      render: (b) => (
-        <Badge tone={b.zkteco?.enabled ? "blue" : "outline"}>{b.zkteco?.enabled ? "Configured" : "Not Configured"}</Badge>
-      ),
-    },
     { key: "createdAt", header: "Created Date", className: "whitespace-nowrap text-slate-600", render: (b) => formatShortDate(b.createdAt) },
     {
       key: "actions",
       header: "Action",
+      sticky: "right",
       headerClassName: "text-right",
       render: (b) => (
         <div className="flex justify-end gap-2">
@@ -150,13 +135,20 @@ const Branches = () => {
       </div>
 
       <div className="mt-4">
-        <DataTable
-          columns={columns}
-          rows={branches}
-          loading={isLoading}
-          minWidth={960}
-          emptyMessage={search ? `No branch matches "${search}".` : "No branches yet. Create your first branch."}
-        />
+        {/* Cards on phones, the table from sm */}
+        <div className="sm:hidden">
+          <BranchCards
+            branches={branches}
+            loading={isLoading}
+            emptyMessage={emptyMessage}
+            onLogin={handleLogin}
+            onEdit={openForm}
+            onDelete={setDeleting}
+          />
+        </div>
+        <div className="hidden sm:block">
+          <DataTable columns={columns} rows={branches} loading={isLoading} minWidth={720} emptyMessage={emptyMessage} />
+        </div>
         <Pagination meta={meta} onPageChange={setPage} onLimitChange={handleLimitChange} />
       </div>
 

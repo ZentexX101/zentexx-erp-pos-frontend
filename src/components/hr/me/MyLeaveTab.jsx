@@ -31,7 +31,9 @@ const MyLeaveTab = ({ staffId, today, onError }) => {
     <>
       {!staffId && (
         <div className="flex justify-end">
-          <Button onClick={() => setAsking(true)}>Ask for leave</Button>
+          <Button onClick={() => setAsking(true)} className="w-full sm:w-auto">
+            Ask for leave
+          </Button>
         </div>
       )}
 
@@ -45,37 +47,37 @@ const MyLeaveTab = ({ staffId, today, onError }) => {
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="bg-slate-50/70 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Dates</th>
-                  <th className="px-4 py-3 font-semibold">Days</th>
-                  <th className="px-4 py-3 font-semibold">Type</th>
-                  <th className="px-4 py-3 font-semibold">Reason</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold">Decided by</th>
-                  <th className="px-4 py-3" />
+                  <th className="px-3 py-3 font-semibold sm:px-5">Dates</th>
+                  <th className="px-3 py-3 font-semibold sm:px-4">Days</th>
+                  <th className="px-3 py-3 font-semibold sm:px-4">Type</th>
+                  <th className="px-3 py-3 font-semibold sm:px-4">Reason</th>
+                  <th className="px-3 py-3 font-semibold sm:px-4">Status</th>
+                  <th className="px-3 py-3 font-semibold sm:px-4">Decided by</th>
+                  <th className="px-3 py-3 sm:px-4" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {rows.map((leave) => (
                   <tr key={leave._id} className="transition-colors hover:bg-slate-50/60">
-                    <td className="whitespace-nowrap px-5 py-3 font-medium text-slate-900">
+                    <td className="whitespace-nowrap px-3 py-3 font-medium text-slate-900 sm:px-5">
                       {shortDayLabel(leave.from)}
                       {leave.to !== leave.from && ` – ${shortDayLabel(leave.to)}`}
                     </td>
-                    <td className="px-4 py-3 tabular-nums text-slate-600">{leave.days}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-slate-700">{leaveTypeLabel(leave.type)}</td>
-                    <td className="max-w-56 truncate px-4 py-3 text-slate-500" title={leave.reason ?? undefined}>
+                    <td className="px-3 py-3 tabular-nums text-slate-600 sm:px-4">{leave.days}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-slate-700 sm:px-4">{leaveTypeLabel(leave.type)}</td>
+                    <td className="max-w-56 truncate px-3 py-3 text-slate-500 sm:px-4" title={leave.reason ?? undefined}>
                       {leave.reason ?? ""}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-3 sm:px-4">
                       <Badge dot tone={LEAVE_STATUS_TONE[leave.status]}>
                         {leave.status}
                       </Badge>
                     </td>
-                    <td className="max-w-48 truncate px-4 py-3 text-slate-500" title={leave.reviewNote ?? undefined}>
+                    <td className="max-w-48 truncate px-3 py-3 text-slate-500 sm:px-4" title={leave.reviewNote ?? undefined}>
                       {leave.reviewedBy?.name ?? ""}
                       {leave.reviewNote ? `: ${leave.reviewNote}` : ""}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-3 text-right sm:px-4">
                       {!staffId && (leave.status === "pending" || (leave.status === "approved" && leave.from > today)) && (
                         <button
                           type="button"

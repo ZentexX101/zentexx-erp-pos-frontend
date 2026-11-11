@@ -10,7 +10,6 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   BRANCHES: "/dashboard/branches",
   STAFF: "/dashboard/staff",
-  REGISTRATIONS: "/dashboard/registrations",
   SUPPLIERS: "/dashboard/suppliers",
   SUPPLIER_PAYMENTS: "/dashboard/supplier-payments",
   SUPPLIER_LEDGER: "/dashboard/suppliers/:id/ledger",

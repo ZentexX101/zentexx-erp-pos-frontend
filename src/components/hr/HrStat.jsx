@@ -13,15 +13,15 @@ const ACCENTS = {
 const HrStat = ({ label, value, hint, tone = "text-slate-900", icon, accent = "slate" }) => {
   const Icon = icon;
   return (
-    <div className="flex min-w-0 items-start justify-between gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/70 transition hover:shadow-md sm:p-5">
+    <div className="flex min-w-0 items-start justify-between gap-2 rounded-2xl bg-white p-3.5 shadow-sm ring-1 ring-slate-200/70 transition hover:shadow-md sm:gap-3 sm:p-5">
       <div className="min-w-0">
-        <p className="text-[13px] font-medium text-slate-500">{label}</p>
-        <p className={`mt-1.5 text-2xl font-bold tracking-tight tabular-nums break-all ${tone}`}>{value}</p>
+        <p className="text-xs font-medium text-slate-500 sm:text-[13px]">{label}</p>
+        <p className={`mt-1 text-lg font-bold tracking-tight tabular-nums break-all sm:mt-1.5 sm:text-2xl ${tone}`}>{value}</p>
         {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
       </div>
       {Icon && (
-        <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${ACCENTS[accent]}`} aria-hidden="true">
-          <Icon className="size-5" />
+        <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg sm:size-10 sm:rounded-xl ${ACCENTS[accent]}`} aria-hidden="true">
+          <Icon className="size-4 sm:size-5" />
         </span>
       )}
     </div>

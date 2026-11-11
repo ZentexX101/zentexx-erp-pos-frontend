@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -12,6 +12,7 @@ import Select from "../../components/common/forms/Select";
 import Icon from "../../components/common/icons/Icon";
 import PageHeader from "../../components/common/layout/PageHeader";
 import ConfirmModal from "../../components/common/modals/ConfirmModal";
+import StaffCards from "../../components/staff/StaffCards";
 import PermissionsViewModal from "../../components/staff/PermissionsViewModal";
 import StaffFormModal from "../../components/staff/StaffFormModal";
 import { canManageUser, isBranchRole, ROLE_LABELS, ROLE_TONES, ROLES } from "../../constants/roles";
@@ -56,8 +57,6 @@ const Staff = () => {
   const staff = data?.data ?? [];
   const meta = data?.meta;
   const error = actionError || (staffError || branchError || catalogError)?.message;
-
-  const branchById = useMemo(() => Object.fromEntries(branches.map((b) => [b._id, b])), [branches]);
 
   const handleSearch = (value) => {
     setSearchInput(value);
@@ -157,14 +156,6 @@ const Staff = () => {
         ),
     },
     {
-      key: "machine",
-      header: "Machine",
-      render: (s) => {
-        const configured = s.branch && branchById[s.branch._id]?.zkteco?.enabled;
-        return <Badge tone={configured ? "blue" : "outline"}>{configured ? "Configured" : "Not Configured"}</Badge>;
-      },
-    },
-    {
       key: "status",
       header: "Status",
       render: (s) => <Badge tone={s.isActive ? "green" : "slate"}>{s.isActive ? "Active" : "Inactive"}</Badge>,
@@ -198,6 +189,7 @@ const Staff = () => {
     {
       key: "actions",
       header: "Action",
+      sticky: "right",
       headerClassName: "text-right",
       render: (s) =>
         canManageUser(actor, s) ? (
@@ -282,7 +274,22 @@ const Staff = () => {
       </div>
 
       <div className="mt-4">
-        <DataTable columns={columns} rows={staff} loading={isLoading} emptyMessage="No staff found." minWidth={1400} />
+        {/* Cards on phones, the table from sm */}
+        <div className="sm:hidden">
+          <StaffCards
+            staff={staff}
+            loading={isLoading}
+            actor={actor}
+            enteringId={enteringId}
+            onLoginAs={handleLoginAs}
+            onEdit={openForm}
+            onDelete={setDeleting}
+            onViewPermissions={setViewing}
+          />
+        </div>
+        <div className="hidden sm:block">
+          <DataTable columns={columns} rows={staff} loading={isLoading} emptyMessage="No staff found." minWidth={1400} />
+        </div>
         <Pagination meta={meta} onPageChange={setPage} onLimitChange={handleLimitChange} />
       </div>
 
