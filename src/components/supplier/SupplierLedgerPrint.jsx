@@ -15,7 +15,7 @@ const SupplierLedgerPrint = ({ supplier, summary, entries, total, filters }) => 
   const complete = entries.length === total;
   const showBalances = complete && !filters.type;
   const period =
-    filters.from || filters.to ? `${filters.from || "Start"} to ${filters.to || formatShortDate(new Date())}` : "All time";
+    filters.from || filters.to ? `${filters.from ? formatShortDate(filters.from) : "Start"} to ${formatShortDate(filters.to || new Date())}` : "All time";
 
   return (
     <div className="hidden text-[11px] text-slate-800 print:block">

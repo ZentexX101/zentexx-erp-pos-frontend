@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { DAY_LOOK, daySwatch, leaveTypeLabel } from "../../constants/hr";
-import { todayInputValue } from "../../utils/formatDate";
+import { formatDayMonth, formatWeekdayDate, ordinal, todayInputValue } from "../../utils/formatDate";
 import { minutesLabel } from "../../utils/hr";
 
 const WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -132,7 +132,7 @@ const DayDetail = ({ d, info, today }) => {
   const status = isToday && d.status === "upcoming" ? "not_yet" : d.status;
   const look = DAY_LOOK[status] ?? DAY_LOOK.upcoming;
   const pill = d.status === "late" ? `Late ${minutesLabel(d.lateMinutes)}` : look.label;
-  const label = new Date(`${d.day}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  const label = formatWeekdayDate(d.day, { short: true });
   const empty =
     d.status === "before_joining" ? "Before joining" : d.status === "upcoming" ? (isToday ? "No check-in yet" : "Nothing yet") : null;
 
@@ -184,8 +184,7 @@ const WeekSummary = ({ days, infos, today, compact = false }) => {
 
   const first = real[0].day;
   const last = real[real.length - 1].day;
-  const month = new Date(`${first}T00:00:00`).toLocaleDateString("en-GB", { month: "short" });
-  const range = first === last ? `${Number(first.slice(8))} ${month}` : `${Number(first.slice(8))}–${Number(last.slice(8))} ${month}`;
+  const range = first === last ? formatDayMonth(first) : `${ordinal(Number(first.slice(8)))} – ${formatDayMonth(last)}`;
   const count = (...statuses) => real.filter((d) => statuses.includes(d.status)).length;
   // Weekly offs count once they've passed, same as the month's numbers above the calendar
   const offs = real.filter((d) => d.status === "off" && d.day <= today).length;

@@ -1,4 +1,5 @@
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { formatMonth } from "../../utils/formatDate";
 import { currentMonth, monthLabel, shiftMonth } from "../../utils/hr";
 
 const arrow =
@@ -13,7 +14,7 @@ const MonthSwitcher = ({ month, onChange, allowFuture = false, className = "" })
     </button>
     <span className="min-w-0 flex-1 truncate text-center text-sm font-semibold text-slate-900 sm:min-w-36">
       {/* "Nov 2026" on phones, "November 2026" from sm */}
-      <span className="sm:hidden">{new Date(`${month}-01T00:00:00`).toLocaleDateString("en-GB", { month: "short", year: "numeric" })}</span>
+      <span className="sm:hidden">{formatMonth(month, { short: true })}</span>
       <span className="hidden sm:inline">{monthLabel(month)}</span>
     </span>
     <button

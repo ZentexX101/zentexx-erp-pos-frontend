@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatTime } from "../../utils/formatDate";
 
 // Degrees from 12 o'clock, clockwise, for a time on a 12-hour face
 const angleOf = (hours, minutes = 0) => ((hours % 12) + minutes / 60) * 30;
@@ -42,7 +43,7 @@ const AnalogClock = ({ dutyStart, dutyEnd, className = "size-20" }) => {
   const m = now.getMinutes();
   const s = now.getSeconds();
   const arc = dutyArc(dutyStart, dutyEnd);
-  const label = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const label = formatTime(now);
 
   return (
     <svg viewBox="0 0 100 100" className={`shrink-0 drop-shadow-sm ${className}`} role="img" aria-label={`Time now ${label}`}>

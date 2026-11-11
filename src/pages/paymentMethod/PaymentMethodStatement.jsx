@@ -7,13 +7,13 @@ import PaymentMethodStatementHeader from "../../components/paymentMethod/Payment
 import PaymentMethodStatementSummary from "../../components/paymentMethod/PaymentMethodStatementSummary";
 import { useBranch } from "../../hooks/useBranch";
 import { usePaymentMethodStatementData } from "../../hooks/usePaymentMethodApi";
-import { formatShortDate, todayInputValue } from "../../utils/formatDate";
+import { toInputDate, todayInputValue } from "../../utils/formatDate";
 
 // The last 30 days, like the reference app
 const defaultFilters = () => {
   const from = new Date();
   from.setDate(from.getDate() - 30);
-  return { from: formatShortDate(from), to: todayInputValue() };
+  return { from: toInputDate(from), to: todayInputValue() };
 };
 
 const PaymentMethodStatement = () => {

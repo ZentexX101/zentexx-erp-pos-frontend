@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
-import { todayInputValue } from "../../../utils/formatDate";
+import { formatMonth, todayInputValue } from "../../../utils/formatDate";
 
 const WEEK_DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
@@ -40,7 +40,7 @@ const RangeCalendar = ({ from, to, onPick, onHover = () => {} }) => {
         >
           <LuChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
-        <p className="text-sm font-semibold text-slate-900">{first.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}</p>
+        <p className="text-sm font-semibold text-slate-900">{formatMonth(first)}</p>
         <button
           type="button"
           onClick={() => shift(1)}

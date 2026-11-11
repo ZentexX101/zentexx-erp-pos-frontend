@@ -3,7 +3,7 @@ import { LuCalendarCheck, LuCalendarX, LuClock, LuCoffee, LuPlane } from "react-
 import { ATTENDANCE_STATUS, leaveTypeLabel } from "../../../constants/hr";
 import { useMonthSheetData } from "../../../hooks/useHrApi";
 import { currentMonth, minutesLabel, shortDayLabel, timeLabel, workedLabel } from "../../../utils/hr";
-import { todayInputValue } from "../../../utils/formatDate";
+import { formatWeekday, todayInputValue } from "../../../utils/formatDate";
 import Badge from "../../common/data/Badge";
 import HrStat from "../HrStat";
 import MonthSwitcher from "../MonthSwitcher";
@@ -69,7 +69,7 @@ const MyAttendanceTab = ({ staffId }) => {
                         >
                           <span className="text-sm font-bold tabular-nums">{Number(d.day.slice(8))}</span>
                           {/* Phones: the weekday here (the long name beside it is hidden); from sm the month */}
-                          <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide opacity-70 sm:hidden">{new Date(`${d.day}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short" })}</span>
+                          <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide opacity-70 sm:hidden">{formatWeekday(d.day)}</span>
                           <span className="mt-0.5 hidden text-[9px] font-semibold uppercase tracking-wide opacity-70 sm:block">{shortDayLabel(d.day).split(" ")[1]}</span>
                         </span>
                         <span className="hidden text-sm font-medium capitalize text-slate-700 sm:inline">{d.weekday}</span>

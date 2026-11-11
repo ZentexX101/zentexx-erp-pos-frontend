@@ -12,6 +12,7 @@ import Textarea from "../common/forms/Textarea";
 import Modal from "../common/modals/Modal";
 import PaymentMethodLines from "../payment/PaymentMethodLines";
 import { RepairDeviceFields, RepairPromiseFields, RepairTechnicianFields } from "./RepairJobFields";
+import { toInputDate } from "../../utils/formatDate";
 
 // Runs the page's save, showing any refusal inside the modal
 const useSubmit = (onSubmit) => {
@@ -133,7 +134,7 @@ export const RepairEditModal = ({ job, staff, onClose, onSubmit }) => {
     technician: job.technician?._id ?? "",
     outsideName: job.outsideName ?? "",
     estimate: job.estimate ? String(job.estimate) : "",
-    promisedDate: job.promisedDate ? new Date(job.promisedDate).toLocaleDateString("en-CA") : "",
+    promisedDate: job.promisedDate ? toInputDate(job.promisedDate) : "",
   });
   const { error, setError, saving, run } = useSubmit(onSubmit);
   const set = (name, value) => setForm((prev) => ({ ...prev, [name]: value }));

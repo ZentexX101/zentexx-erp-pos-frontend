@@ -13,6 +13,7 @@ import Modal from "../common/modals/Modal";
 import PaymentMethodLines from "../payment/PaymentMethodLines";
 import PreOrderCart from "./PreOrderCart";
 import ProductPicker from "./ProductPicker";
+import { toInputDate } from "../../utils/formatDate";
 
 // Runs the page's save, showing any refusal inside the modal
 const useSubmit = (onSubmit) => {
@@ -88,7 +89,7 @@ export const PreOrderEditModal = ({ row, onClose, onSubmit }) => {
   const [form, setForm] = useState({
     discount: row.discount ? String(row.discount) : "",
     deliveryCharge: row.deliveryCharge ? String(row.deliveryCharge) : "",
-    expectedDate: row.expectedDate ? new Date(row.expectedDate).toLocaleDateString("en-CA") : "",
+    expectedDate: row.expectedDate ? toInputDate(row.expectedDate) : "",
     note: row.note ?? "",
   });
   const { error, setError, saving, run } = useSubmit(onSubmit);

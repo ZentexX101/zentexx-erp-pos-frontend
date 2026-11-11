@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LuBriefcaseBusiness, LuBuilding2, LuCalendarDays } from "react-icons/lu";
 import { dayLabel, dutyLabel, timeLabel } from "../../../utils/hr";
+import { formatWeekdayDate } from "../../../utils/formatDate";
 import { getInitials } from "../../../utils/initials";
 import AnalogClock from "../AnalogClock";
 
@@ -62,7 +63,7 @@ const MyHeader = ({ user, today, branchName, title, online = false }) => (
       </p>
       <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500 sm:hidden">
         <LuCalendarDays className="size-3.5 shrink-0 text-slate-400" aria-hidden="true" />
-        {new Date(`${today}T00:00:00`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" })}
+        {formatWeekdayDate(today, { short: true })}
       </p>
       <div className="mt-3 hidden flex-wrap gap-2 sm:flex">
         <Chip icon={LuCalendarDays}>{dayLabel(today)}</Chip>

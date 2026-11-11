@@ -1,6 +1,7 @@
 import { LuArrowRight, LuLogIn, LuMapPin, LuPencil, LuPhone, LuTrash2 } from "react-icons/lu";
 import { BRANCH_STATUS } from "../../constants/branch";
 import Spinner from "../common/loaders/Spinner";
+import { formatDate } from "../../utils/formatDate";
 
 // Two letters for the avatar: "Decent Plus" → "DP", "Khulshi" → "KH"
 const initialsOf = (name = "") => {
@@ -8,8 +9,7 @@ const initialsOf = (name = "") => {
   return (words.length > 1 ? words[0][0] + words[1][0] : name.slice(0, 2)).toUpperCase();
 };
 
-// "27 Oct 2026"
-const shortDate = (value) => new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
 
 const iconButton =
   "inline-flex size-8 items-center justify-center rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/20";
@@ -69,7 +69,7 @@ const BranchCards = ({ branches, loading, emptyMessage, onLogin, onEdit, onDelet
                       {active ? "Active" : "Inactive"}
                     </span>
                     <span className="text-slate-300">·</span>
-                    <span className="truncate">Since {shortDate(b.createdAt)}</span>
+                    <span className="truncate">Since {formatDate(b.createdAt)}</span>
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-1.5">

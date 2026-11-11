@@ -1,5 +1,5 @@
 import { LuRefreshCw } from "react-icons/lu";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate, formatTime } from "../../utils/formatDate";
 import Select from "../common/forms/Select";
 import PeriodPicker from "./ui/PeriodPicker";
 
@@ -8,7 +8,7 @@ const greeting = () => {
   return hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 };
 
-const timeOf = (ms) => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+const timeOf = (ms) => formatTime(ms);
 
 // Greeting on the left; on the right one compact toolbar: branch (main admin, all-branch view),
 // period with its dates, and Refresh. On phones the toolbar sits under the greeting at full width.

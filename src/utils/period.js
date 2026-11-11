@@ -1,4 +1,4 @@
-import { formatShortDate } from "./formatDate";
+import { formatDate, toInputDate } from "./formatDate";
 
 // Quick periods for list filters ("Today" like the reference app); custom uses its own dates
 export const PERIOD_OPTIONS = [
@@ -22,17 +22,17 @@ export const periodRange = (period, custom = {}) => {
   const now = new Date();
   switch (period) {
     case "today":
-      return { from: formatShortDate(now), to: formatShortDate(now) };
+      return { from: toInputDate(now), to: toInputDate(now) };
     case "yesterday":
-      return { from: formatShortDate(daysAgo(1)), to: formatShortDate(daysAgo(1)) };
+      return { from: toInputDate(daysAgo(1)), to: toInputDate(daysAgo(1)) };
     case "last_7_days":
-      return { from: formatShortDate(daysAgo(6)), to: formatShortDate(now) };
+      return { from: toInputDate(daysAgo(6)), to: toInputDate(now) };
     case "this_month":
-      return { from: formatShortDate(new Date(now.getFullYear(), now.getMonth(), 1)), to: formatShortDate(now) };
+      return { from: toInputDate(new Date(now.getFullYear(), now.getMonth(), 1)), to: toInputDate(now) };
     case "last_month":
       return {
-        from: formatShortDate(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
-        to: formatShortDate(new Date(now.getFullYear(), now.getMonth(), 0)),
+        from: toInputDate(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
+        to: toInputDate(new Date(now.getFullYear(), now.getMonth(), 0)),
       };
     case "custom":
       return { from: custom.from || "", to: custom.to || "" };
@@ -41,12 +41,10 @@ export const periodRange = (period, custom = {}) => {
   }
 };
 
-// "2026-11-01" -> "1 Nov 2026"
-const shortDay = (day) => new Date(`${day}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
-// The dates a period covers: "1 Nov 2026 – 3 Nov 2026", one date, or "Every day so far"
+// The dates a period covers: "1st Nov-2026 – 3rd Nov-2026", one date, or "Every day so far"
 export const rangeText = ({ from, to }) => {
   if (!from && !to) return "Every day so far";
-  if (from === to) return shortDay(from);
-  return `${from ? shortDay(from) : "Start"} – ${to ? shortDay(to) : "Today"}`;
+  if (from === to) return formatDate(from);
+  return `${from ? formatDate(from) : "Start"} – ${to ? formatDate(to) : "Today"}`;
 };
