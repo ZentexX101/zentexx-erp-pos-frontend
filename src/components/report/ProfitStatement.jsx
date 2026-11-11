@@ -4,7 +4,7 @@ import { formatTaka } from "../../utils/money";
 
 // One line. less: a deduction, shown with a minus. link: { to, onClick } opens the page behind the number.
 const Line = ({ label, hint, value, less, link }) => (
-  <div className="group flex items-center justify-between gap-4 px-5 py-2.5 text-sm">
+  <div className="group flex items-center justify-between gap-3 px-4 py-2.5 text-sm sm:gap-4 sm:px-5">
     <span className={`min-w-0 ${less ? "pl-4 text-slate-500" : "font-medium text-slate-800"}`}>
       {link ? (
         <Link to={link.to} onClick={link.onClick} className="inline-flex items-center gap-1 hover:text-slate-900 hover:underline print:no-underline">
@@ -14,7 +14,7 @@ const Line = ({ label, hint, value, less, link }) => (
       ) : (
         label
       )}
-      {hint && <span className="ml-1.5 text-xs text-slate-400">{hint}</span>}
+      {hint && <span className="block text-xs text-slate-400 sm:ml-1.5 sm:inline">{hint}</span>}
     </span>
     <span className={`shrink-0 tabular-nums ${less ? "text-red-600" : "font-medium text-slate-900"}`}>
       {less && value > 0 ? "− " : ""}
@@ -25,19 +25,19 @@ const Line = ({ label, hint, value, less, link }) => (
 
 // A running total at the end of a section
 const Subtotal = ({ label, value }) => (
-  <div className="flex items-center justify-between gap-4 border-y border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-900">
+  <div className="flex items-center justify-between gap-4 border-y border-slate-200 bg-slate-50 px-4 py-3 text-sm sm:px-5 font-semibold text-slate-900">
     <span className="min-w-0">{label}</span>
     <span className={`shrink-0 tabular-nums ${value < 0 ? "text-red-600" : ""}`}>{formatTaka(value)}</span>
   </div>
 );
 
-const Heading = ({ children }) => <h3 className="px-5 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-widest text-slate-400">{children}</h3>;
+const Heading = ({ children }) => <h3 className="px-4 pb-1 pt-4 text-[11px] sm:px-5 font-semibold uppercase tracking-widest text-slate-400">{children}</h3>;
 
 // The statement top to bottom: each section ends in a running total, down to the net profit.
 // linkTo(key): the page behind a number, when this user can open one.
 const ProfitStatement = ({ report, linkTo }) => (
   <section className="min-w-0 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 print:shadow-none">
-    <h2 className="border-b border-slate-100 px-5 py-3.5 font-semibold text-slate-900">Statement</h2>
+    <h2 className="border-b border-slate-100 px-4 py-3.5 font-semibold sm:px-5 text-slate-900">Statement</h2>
 
     <Heading>Product sales</Heading>
     <Line label="Sales" hint={`${report.orders} order${report.orders === 1 ? "" : "s"}`} value={report.revenue} link={linkTo("sales")} />
@@ -70,7 +70,7 @@ const ProfitStatement = ({ report, linkTo }) => (
     />
 
     <div
-      className={`flex items-center justify-between gap-4 px-5 py-4 font-bold ${report.netProfit >= 0 ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"}`}
+      className={`flex items-center justify-between gap-3 px-4 py-4 font-bold sm:gap-4 sm:px-5 ${report.netProfit >= 0 ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"}`}
     >
       <span>{report.netProfit >= 0 ? "Net Profit" : "Net Loss"}</span>
       <span className="text-lg tabular-nums">{formatTaka(report.netProfit)}</span>

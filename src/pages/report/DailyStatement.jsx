@@ -29,6 +29,17 @@ const Step = ({ sign, label, value, tone = "text-slate-900", strong }) => (
   </div>
 );
 
+// The same step as one line of the phone summary card
+const PhoneStep = ({ sign, label, value, tone = "text-slate-900" }) => (
+  <div className="flex items-center justify-between gap-3 px-4 py-3">
+    <dt className="text-slate-600">
+      <span className="mr-2 inline-block w-3 text-slate-400">{sign}</span>
+      {label}
+    </dt>
+    <dd className={`break-all text-right font-semibold tabular-nums ${tone}`}>{formatTaka(value)}</dd>
+  </div>
+);
+
 // Daily Statement: every taka that moved through the payment methods in the period (from their ledger),
 // so it always matches the real balances. Serves the branch panel and the main panel (useReportScope).
 const DailyStatement = () => {
@@ -76,15 +87,30 @@ const DailyStatement = () => {
         ) : (
           data && (
             <>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+              {/* Phones: the sum as one card, each step a line */}
+              <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 sm:hidden">
+                <dl className="divide-y divide-slate-100 text-sm">
+                  <PhoneStep label="Opening balance" value={summary.opening} />
+                  <PhoneStep sign="+" label="Money in" value={summary.inflow} tone="text-emerald-600" />
+                  <PhoneStep sign="−" label="Money out" value={summary.outflow} tone="text-red-600" />
+                  <div className="flex items-center justify-between gap-3 bg-slate-50 px-4 py-3.5">
+                    <dt className="font-semibold text-slate-900">
+                      <span className="mr-2 inline-block w-3 text-slate-400">=</span>Closing balance
+                    </dt>
+                    <dd className="break-all text-right text-lg font-bold tabular-nums text-slate-900">{formatTaka(summary.closing)}</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <div className="hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
                 <Step label="Opening balance" value={summary.opening} />
                 <Step sign="+" label="Money in" value={summary.inflow} tone="text-emerald-600" />
                 <Step sign="−" label="Money out" value={summary.outflow} tone="text-red-600" />
                 <Step sign="=" label="Closing balance" value={summary.closing} strong />
               </div>
-              <p className="-mt-2 truncate text-sm text-slate-500" title={takaInWords(summary.closing)}>
+              <p className="-mt-2 text-sm text-slate-500 xl:truncate" title={takaInWords(summary.closing)}>
                 Closing: <span className="font-medium text-slate-700">{takaInWords(summary.closing)}</span>
-                <span className={`ml-3 font-semibold tabular-nums ${summary.net >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                <span className={`block font-semibold tabular-nums xl:ml-3 xl:inline ${summary.net >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                   {summary.net >= 0 ? "+" : ""}
                   {formatTaka(summary.net)} this period
                 </span>

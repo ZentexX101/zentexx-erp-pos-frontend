@@ -18,7 +18,7 @@ const CashFlowCard = ({ title, tone, rows, total, emptyText }) => {
   return (
     <section className="flex min-w-0 flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 print:shadow-none">
       <div className={`h-[3px] ${colors.accent}`} aria-hidden="true" />
-      <h2 className="border-b border-slate-100 px-5 py-3.5 font-semibold text-slate-900">{title}</h2>
+      <h2 className="border-b border-slate-100 px-4 py-3.5 font-semibold sm:px-5 text-slate-900">{title}</h2>
 
       {rows.length === 0 ? (
         <p className="flex flex-1 items-center justify-center px-5 py-10 text-sm text-slate-400">{emptyText}</p>
@@ -32,7 +32,7 @@ const CashFlowCard = ({ title, tone, rows, total, emptyText }) => {
                   type="button"
                   onClick={() => setOpen(expanded ? null : row.key)}
                   aria-expanded={expanded}
-                  className="w-full px-5 py-3 text-left outline-none transition hover:bg-slate-50 focus-visible:bg-slate-50"
+                  className="w-full px-4 py-3 text-left sm:px-5 outline-none transition hover:bg-slate-50 focus-visible:bg-slate-50"
                 >
                   <span className="flex min-w-0 items-center gap-2">
                     <LuChevronDown
@@ -47,7 +47,7 @@ const CashFlowCard = ({ title, tone, rows, total, emptyText }) => {
                     <span className={`block h-full rounded-full ${colors.accent}`} style={{ width: `${Math.max(percentOf(row.amount, total), 2)}%` }} />
                   </span>
                 </button>
-                <ul className={`bg-slate-50/70 px-5 py-2 pl-11 print:block ${expanded ? "block" : "hidden"}`}>
+                <ul className={`bg-slate-50/70 px-4 py-2 pl-10 sm:px-5 sm:pl-11 print:block ${expanded ? "block" : "hidden"}`}>
                   {row.methods.map((method) => (
                     <li key={method.name} className="flex items-center justify-between gap-3 py-1 text-xs">
                       <span className="min-w-0 truncate text-slate-600">{method.name}</span>
@@ -61,7 +61,7 @@ const CashFlowCard = ({ title, tone, rows, total, emptyText }) => {
         </ul>
       )}
 
-      <div className={`flex items-center justify-between gap-3 px-5 py-3.5 font-semibold ${colors.total}`}>
+      <div className={`flex items-center justify-between gap-3 px-4 py-3.5 font-semibold sm:px-5 ${colors.total}`}>
         <span>Total</span>
         <span className="tabular-nums">{formatTaka(total)}</span>
       </div>

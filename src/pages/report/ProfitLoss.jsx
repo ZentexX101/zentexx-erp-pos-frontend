@@ -22,13 +22,17 @@ const Kpi = ({ label, value, before, lowerIsBetter }) => {
   const Arrow = change > 0 ? LuArrowUpRight : LuArrowDownRight;
 
   return (
-    <div className="min-w-0 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 print:shadow-none">
-      <p className="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className={`mt-1 truncate text-xl font-bold tabular-nums ${value < 0 ? "text-red-600" : "text-slate-900"}`} title={formatTaka(value)}>
+    <div className="min-w-0 rounded-2xl bg-white p-3.5 shadow-sm ring-1 ring-slate-200/80 sm:p-4 print:shadow-none">
+      <p className="truncate text-[11px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">{label}</p>
+      {/* Two cards a row on phones: a smaller number that wraps (never cut) when it's in crores */}
+      <p
+        className={`mt-1 break-all text-base font-bold tabular-nums sm:truncate sm:text-xl ${value < 0 ? "text-red-600" : "text-slate-900"}`}
+        title={formatTaka(value)}
+      >
         {formatTaka(value)}
       </p>
       {before !== undefined && (
-        <p className="mt-1 flex min-w-0 items-center gap-1 text-xs text-slate-500">
+        <p className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1 text-xs text-slate-500 sm:flex-nowrap">
           {known && change !== 0 ? (
             <span className={`inline-flex shrink-0 items-center font-semibold tabular-nums ${good ? "text-emerald-600" : "text-red-600"}`}>
               <Arrow className="size-3.5" aria-hidden="true" />
@@ -76,7 +80,7 @@ const ProfitLoss = () => {
         {isLoading && !report ? (
           <div className="space-y-5" aria-hidden="true">
             <div className="h-28 animate-pulse rounded-2xl bg-slate-200/60" />
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
               {[0, 1, 2, 3].map((i) => (
                 <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-200/60" />
               ))}
@@ -89,7 +93,7 @@ const ProfitLoss = () => {
               <ProfitVerdict report={report} />
 
               <div>
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
                   <Kpi label="Net sales" value={report.netSales} before={before?.netSales} />
                   <Kpi label="Trading profit" value={report.tradingProfit} before={before?.tradingProfit} />
                   <Kpi label="Service profit" value={report.serviceProfit} before={before?.serviceProfit} />
@@ -106,7 +110,7 @@ const ProfitLoss = () => {
                 <ProfitStatement report={report} linkTo={linkTo} />
 
                 <div className="min-w-0 space-y-4">
-                  <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200/80 print:shadow-none">
+                  <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 sm:p-5 print:shadow-none">
                     <h2 className="font-semibold text-slate-900">Where expenses went</h2>
                     {report.expenseByCategory.length === 0 ? (
                       <p className="py-8 text-center text-sm text-slate-400">No expense in this period.</p>
@@ -134,7 +138,7 @@ const ProfitLoss = () => {
                   </section>
 
                   {(report.delivery > 0 || report.exchangeValue > 0) && (
-                    <section className="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200/80">
+                    <section className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/80 sm:p-5">
                       <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
                         <LuInfo className="size-4 text-slate-500" aria-hidden="true" />
                         Not counted as profit or cost

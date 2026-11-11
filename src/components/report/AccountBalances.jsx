@@ -15,7 +15,7 @@ const AccountBalances = ({ accounts, summary, showBranch, linkable }) => {
 
   return (
     <section className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 print:shadow-none">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-5 py-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-3.5 sm:px-5">
         <h2 className="font-semibold text-slate-900">Accounts</h2>
         {emptyCount > 0 && (
           <button
