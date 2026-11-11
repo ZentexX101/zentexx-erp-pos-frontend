@@ -22,9 +22,15 @@ const PaymentListFilters = ({ period, onPeriod, searchInput, onSearch, searchPla
       )}
     </FilterBar>
     {summary && (
-      <p className="text-sm text-slate-600">
-        {summary.count} {noun}
-        {summary.count === 1 ? "" : "s"} · Total <span className="text-base font-bold text-slate-900">{formatTaka(summary.amount)}</span>
+      <p className="flex items-center justify-between gap-2 rounded-xl bg-white px-4 py-2.5 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200 lg:justify-start lg:bg-transparent lg:p-0 lg:shadow-none lg:ring-0">
+        <span>
+          {summary.count} {noun}
+        {summary.count === 1 ? "" : "s"}
+        </span>
+        <span>
+          <span className="hidden lg:inline">· </span>Total{" "}
+          <span className="text-base font-bold text-slate-900">{formatTaka(summary.amount)}</span>
+        </span>
       </p>
     )}
   </div>

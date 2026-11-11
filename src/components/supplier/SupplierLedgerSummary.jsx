@@ -8,17 +8,17 @@ import SupplierBalance from "./SupplierBalance";
 const StatCard = ({ icon, label, hint, children, tone }) => {
   const Icon = icon;
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+    <div className="min-w-0 rounded-xl bg-white p-3.5 shadow-sm ring-1 ring-slate-200 sm:p-4">
       <div className="flex items-center gap-2.5">
-        <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${tone}`}>
-          <Icon className="h-5 w-5" aria-hidden="true" />
+        <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg sm:size-9 ${tone}`}>
+          <Icon className="size-4 sm:size-5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-          <p className="truncate text-xs text-slate-400">{hint}</p>
+          <p className="text-[11px] font-semibold uppercase leading-tight tracking-wide text-slate-500 sm:truncate sm:text-xs">{label}</p>
+          <p className="hidden truncate text-xs text-slate-400 sm:block">{hint}</p>
         </div>
       </div>
-      <div className="mt-3 text-xl">{children}</div>
+      <div className="mt-2.5 break-all text-base sm:mt-3 sm:text-xl">{children}</div>
     </div>
   );
 };
@@ -26,7 +26,7 @@ const StatCard = ({ icon, label, hint, children, tone }) => {
 // Supplier details, the current balance, and totals for the filtered period
 const SupplierLedgerSummary = ({ supplier, summary, hasPeriod }) => (
   <div className="space-y-4">
-    <div className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:flex-row sm:items-start sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:p-5">
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">{BUSINESS_NAME}</p>
         <h2 className="mt-1 text-xl font-bold text-slate-900">{supplier.name}</h2>
@@ -34,14 +34,14 @@ const SupplierLedgerSummary = ({ supplier, summary, hasPeriod }) => (
           {formatPhone(supplier.phone)} · {supplier.address}
         </p>
       </div>
-      <div className="sm:text-right">
+      <div className="border-t border-slate-100 pt-3 sm:border-t-0 sm:pt-0 sm:text-right">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Current Balance</p>
         <SupplierBalance amount={supplier.balance} className="mt-1 block text-2xl" />
         <p className="text-sm text-slate-500">{supplierBalanceMeaning(supplier.balance)}</p>
       </div>
     </div>
 
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
       <StatCard icon={LuFlag} label="Opening Balance" hint={hasPeriod ? "Before the selected period" : "Before the first entry"} tone="bg-slate-100 text-slate-600">
         <SupplierBalance amount={summary.openingBalance} />
       </StatCard>
