@@ -15,15 +15,24 @@ const PaymentMethodLines = ({ lines, onChange, methods, title, addLabel, totalLa
   const removeLine = (key) => onChange(lines.length > 1 ? lines.filter((line) => line.key !== key) : lines);
 
   return (
-    <section className="rounded-lg border border-slate-200 p-4">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="flex items-center gap-2 font-semibold text-slate-900">
-          <LuWallet className="h-4 w-4" aria-hidden="true" />
+    // A container: the layout follows this box (it sits in narrow side panels on desktop too)
+    <section className="@container rounded-lg border border-slate-200 p-4">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <h3 className="flex min-w-0 items-start gap-2 font-semibold leading-snug text-slate-900">
+          <LuWallet className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {title}
         </h3>
-        <Button variant="secondary" onClick={() => onChange([...lines, newPaymentLine()])} disabled={lines.length >= methods.length}>
+        {/* Narrow: just "+ Add" so the title keeps its line */}
+        <Button
+          variant="secondary"
+          onClick={() => onChange([...lines, newPaymentLine()])}
+          disabled={lines.length >= methods.length}
+          className="shrink-0 @max-md:px-3"
+          aria-label={addLabel}
+        >
           <LuPlus className="h-4 w-4" aria-hidden="true" />
-          {addLabel}
+          <span className="@md:hidden">Add</span>
+          <span className="hidden @md:inline">{addLabel}</span>
         </Button>
       </div>
 
@@ -32,9 +41,13 @@ const PaymentMethodLines = ({ lines, onChange, methods, title, addLabel, totalLa
           // A method already used on another line can't be picked again
           const taken = new Set(lines.filter((l) => l.key !== line.key).map((l) => l.paymentMethod));
           return (
-            <div key={line.key} className="flex flex-wrap items-start gap-3 rounded-lg bg-slate-50 p-3">
-              <span className="pt-2 text-sm font-semibold text-slate-500">#{index + 1}</span>
-              <div className="min-w-48 flex-1">
+            // Narrow: #, method across; amount and remove under it. From @md: all on one line
+            <div
+              key={line.key}
+              className="grid grid-cols-[1.5rem_minmax(0,1fr)_2.25rem] items-center gap-2 rounded-lg bg-slate-50 p-3 @md:grid-cols-[1.5rem_minmax(0,1fr)_10rem_2.25rem] @md:gap-3"
+            >
+              <span className="text-sm font-semibold text-slate-500">#{index + 1}</span>
+              <div className="col-span-2 min-w-0 @md:col-span-1">
                 <select
                   aria-label={`Payment method ${index + 1}`}
                   value={line.paymentMethod}
@@ -57,7 +70,7 @@ const PaymentMethodLines = ({ lines, onChange, methods, title, addLabel, totalLa
                 placeholder="Amount (৳)"
                 value={line.amount}
                 onChange={(e) => setLine(line.key, "amount", toDecimalInput(e.target.value))}
-                className={`${fieldClass} w-40`}
+                className={`${fieldClass} col-start-2 w-full min-w-0 @md:col-start-auto`}
               />
               <button
                 type="button"

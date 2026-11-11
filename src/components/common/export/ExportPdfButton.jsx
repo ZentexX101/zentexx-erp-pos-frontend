@@ -14,8 +14,8 @@ const MAX_ROWS = 5000;
 
 const CHOICES = {
   range: [
-    { value: "this_month", label: "This month" },
     { value: "all", label: "All time" },
+    { value: "this_month", label: "This month" },
     { value: "month", label: "Pick a month" },
   ],
   month: [
@@ -96,7 +96,8 @@ const ExportPdfButton = ({ report, params = {}, scope }) => {
 
   // all states
   const [open, setOpen] = useState(false);
-  const [choice, setChoice] = useState("this_month");
+  // All time by default (like the lists); month-only reports (e.g. salaries) start on this month
+  const [choice, setChoice] = useState(report.period === "range" ? "all" : "this_month");
   const [month, setMonth] = useState(currentMonth());
   const [status, setStatus] = useState(null); // { label, percent } while working
   const [error, setError] = useState("");

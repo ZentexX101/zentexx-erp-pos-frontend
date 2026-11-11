@@ -7,8 +7,11 @@ import { formatPhone } from "../../utils/phone";
 import Spinner from "../common/loaders/Spinner";
 import CustomerBalance from "./CustomerBalance";
 
-// Searchable customer dropdown for forms: type a name or phone, pick one (searched on the backend)
-const CustomerSelect = ({ label = "Customer", value, onChange, error }) => {
+// Searchable customer dropdown: type a name or phone, pick one (searched on the backend)
+// required: show the red star (forms). variant "filter": no label and the same 40px box as the other
+// list filters (Select variant="filter"), so it lines up in a FilterBar.
+const CustomerSelect = ({ label = "Customer", value, onChange, error, required = true, variant = "form" }) => {
+  const filter = variant === "filter";
   const ref = useRef(null);
   const [open, setOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -26,16 +29,32 @@ const CustomerSelect = ({ label = "Customer", value, onChange, error }) => {
 
   return (
     <div ref={ref} className="relative">
-      <p className="mb-1 text-sm font-medium text-slate-700">
-        {label}
-        <span className="text-red-500"> *</span>
-      </p>
+      {!filter && (
+        <p className="mb-1 text-sm font-medium text-slate-700">
+          {label}
+          {required && <span className="text-red-500"> *</span>}
+        </p>
+      )}
 
       {value && !open ? (
-        <div className="flex items-center justify-between gap-3 rounded-md border border-slate-300 bg-white px-3 py-2">
-          <button type="button" onClick={() => setOpen(true)} className="min-w-0 flex-1 text-left">
-            <span className="block truncate font-medium text-slate-900">{value.name}</span>
-            <span className="text-xs text-slate-500">{formatPhone(value.phone)}</span>
+        <div
+          className={`flex items-center justify-between gap-3 border bg-white px-3 ${
+            filter ? "h-10 rounded-lg border-slate-500 shadow-xs" : "rounded-md border-slate-300 py-2"
+          }`}
+        >
+          <button type="button" onClick={() => setOpen(true)} className="min-w-0 flex-1 text-left" aria-label={filter ? `${label}: ${value.name}` : undefined}>
+            {filter ? (
+              // One line in a filter: name · phone
+              <span className="block truncate text-sm">
+                <span className="font-medium text-slate-900">{value.name}</span>
+                <span className="text-slate-500"> · {formatPhone(value.phone)}</span>
+              </span>
+            ) : (
+              <>
+                <span className="block truncate font-medium text-slate-900">{value.name}</span>
+                <span className="text-xs text-slate-500">{formatPhone(value.phone)}</span>
+              </>
+            )}
           </button>
           <button type="button" onClick={() => onChange(null)} className="rounded p-1 text-slate-400 hover:text-slate-700" aria-label="Clear customer">
             <LuX className="h-4 w-4" aria-hidden="true" />
@@ -51,11 +70,12 @@ const CustomerSelect = ({ label = "Customer", value, onChange, error }) => {
               setOpen(true);
             }}
             onFocus={() => setOpen(true)}
-            placeholder="Search customer by name or phone"
+            placeholder={filter ? `All customers` : "Search customer by name or phone"}
+            aria-label={filter ? `Filter by ${label.toLowerCase()}` : undefined}
             aria-invalid={Boolean(error)}
-            className={`w-full rounded-md border bg-white px-3 py-2 pr-9 text-slate-900 outline-none focus:ring-2 ${
-              error ? "border-red-400 focus:ring-red-200" : "border-slate-300 focus:border-slate-400 focus:ring-brand/10"
-            }`}
+            className={`w-full border bg-white px-3 pr-9 text-slate-900 outline-none focus:ring-2 ${
+              filter ? "h-10 rounded-lg text-sm shadow-xs placeholder:text-slate-700 hover:border-slate-400" : "rounded-md py-2"
+            } ${error ? "border-red-400 focus:ring-red-200" : "border-slate-300 focus:border-slate-400 focus:ring-brand/10"}`}
           />
           <LuChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
         </div>

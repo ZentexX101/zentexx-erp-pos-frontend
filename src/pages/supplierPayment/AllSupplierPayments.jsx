@@ -14,7 +14,7 @@ import { periodRange } from "../../utils/period";
 // Main admin panel "Supplier Payment Lists": every branch's payments (made from inside a branch)
 const AllSupplierPayments = () => {
   // all states
-  const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [branch, setBranch] = useState("");

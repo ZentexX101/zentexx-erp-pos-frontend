@@ -24,7 +24,7 @@ const DUE_OPTIONS = [{ value: "true", label: "Only with due" }];
 
 // The period's totals
 const Totals = ({ summary }) => (
-  <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+  <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 max-sm:[&>*:last-child:nth-child(odd)]:col-span-2">
     {[
       { label: "Services sold", value: summary?.count ?? 0, plain: true },
       { label: "Total", value: summary?.total, className: "text-slate-900" },
@@ -69,7 +69,7 @@ const ServiceSales = () => {
   const { user } = useAuth();
 
   // all states
-  const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [service, setService] = useState("");

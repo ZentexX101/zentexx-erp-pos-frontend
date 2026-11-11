@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LuInfo } from "react-icons/lu";
+import { LuInfo, LuShoppingCart } from "react-icons/lu";
 import { useNavigate } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
@@ -23,7 +23,7 @@ import { paymentLinesError, paymentLinesTotal, toPaymentItems } from "../../util
 import { addToCart, cartError, cartSubTotal, toCartItems } from "../../utils/preOrder";
 
 const amountClass =
-  "w-32 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-right text-sm font-semibold text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10";
+  "h-10 w-32 rounded-lg border border-slate-300 bg-white px-3 text-right text-sm font-semibold text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10";
 
 // Book products that aren't here yet, for a saved customer, with an advance of at least 1 taka
 const CreatePreOrder = () => {
@@ -84,7 +84,7 @@ const CreatePreOrder = () => {
   };
 
   return (
-    <div className="space-y-5">
+    <div className={`space-y-5 ${lines.length > 0 ? "max-xl:pb-20" : ""}`}>
       <PageHeader title="New Pre Order" subtitle="Book products that aren't in this branch yet. The advance stays the customer's money until it's sold." />
 
       <div className="grid items-start gap-5 xl:grid-cols-[3fr_2fr] [&>*]:min-w-0">
@@ -103,7 +103,7 @@ const CreatePreOrder = () => {
                 <CustomerSelect value={customer} onChange={setCustomer} />
               </div>
               {hasPermission(user, "customer.create") && (
-                <Button variant="secondary" onClick={() => setCreatingCustomer(true)} className="shrink-0">
+                <Button variant="secondary" onClick={() => setCreatingCustomer(true)} className="h-[42px] shrink-0 max-sm:w-[42px] max-sm:px-0">
                   <Icon name="plus" />
                   <span className="hidden sm:inline">New Customer</span>
                   <span className="sr-only sm:hidden">New Customer</span>
@@ -119,7 +119,9 @@ const CreatePreOrder = () => {
             />
           </section>
 
-          <PreOrderCart lines={lines} onChange={setLines} />
+          <div id="preorder-cart" className="scroll-mt-20">
+            <PreOrderCart lines={lines} onChange={setLines} />
+          </div>
 
           <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/70">
             {!customer && (
@@ -178,6 +180,26 @@ const CreatePreOrder = () => {
           </section>
         </div>
       </div>
+
+      {/* Phones / tablets: the cart sits under the products, so a floating bar shows what is in it and jumps there */}
+      {lines.length > 0 && (
+        <button
+          type="button"
+          onClick={() => document.getElementById("preorder-cart")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          className="fixed inset-x-4 bottom-4 z-30 flex items-center justify-between gap-3 rounded-2xl bg-slate-900 px-4 py-3 text-white shadow-xl shadow-slate-900/30 sm:left-auto sm:w-96 xl:hidden"
+        >
+          <span className="flex items-center gap-2.5">
+            <span className="relative">
+              <LuShoppingCart className="size-5" aria-hidden="true" />
+              <span className="absolute -right-2 -top-2 flex size-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold">
+                {lines.reduce((sum, line) => sum + (Number(line.quantity) || 0), 0)}
+              </span>
+            </span>
+            <span className="text-sm font-semibold tabular-nums">{formatTaka(grandTotal)}</span>
+          </span>
+          <span className="text-sm font-semibold text-emerald-300">View cart →</span>
+        </button>
+      )}
 
       {creatingCustomer && (
         <CustomerFormModal

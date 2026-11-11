@@ -17,7 +17,7 @@ const AllCustomerPaymentList = ({ kind }) => {
   const copy = CUSTOMER_PAYMENT_KINDS[kind];
 
   // all states
-  const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [branch, setBranch] = useState("");

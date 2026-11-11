@@ -34,7 +34,7 @@ const Transfers = ({ scope = "main" }) => {
   const inBranch = scope === "branch";
 
   // all states
-  const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [branchFilter, setBranchFilter] = useState("");

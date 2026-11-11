@@ -15,7 +15,7 @@ const Field = ({ label, children }) => (
 // the service; the services each already has are shown as badges. serviceNames: { id: name }.
 const ServiceDevicePicker = ({ sale, rows, picked, onPick, serviceNames }) => (
   <section className="space-y-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 sm:p-5">
-    <dl className="grid gap-4 sm:grid-cols-3">
+    <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
       <Field label="Invoice">
         <span className="font-mono">{sale.invoiceNo}</span>
         <span className="block text-xs font-normal text-slate-500">{formatDateTime(sale.date)}</span>

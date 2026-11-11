@@ -16,7 +16,7 @@ const PurchaseDetailsModal = ({ purchase, onClose }) => (
   <Modal isOpen={Boolean(purchase)} onClose={onClose} title={`Purchase ${purchase?.invoiceNo ?? ""}`} subtitle={purchase && formatDateTime(purchase.date)} size="xl">
     {purchase && (
       <div className="space-y-5">
-        <dl className="grid gap-4 sm:grid-cols-3">
+        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3 [&>*:first-child]:col-span-2 sm:[&>*:first-child]:col-span-1">
           <Field label="Supplier">
             {purchase.supplier?.name}
             <span className="block text-xs font-normal text-slate-500">{formatPhone(purchase.supplier?.phone)}</span>
@@ -27,7 +27,7 @@ const PurchaseDetailsModal = ({ purchase, onClose }) => (
 
         <InvoiceItemsTable items={purchase.items} total={purchase.totalAmount} showSalePrice />
 
-        <dl className="grid grid-cols-3 gap-3 rounded-lg bg-slate-50 p-3">
+        <dl className="grid grid-cols-3 gap-2 rounded-lg bg-slate-50 p-3 sm:gap-3 max-sm:[&_dd]:text-[13px] [&_dd]:tabular-nums">
           <Field label="Total">{formatTaka(purchase.totalAmount)}</Field>
           <Field label="Paid">
             <span className="text-green-600">{formatTaka(purchase.paidAmount)}</span>

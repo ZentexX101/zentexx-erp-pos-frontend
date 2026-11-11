@@ -43,8 +43,8 @@ const PosProductGrid = ({ onAdd, onScan, inCart }) => {
 
   return (
     <section className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
-        <div className="relative">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[2fr_1fr_1fr]">
+        <div className="relative col-span-2 sm:col-span-1">
           <LuScanLine className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
           <input
             value={searchInput}
@@ -103,7 +103,7 @@ const PosProductGrid = ({ onAdd, onScan, inCart }) => {
                 <span className="absolute right-1.5 top-1.5 z-10 origin-top-right scale-90">
                   {out ? <Badge tone="red">Out of stock</Badge> : added ? <Badge tone="blue">In cart</Badge> : null}
                 </span>
-                <span className="flex h-28 items-center justify-center bg-slate-50 p-2">
+                <span className="flex h-24 items-center justify-center bg-slate-50 p-2 sm:h-28">
                   {stock.product.image?.url ? (
                     <img src={stock.product.image.url} alt="" className="h-full w-full object-contain" />
                   ) : (

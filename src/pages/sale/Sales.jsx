@@ -44,7 +44,7 @@ const KINDS = {
 
 // The period's totals; profit only for main admins, exchange value only on exchanges
 const Totals = ({ summary, showProfit, showExchange }) => (
-  <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+  <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 max-sm:[&>*:last-child:nth-child(odd)]:col-span-2">
     {[
       { label: "Sales", value: summary?.count ?? 0, plain: true },
       { label: "Total", value: summary?.total, className: "text-slate-900" },
@@ -67,7 +67,7 @@ const Sales = ({ kind = "sale" }) => {
   const { user } = useAuth();
 
   // all states
-  const [period, setPeriod] = useState({ period: "today", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [due, setDue] = useState("");

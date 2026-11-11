@@ -34,9 +34,9 @@ const PosCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, canCreateCus
           <CustomerSelect label={customerLabel} value={customer} onChange={onCustomer} />
         </div>
         {canCreateCustomer && (
-          <Button onClick={() => setCreating(true)} className="shrink-0">
+          <Button onClick={() => setCreating(true)} className="h-[42px] shrink-0 max-sm:w-[42px] max-sm:px-0" aria-label="Create customer" title="Create customer">
             <Icon name="plus" />
-            Create Customer
+            <span className="hidden sm:inline">Create Customer</span>
           </Button>
         )}
       </div>

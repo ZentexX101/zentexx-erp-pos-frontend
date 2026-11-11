@@ -14,7 +14,7 @@ const PurchaseReturnDetailsModal = ({ purchaseReturn, onClose }) => (
   >
     {purchaseReturn && (
       <div className="space-y-5">
-        <dl className="grid gap-4 sm:grid-cols-2">
+        <dl className="grid grid-cols-2 gap-4">
           <div>
             <dt className="text-xs text-slate-500">Supplier</dt>
             <dd className="font-medium text-slate-900">

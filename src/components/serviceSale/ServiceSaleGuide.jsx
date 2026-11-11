@@ -13,7 +13,7 @@ const STEPS = [
 // Shown before an invoice is found: how it works, the latest sales of this branch to start from
 // (onPick searches that invoice) and which services can be sold. sales: recent POS / exchange orders.
 const ServiceSaleGuide = ({ sales, salesLoading, services, onPick, canManageServices }) => (
-  <div className="grid items-start gap-4 xl:grid-cols-[3fr_2fr]">
+  <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] [&>*]:min-w-0">
     <div className="space-y-4">
       {/* How it works */}
       <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 sm:p-5">
@@ -36,7 +36,7 @@ const ServiceSaleGuide = ({ sales, salesLoading, services, onPick, canManageServ
       <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-semibold text-slate-900">Recent sales</h2>
-          <span className="text-xs text-slate-500">Click one to add a service</span>
+          <span className="hidden text-xs text-slate-500 sm:inline">Click one to add a service</span>
         </div>
         {salesLoading ? (
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -49,7 +49,7 @@ const ServiceSaleGuide = ({ sales, salesLoading, services, onPick, canManageServ
             No sale in this branch yet. Sell a device from Create POS first.
           </p>
         ) : (
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 [&>*]:min-w-0">
             {sales.map((sale) => (
               <li key={sale._id}>
                 <button

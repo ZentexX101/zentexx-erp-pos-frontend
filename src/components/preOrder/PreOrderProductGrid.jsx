@@ -30,7 +30,7 @@ const PreOrderProductGrid = ({ onAdd, isAdded }) => {
 
   return (
     <section className="min-w-0 space-y-3">
-      <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[2fr_1fr_1fr] [&>*:first-child]:col-span-2 sm:[&>*:first-child]:col-span-1">
         <div className="relative">
           <LuSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
           <input
@@ -86,7 +86,7 @@ const PreOrderProductGrid = ({ onAdd, isAdded }) => {
                 <span className="absolute right-1.5 top-1.5 z-10 origin-top-right scale-90">
                   {added ? <Badge tone="blue">Added</Badge> : <Badge tone="amber">No stock</Badge>}
                 </span>
-                <span className="flex h-28 items-center justify-center bg-slate-50 p-2">
+                <span className="flex h-24 items-center justify-center bg-slate-50 p-2 sm:h-28">
                   {product.image?.url ? (
                     <img src={product.image.url} alt="" className="h-full w-full object-contain" />
                   ) : (

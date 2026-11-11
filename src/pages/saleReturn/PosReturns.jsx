@@ -24,7 +24,7 @@ const PosReturns = () => {
   const { user } = useAuth();
 
   // all states
-  const [period, setPeriod] = useState({ period: "today", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [customer, setCustomer] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -61,11 +61,11 @@ const PosReturns = () => {
         }
       />
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <FilterBar search={<SearchInput value={searchInput} onChange={withPageReset(setSearchInput)} placeholder="Search by Return ID or Order ID..." />}>
           <PeriodFilter value={period} onChange={withPageReset(setPeriod)} />
-          <div className="col-span-2 w-72">
-            <CustomerSelect label="Customer" value={customer} onChange={withPageReset(setCustomer)} />
+          <div className="min-w-0 sm:w-64">
+            <CustomerSelect variant="filter" label="Customer" value={customer} onChange={withPageReset(setCustomer)} />
           </div>
         </FilterBar>
         {summary && (

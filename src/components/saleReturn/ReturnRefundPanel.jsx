@@ -29,18 +29,18 @@ const ReturnRefundPanel = ({ sale, total, refund, suggested, lines, onLines, onS
         }
       />
 
-      <dl className="grid gap-3 rounded-lg bg-slate-50 p-3 text-sm sm:grid-cols-3">
+      <dl className="grid grid-cols-3 gap-2 rounded-lg bg-slate-50 p-3 text-sm sm:gap-3">
         <div>
           <dt className="text-xs text-slate-500">Return total</dt>
-          <dd className="text-lg font-bold text-slate-900">{formatTaka(total)}</dd>
+          <dd className="break-all text-base font-bold sm:text-lg text-slate-900">{formatTaka(total)}</dd>
         </div>
         <div>
           <dt className="text-xs text-slate-500">Refunded now</dt>
-          <dd className="text-lg font-bold text-orange-600">{formatTaka(refund)}</dd>
+          <dd className="break-all text-base font-bold sm:text-lg text-orange-600">{formatTaka(refund)}</dd>
         </div>
         <div>
           <dt className="text-xs text-slate-500">{sale.customer ? "Adjusted on customer balance" : "Must be refunded"}</dt>
-          <dd className={`text-lg font-bold ${adjusted > 0 && !sale.customer ? "text-red-600" : "text-slate-900"}`}>{formatTaka(adjusted)}</dd>
+          <dd className={`break-all text-base font-bold sm:text-lg ${adjusted > 0 && !sale.customer ? "text-red-600" : "text-slate-900"}`}>{formatTaka(adjusted)}</dd>
         </div>
       </dl>
       {sale.customer && adjusted > 0 && (

@@ -23,7 +23,7 @@ const CustomerPaymentList = ({ kind }) => {
   const canCreate = hasPermission(user, "payment.create");
 
   // all states
-  const [period, setPeriod] = useState({ period: "today", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [page, setPage] = useState(1);

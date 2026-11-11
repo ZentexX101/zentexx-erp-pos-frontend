@@ -28,7 +28,7 @@ const CompactPaymentRows = ({ title, lines, onChange, methods, tone = "green" })
             aria-label={`Payment method ${index + 1}`}
             value={line.paymentMethod}
             onChange={(e) => setLine(line.key, "paymentMethod", e.target.value)}
-            className="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
+            className="h-10 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
           >
             <option value="">{methods.length ? "Select payment method" : "No active payment method"}</option>
             {methods
@@ -45,7 +45,7 @@ const CompactPaymentRows = ({ title, lines, onChange, methods, tone = "green" })
             value={line.amount}
             onChange={(e) => setLine(line.key, "amount", toDecimalInput(e.target.value))}
             placeholder="0"
-            className={`w-28 rounded-md border px-2 py-2 text-right text-sm font-semibold outline-none focus:ring-2 ${amountTone}`}
+            className={`h-10 w-28 rounded-lg border px-3 text-right text-sm font-semibold outline-none focus:ring-2 sm:w-32 ${amountTone}`}
           />
           {lines.length > 1 && (
             <button

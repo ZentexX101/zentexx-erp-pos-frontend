@@ -55,17 +55,17 @@ const PurchaseItemList = ({ lines, onChange, onRemove }) => {
         const { product } = line;
         const set = (field) => (value) => onChange(index, field, value);
         return (
-          <section key={product._id} className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
+          <section key={product._id} className="min-w-0 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h3 className="font-semibold uppercase text-slate-900">{product.name}</h3>
+                <h3 className="break-words font-semibold uppercase text-slate-900">{product.name}</h3>
                 {product.trackSerial ? (
                   <Badge tone="purple">IMEI Product · {lineQuantity(line)} pcs</Badge>
                 ) : (
                   <p className="text-xs font-medium text-indigo-600">Simple Product</p>
                 )}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex shrink-0 items-center gap-1 sm:gap-3">
                 <div className="text-right">
                   <p className="text-xs text-slate-500">Line total</p>
                   <p className="font-bold text-slate-900">{formatTaka(lineTotal(line))}</p>
@@ -81,8 +81,9 @@ const PurchaseItemList = ({ lines, onChange, onRemove }) => {
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <Field label="Product Selling Price">
+            {/* Phones: selling and buying price side by side, quantity (and IMEIs) across under them; md: one row */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+              <Field label="Selling Price">
                 <input
                   inputMode="decimal"
                   placeholder="৳ per piece"
@@ -95,7 +96,11 @@ const PurchaseItemList = ({ lines, onChange, onRemove }) => {
                 )}
               </Field>
 
-              <Field label={product.trackSerial ? "Product Quantity (from IMEIs)" : "Product Quantity"} required={!product.trackSerial}>
+              <Field
+                label={product.trackSerial ? "Quantity (from IMEIs)" : "Quantity"}
+                required={!product.trackSerial}
+                className="col-span-2 max-md:order-last md:col-span-1"
+              >
                 <input
                   inputMode="numeric"
                   value={product.trackSerial ? String(lineQuantity(line)) : line.quantity}
@@ -105,7 +110,7 @@ const PurchaseItemList = ({ lines, onChange, onRemove }) => {
                 />
               </Field>
 
-              <Field label="Product Buying Price" required>
+              <Field label="Buying Price" required>
                 <input
                   inputMode="decimal"
                   placeholder="Enter buying price"
@@ -116,7 +121,7 @@ const PurchaseItemList = ({ lines, onChange, onRemove }) => {
               </Field>
 
               {product.trackSerial && (
-                <Field label="IMEI / Serial Numbers" required className="md:col-span-3">
+                <Field label="IMEI / Serial Numbers" required className="col-span-2 max-md:order-last md:col-span-3">
                   <SerialsInput value={line.serialsText} onChange={set("serialsText")} name={product.name} />
                 </Field>
               )}

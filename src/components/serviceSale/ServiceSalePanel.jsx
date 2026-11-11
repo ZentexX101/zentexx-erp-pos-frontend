@@ -1,5 +1,6 @@
 import { formatTaka } from "../../utils/money";
 import { roundTaka, toDecimalInput, toIntegerInput } from "../../utils/number";
+import { servicePrice } from "../../utils/serviceSale";
 import Button from "../common/buttons/Button";
 import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
@@ -23,15 +24,53 @@ const ServiceSalePanel = ({ row, options, form, onField, maths, left, lines, onL
 
   return (
     <section className="space-y-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 sm:p-5">
-      <Select
-        label="Service"
-        required
-        placeholder={options.length ? "Select a service" : "No service left for this device"}
-        options={options.map((s) => ({ value: s._id, label: `${s.name} · ${s.pricePercent}%` }))}
-        value={form.service}
-        onChange={(e) => onField("service", e.target.value)}
-        disabled={!row || !options.length}
-      />
+      {/* Services as choices in the panel (a native dropdown grew as wide as the longest name and spilled out) */}
+      <fieldset disabled={!row} className="min-w-0">
+        <legend className="mb-1.5 text-sm font-medium text-slate-700">
+          Service <span className="text-red-500">*</span>
+        </legend>
+        {!row ? (
+          <p className="rounded-lg border border-dashed border-slate-300 px-3 py-3 text-sm text-slate-500">Pick a device first.</p>
+        ) : !options.length ? (
+          <p className="rounded-lg bg-amber-50 px-3 py-3 text-sm text-amber-800">No service left for this device.</p>
+        ) : (
+          <div role="radiogroup" aria-label="Service" className="max-h-72 space-y-2 overflow-y-auto pr-0.5">
+            {options.map((option) => {
+              const picked = form.service === option._id;
+              const price = servicePrice(row.device.unitPrice, option.pricePercent);
+              return (
+                <button
+                  key={option._id}
+                  type="button"
+                  role="radio"
+                  aria-checked={picked}
+                  onClick={() => onField("service", picked ? "" : option._id)}
+                  className={`flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left ring-1 ring-inset transition ${
+                    picked ? "bg-slate-900 text-white ring-slate-900" : "bg-white ring-slate-200 hover:bg-slate-50 hover:ring-slate-300"
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full ring-2 ring-inset ${picked ? "bg-white ring-white" : "ring-slate-300"}`}
+                    aria-hidden="true"
+                  >
+                    {picked && <span className="size-2 rounded-full bg-slate-900" />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block break-words text-sm font-semibold leading-snug">{option.name}</span>
+                    <span className={`mt-1 flex flex-wrap gap-1.5 text-[11px] font-semibold ${picked ? "text-slate-300" : "text-slate-500"}`}>
+                      <span className={`rounded-full px-2 py-0.5 ${picked ? "bg-white/10" : "bg-blue-50 text-blue-700"}`}>{option.pricePercent}% of price</span>
+                      <span className={`rounded-full px-2 py-0.5 ${picked ? "bg-white/10" : "bg-amber-50 text-amber-800"}`}>
+                        {option.incentivePercent}% incentive
+                      </span>
+                    </span>
+                  </span>
+                  <span className={`shrink-0 text-sm font-bold tabular-nums ${picked ? "text-emerald-300" : "text-slate-900"}`}>{formatTaka(price)}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </fieldset>
 
       {row && !row.serial && (
         <Input

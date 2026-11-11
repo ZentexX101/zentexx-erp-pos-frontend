@@ -73,7 +73,7 @@ const AddPurchaseReturn = () => {
         </Alert>
       )}
 
-      <div className="grid gap-4 xl:grid-cols-[2fr_3fr]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] [&>*]:min-w-0">
         <SupplierPicker selected={supplier} onSelect={selectSupplier} />
         <StockPicker addedIds={new Set(lines.map((line) => line.stock.product._id))} onAdd={addLine} />
       </div>

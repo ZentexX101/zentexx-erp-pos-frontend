@@ -6,8 +6,8 @@ import { variantDetails } from "../../utils/productVariant";
 import Button from "../common/buttons/Button";
 import Modal from "../common/modals/Modal";
 
-const Field = ({ label, children }) => (
-  <div>
+const Field = ({ label, children, className = "" }) => (
+  <div className={className}>
     <dt className="text-xs text-slate-500">{label}</dt>
     <dd className="font-medium text-slate-900">{children}</dd>
   </div>
@@ -32,13 +32,13 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
   >
     {sale && (
       <div className="space-y-5">
-        <dl className="grid gap-4 sm:grid-cols-3">
+        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Field label="Customer">
             {sale.customer?.name ?? "Walk-in customer"}
             {sale.customer && <span className="block text-xs font-normal text-slate-500">{formatPhone(sale.customer.phone)}</span>}
           </Field>
           <Field label="Sold by">{sale.soldBy?.name ?? "—"}</Field>
-          <Field label="Paid with">
+          <Field label="Paid with" className="col-span-2 sm:col-span-1">
             {[
               ...sale.payments.map((line) => `${line.paymentMethod?.name} ${formatTaka(line.amount)}`),
               ...(sale.advanceAmount > 0 ? [`Advance ${formatTaka(sale.advanceAmount)} (${sale.preOrderNo})`] : []),
@@ -47,20 +47,32 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
         </dl>
 
         <div className="overflow-x-auto rounded-lg border border-slate-200">
-          <table className="w-full min-w-[520px] text-left text-sm">
+          <table className="w-full text-left text-sm sm:min-w-[520px]">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
-                <th className="px-3 py-2 font-semibold">Product</th>
-                <th className="px-3 py-2 text-right font-semibold">Qty</th>
-                <th className="px-3 py-2 text-right font-semibold">Price</th>
-                <th className="px-3 py-2 text-right font-semibold">Total</th>
+                <th className="px-3 py-2 font-semibold">
+                  <span className="flex justify-between gap-3">
+                    Product
+                    <span className="sm:hidden">Total</span>
+                  </span>
+                </th>
+                <th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Qty</th>
+                <th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Price</th>
+                <th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {sale.items.map((item) => (
                 <tr key={item.product} className="align-top">
                   <td className="px-3 py-2">
-                    <p className="font-medium text-slate-900">{item.name}</p>
+                    {/* Phones: the total sits on the name line (the Total column is hidden), so the details get the full width */}
+                    <p className="flex items-start justify-between gap-3">
+                      <span className="min-w-0 font-medium text-slate-900">{item.name}</span>
+                      <span className="shrink-0 font-semibold tabular-nums text-slate-900 sm:hidden">{formatTaka(item.total)}</span>
+                    </p>
+                    <p className="text-xs tabular-nums text-slate-500 sm:hidden">
+                      {item.quantity} × {formatTaka(item.unitPrice)}
+                    </p>
                     {variantDetails(item.variant) && <p className="text-xs text-slate-500">{variantDetails(item.variant)}</p>}
                     {item.serials.length > 0 && <p className="break-all font-mono text-xs text-slate-500">IMEI: {item.serials.join(", ")}</p>}
                     {item.productCode && <p className="break-all font-mono text-xs text-slate-500">IMEI / ID: {item.productCode}</p>}
@@ -71,15 +83,22 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
                       </p>
                     )}
                   </td>
-                  <td className="px-3 py-2 text-right">{item.quantity}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right">{formatTaka(item.unitPrice)}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right font-semibold">{formatTaka(item.total)}</td>
+                  <td className="hidden px-3 py-2 text-right sm:table-cell">{item.quantity}</td>
+                  <td className="hidden whitespace-nowrap px-3 py-2 text-right sm:table-cell">{formatTaka(item.unitPrice)}</td>
+                  <td className="hidden whitespace-nowrap px-3 py-2 text-right font-semibold sm:table-cell">{formatTaka(item.total)}</td>
                 </tr>
               ))}
               {(sale.externalItems ?? []).map((item, i) => (
                 <tr key={`external-${i}`} className="align-top">
                   <td className="px-3 py-2">
-                    <p className="font-medium text-slate-900">{item.name}</p>
+                    {/* Phones: the total sits on the name line (the Total column is hidden), so the details get the full width */}
+                    <p className="flex items-start justify-between gap-3">
+                      <span className="min-w-0 font-medium text-slate-900">{item.name}</span>
+                      <span className="shrink-0 font-semibold tabular-nums text-slate-900 sm:hidden">{formatTaka(item.total)}</span>
+                    </p>
+                    <p className="text-xs tabular-nums text-slate-500 sm:hidden">
+                      {item.quantity} × {formatTaka(item.unitPrice)}
+                    </p>
                     <div className="mt-1.5 space-y-0.5 rounded-lg bg-amber-50 px-2.5 py-2 text-xs ring-1 ring-amber-100">
                       <p className="font-semibold text-amber-800">External product (not from our stock)</p>
                       <p className="text-slate-700">
@@ -93,9 +112,9 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
                     </div>
                     {item.productCode && <p className="break-all font-mono text-xs text-slate-500">IMEI / ID: {item.productCode}</p>}
                   </td>
-                  <td className="px-3 py-2 text-right">{item.quantity}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right">{formatTaka(item.unitPrice)}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right font-semibold">{formatTaka(item.total)}</td>
+                  <td className="hidden px-3 py-2 text-right sm:table-cell">{item.quantity}</td>
+                  <td className="hidden whitespace-nowrap px-3 py-2 text-right sm:table-cell">{formatTaka(item.unitPrice)}</td>
+                  <td className="hidden whitespace-nowrap px-3 py-2 text-right font-semibold sm:table-cell">{formatTaka(item.total)}</td>
                 </tr>
               ))}
             </tbody>

@@ -46,7 +46,7 @@ const Replacements = () => {
   const canManage = hasPermission(user, "return.create");
 
   // all states
-  const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
+  const [period, setPeriod] = useState({ period: "all", from: "", to: "" });
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
   const [status, setStatus] = useState("");
