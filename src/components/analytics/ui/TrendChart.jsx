@@ -61,7 +61,7 @@ const TrendChart = ({ data, unit = "day" }) => {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setMetric(active ? "all" : key)}
-                className={`group relative min-w-0 overflow-hidden rounded-xl border px-3 py-2.5 text-left transition ${
+                className={`group relative min-w-0 overflow-hidden rounded-xl border px-2.5 py-2.5 sm:px-3 text-left transition ${
                   active ? "border-slate-300 bg-white shadow-sm" : "border-slate-200/80 bg-slate-50/60 hover:border-slate-300 hover:bg-white"
                 }`}
               >
@@ -74,10 +74,14 @@ const TrendChart = ({ data, unit = "day" }) => {
                   <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: SERIES_COLORS[key] }} aria-hidden="true" />
                   <span className="truncate">{name}</span>
                 </span>
-                <span className="mt-1 block break-all text-sm font-bold tabular-nums text-slate-900 sm:text-base">
+                {/* Short on phones / tablets (৳6.3L) so the number never breaks; full from md */}
+                <span className="mt-1 block truncate text-sm font-bold tabular-nums text-slate-900 md:hidden" title={formatTaka(stats[key].total)}>
+                  {formatTakaShort(stats[key].total)}
+                </span>
+                <span className="mt-1 hidden break-all text-base font-bold tabular-nums text-slate-900 md:block">
                   {formatTaka(stats[key].total)}
                 </span>
-                <span className="hidden break-all text-[11px] tabular-nums text-slate-500 sm:block">
+                <span className="hidden break-all text-[11px] tabular-nums text-slate-500 md:block">
                   Avg {formatTakaShort(stats[key].average)} / {per}
                 </span>
               </button>

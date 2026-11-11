@@ -20,7 +20,7 @@ export const StatTile = ({ icon, label, value, hint, tone = "#64748b", valueClas
           />
         )}
       </div>
-      <p className={`mt-3 text-xl font-bold tracking-tight tabular-nums break-all ${valueClass}`}>
+      <p className={`mt-3 text-lg font-bold tracking-tight tabular-nums break-all sm:text-xl ${valueClass}`}>
         {value}
       </p>
       {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}

@@ -13,7 +13,7 @@ const RecentSalesCard = ({ sales, linkTo, showBranch }) => {
       key: "invoiceNo",
       header: "Invoice",
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-slate-900">
+        <span className="whitespace-nowrap font-mono text-xs font-semibold text-slate-900">
           {row.invoiceNo}
           {row.kind === "exchange" && (
             <Badge tone="purple" className="ml-1.5 font-sans">

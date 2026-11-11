@@ -13,7 +13,7 @@ const COLUMNS = [
 // Who sold the most: orders, sales and the incentive they earned
 const StaffSalesCard = ({ staff }) => (
   <ChartCard icon={LuUsers} title="Staff Sales" subtitle="Orders, sales and incentive per staff" empty={!staff.length}>
-    <MiniTable rowKey="name" rows={staff} columns={COLUMNS} />
+    <MiniTable rowKey="name" mobileEnd="amount" rows={staff} columns={COLUMNS} />
   </ChartCard>
 );
 

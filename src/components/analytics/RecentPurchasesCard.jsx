@@ -8,7 +8,7 @@ import ViewAllLink from "./ui/ViewAllLink";
 // The latest purchases of the period. showBranch: the all-branch view adds the branch.
 const RecentPurchasesCard = ({ purchases, linkTo, showBranch }) => {
   const columns = [
-    { key: "invoiceNo", header: "Invoice", render: (row) => <span className="font-mono text-xs font-semibold text-slate-900">{row.invoiceNo}</span> },
+    { key: "invoiceNo", header: "Invoice", render: (row) => <span className="whitespace-nowrap font-mono text-xs font-semibold text-slate-900">{row.invoiceNo}</span> },
     { key: "supplier", header: "Supplier", render: (row) => row.supplier?.name ?? "—" },
     ...(showBranch ? [{ key: "branch", header: "Branch", className: "text-slate-600", render: (row) => row.branch?.name ?? "—" }] : []),
     { key: "date", header: "Date", className: "whitespace-nowrap text-slate-500", render: (row) => formatDateTime(row.date) },
