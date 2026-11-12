@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { BUSINESS_NAME } from "../../constants/app";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
@@ -60,7 +61,8 @@ const SaleInvoicePrint = ({ sale }) => (
       </thead>
       <tbody>
         {sale.items.map((item, i) => (
-          <tr key={item.product} className="align-top">
+          <Fragment key={item.product}>
+          <tr className="align-top">
             <td className={cell}>{i + 1}</td>
             <td className={cell}>
               {item.name}
@@ -72,6 +74,20 @@ const SaleInvoicePrint = ({ sale }) => (
             <td className={`${cell} text-right`}>{formatTaka(item.unitPrice)}</td>
             <td className={`${cell} text-right`}>{formatTaka(item.total)}</td>
           </tr>
+          {/* Services sold with the product, each on its own line under it */}
+          {(item.services ?? []).map((row) => (
+            <tr key={`${item.product}-${row.service}`} className="align-top">
+              <td className={cell} />
+              <td className={cell}>
+                <span className="pl-3">↳ {row.name}</span>
+                <span className="block pl-3 text-[10px] text-slate-600">{row.pricePercent}% of {formatTaka(item.unitPrice)}, for {item.name}</span>
+              </td>
+              <td className={`${cell} text-right`}>{row.quantity}</td>
+              <td className={`${cell} text-right`}>{formatTaka(row.unitPrice)}</td>
+              <td className={`${cell} text-right`}>{formatTaka(row.price)}</td>
+            </tr>
+          ))}
+          </Fragment>
         ))}
         {(sale.externalItems ?? []).map((item, i) => (
           <tr key={`external-${i}`} className="align-top">

@@ -97,6 +97,9 @@ const ReturnOrderItems = ({ sale, picks, onPick }) => (
                   <td className="px-3 py-2.5">
                     <p className="font-medium uppercase text-slate-900">{item.name}</p>
                     <p className="text-xs text-slate-500">{formatTaka(unitPrice)} per piece paid</p>
+                    {item.services?.length > 0 && (
+                      <p className="text-xs text-emerald-700">Incl. {item.services.map((row) => row.name).join(", ")} (refunded with it)</p>
+                    )}
                     <p className="text-xs text-slate-500 @3xl:hidden">
                       Sold {item.quantity} · returned {item.returnedQuantity}
                     </p>

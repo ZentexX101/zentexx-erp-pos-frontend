@@ -11,7 +11,8 @@ import Select from "../common/forms/Select";
 import Spinner from "../common/loaders/Spinner";
 
 // The branch's products as cards (in-stock first). Clicking adds one to the cart. Typing or scanning
-// an IMEI and pressing Enter adds that exact piece (onScan). inCart(stock) marks the cards already added.
+// an IMEI and pressing Enter adds that exact piece (onScan). inCart(stock) marks the cards already added;
+// clicking one of those again takes it out of the cart (onAdd toggles).
 const PosProductGrid = ({ onAdd, onScan, inCart }) => {
   const [searchInput, setSearchInput] = useState("");
   const search = useDebouncedValue(searchInput.trim());
@@ -95,13 +96,26 @@ const PosProductGrid = ({ onAdd, onScan, inCart }) => {
                 key={stock._id}
                 type="button"
                 onClick={() => onAdd(stock)}
-                disabled={out}
+                disabled={out && !added}
+                aria-pressed={added}
+                title={added ? "Click to remove from the cart" : undefined}
                 className={`group relative flex flex-col overflow-hidden rounded-xl bg-white text-left shadow-sm ring-1 transition ${
                   added ? "ring-2 ring-indigo-500" : "ring-slate-200 hover:ring-indigo-300"
                 } disabled:cursor-not-allowed disabled:opacity-70`}
               >
                 <span className="absolute right-1.5 top-1.5 z-10 origin-top-right scale-90">
-                  {out ? <Badge tone="red">Out of stock</Badge> : added ? <Badge tone="blue">In cart</Badge> : null}
+                  {added ? (
+                    <>
+                      <span className="group-hover:hidden">
+                        <Badge tone="blue">In cart</Badge>
+                      </span>
+                      <span className="hidden group-hover:inline">
+                        <Badge tone="red">Remove</Badge>
+                      </span>
+                    </>
+                  ) : out ? (
+                    <Badge tone="red">Out of stock</Badge>
+                  ) : null}
                 </span>
                 <span className="flex h-24 items-center justify-center bg-slate-50 p-2 sm:h-28">
                   {stock.product.image?.url ? (

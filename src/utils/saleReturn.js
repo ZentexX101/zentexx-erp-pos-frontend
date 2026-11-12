@@ -5,8 +5,11 @@ import { roundTaka } from "./number";
 // Share of the sub total actually charged: the invoice discount is spread over every piece
 const priceShare = (sale) => (sale.subTotal > 0 ? (sale.subTotal - sale.discount) / sale.subTotal : 1);
 
-// What one returned piece of this item is worth (same rounding as the backend)
-export const returnUnitPrice = (sale, item) => roundTaka(item.unitPrice * priceShare(sale));
+// Services sold with the item go back with each piece (per piece price)
+export const itemServicePrice = (item) => (item.services ?? []).reduce((sum, row) => sum + row.price / row.quantity, 0);
+
+// What one returned piece of this item is worth, with its services (same rounding as the backend)
+export const returnUnitPrice = (sale, item) => roundTaka((item.unitPrice + itemServicePrice(item)) * priceShare(sale));
 
 // Pieces of an item that can still come back
 export const returnableQuantity = (item) => item.quantity - item.returnedQuantity;

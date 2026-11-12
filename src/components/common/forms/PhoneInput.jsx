@@ -5,9 +5,8 @@ import { LuChevronDown, LuSearch } from "react-icons/lu";
 import { useDismiss } from "../../../hooks/useDismiss";
 import { DEFAULT_COUNTRY, splitPhone } from "../../../utils/phone";
 
-// Each flag is its own small SVG file, fetched only when it's shown
-const FLAG_URLS = import.meta.glob("/node_modules/country-flag-icons/3x2/*.svg", { eager: true, query: "?no-inline", import: "default" });
-const flagUrl = (country) => FLAG_URLS[`/node_modules/country-flag-icons/3x2/${country}.svg`];
+// Each flag is its own small SVG in public/flags (from country-flag-icons, 3x2), fetched only when it's shown
+const flagUrl = (country) => `${import.meta.env.BASE_URL}flags/${country}.svg`;
 
 const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 

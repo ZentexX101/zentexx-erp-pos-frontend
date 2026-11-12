@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { LuPrinter } from "react-icons/lu";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
@@ -63,7 +64,8 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
             </thead>
             <tbody className="divide-y divide-slate-100">
               {sale.items.map((item) => (
-                <tr key={item.product} className="align-top">
+                <Fragment key={item.product}>
+                <tr className="align-top">
                   <td className="px-3 py-2">
                     {/* Phones: the total sits on the name line (the Total column is hidden), so the details get the full width */}
                     <p className="flex items-start justify-between gap-3">
@@ -87,6 +89,25 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
                   <td className="hidden whitespace-nowrap px-3 py-2 text-right sm:table-cell">{formatTaka(item.unitPrice)}</td>
                   <td className="hidden whitespace-nowrap px-3 py-2 text-right font-semibold sm:table-cell">{formatTaka(item.total)}</td>
                 </tr>
+                {/* Services sold with the product (each covers every piece of it) */}
+                {(item.services ?? []).map((row) => (
+                  <tr key={`${item.product}-${row.service}`} className="align-top bg-emerald-50/40">
+                    <td className="py-2 pl-6 pr-3">
+                      <p className="flex items-start justify-between gap-3">
+                        <span className="min-w-0 font-medium text-emerald-800">↳ {row.name}</span>
+                        <span className="shrink-0 font-semibold tabular-nums text-slate-900 sm:hidden">{formatTaka(row.price)}</span>
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        <span className="tabular-nums sm:hidden">{row.quantity} × {formatTaka(row.unitPrice)} · </span>
+                        {row.pricePercent}% of the selling price
+                      </p>
+                    </td>
+                    <td className="hidden px-3 py-2 text-right sm:table-cell">{row.quantity}</td>
+                    <td className="hidden whitespace-nowrap px-3 py-2 text-right sm:table-cell">{formatTaka(row.unitPrice)}</td>
+                    <td className="hidden whitespace-nowrap px-3 py-2 text-right font-semibold sm:table-cell">{formatTaka(row.price)}</td>
+                  </tr>
+                ))}
+                </Fragment>
               ))}
               {(sale.externalItems ?? []).map((item, i) => (
                 <tr key={`external-${i}`} className="align-top">

@@ -8,10 +8,12 @@ import PosOrderSummary from "../../components/sale/PosOrderSummary";
 import PosProductGrid from "../../components/sale/PosProductGrid";
 import ExternalProductModal from "../../components/sale/ExternalProductModal";
 import SaleInvoicePrint from "../../components/sale/SaleInvoicePrint";
+import ServiceFormModal from "../../components/service/ServiceFormModal";
 import { useAuth } from "../../hooks/useAuth";
 import { usePaymentMethodOptionsData } from "../../hooks/usePaymentMethodApi";
 import { usePrintWhenReady } from "../../hooks/usePrintWhenReady";
 import { useCreateSale, useFindSerial } from "../../hooks/useSaleApi";
+import { useServiceOptionsData } from "../../hooks/useServiceApi";
 import { hasPermission } from "../../utils/access";
 import { formatTaka } from "../../utils/money";
 import { roundTaka } from "../../utils/number";
@@ -26,6 +28,7 @@ import {
   cartError,
   cartLineQuantity,
   cartSubTotal,
+  toggleInCart,
   toSaleItems,
 } from "../../utils/sale";
 
@@ -51,6 +54,20 @@ const CreatePos = () => {
 
   // call pos api
   const { data: methods = [] } = usePaymentMethodOptionsData();
+  const { data: serviceOptions = [] } = useServiceOptionsData();
+
+  // "Create new service" from a cart line: the form opens here; an active new service is picked on that line
+  const [serviceFor, setServiceFor] = useState(null); // product id of that line
+  const canCreateService = hasPermission(user, "service.create");
+  const handleServiceCreated = (saved) => {
+    if (saved?.status === "active") {
+      const picked = { _id: saved._id, name: saved.name, pricePercent: saved.pricePercent, incentivePercent: saved.incentivePercent };
+      setLines((prev) =>
+        prev.map((line) => (line.stock.product._id === serviceFor ? { ...line, services: [...(line.services ?? []), picked] } : line)),
+      );
+    }
+    setServiceFor(null);
+  };
   const createSale = useCreateSale();
   const findSerial = useFindSerial();
   usePrintWhenReady(
@@ -87,7 +104,13 @@ const CreatePos = () => {
     setNotice("");
   };
 
-  // A product card: add one piece (IMEI products open their IMEI picker in the cart instead)
+  // A product card: add it (IMEI products open their IMEI picker in the cart), or take it out when it's in the cart
+  const toggleStock = (stock) => {
+    clearMessages();
+    setLines((prev) => toggleInCart(prev, stock));
+  };
+
+  // A scanned piece: add it to the cart
   const addStock = (stock, serial) => {
     clearMessages();
     setLines((prev) => addToCart(prev, stock, serial));
@@ -183,13 +206,16 @@ const CreatePos = () => {
         )}
 
         <div className="grid gap-4 xl:grid-cols-[3fr_2fr] [&>*]:min-w-0">
-          <PosProductGrid
-            onAdd={(stock) => addStock(stock)}
-            onScan={handleScan}
-            inCart={(stock) =>
-              lines.some((line) => line.stock.product._id === stock.product._id)
-            }
-          />
+          {/* Wide screens: the products stay put while the cart side scrolls; a long list scrolls on its own */}
+          <div className="xl:sticky xl:top-0 xl:-m-1 xl:max-h-[calc(100dvh-8rem)] xl:self-start xl:overflow-y-auto xl:overscroll-contain xl:p-1 xl:[scrollbar-width:thin]">
+            <PosProductGrid
+              onAdd={toggleStock}
+              onScan={handleScan}
+              inCart={(stock) =>
+                lines.some((line) => line.stock.product._id === stock.product._id)
+              }
+            />
+          </div>
 
           <div className="space-y-4">
             <PosCustomerPanel
@@ -204,6 +230,8 @@ const CreatePos = () => {
                 lines={lines}
                 onChange={changeLine}
                 onRemove={removeLine}
+                serviceOptions={serviceOptions}
+                onCreateService={canCreateService ? (index) => setServiceFor(lines[index].stock.product._id) : undefined}
                 externals={externals}
                 onAddExternal={() => setEditingExternal("new")}
                 onEditExternal={(index) => setEditingExternal(index)}
@@ -279,6 +307,8 @@ const CreatePos = () => {
           }}
         />
       )}
+
+      {serviceFor && <ServiceFormModal service={null} onClose={() => setServiceFor(null)} onSaved={handleServiceCreated} />}
 
       {printSale && <SaleInvoicePrint sale={printSale} />}
     </div>

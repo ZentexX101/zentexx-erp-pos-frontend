@@ -6,6 +6,7 @@ import PageHeader from "../../components/common/layout/PageHeader";
 import ExchangeSummary from "../../components/exchange/ExchangeSummary";
 import TradeInPanel from "../../components/exchange/TradeInPanel";
 import PosCart from "../../components/sale/PosCart";
+import ServiceFormModal from "../../components/service/ServiceFormModal";
 import PosCustomerPanel from "../../components/sale/PosCustomerPanel";
 import PosProductGrid from "../../components/sale/PosProductGrid";
 import SaleInvoicePrint from "../../components/sale/SaleInvoicePrint";
@@ -13,12 +14,13 @@ import { useAuth } from "../../hooks/useAuth";
 import { usePaymentMethodOptionsData } from "../../hooks/usePaymentMethodApi";
 import { usePrintWhenReady } from "../../hooks/usePrintWhenReady";
 import { useCreateExchange, useFindSerial } from "../../hooks/useSaleApi";
+import { useServiceOptionsData } from "../../hooks/useServiceApi";
 import { hasPermission } from "../../utils/access";
 import { newTradeIn, toTradeIns, tradeInsError, tradeInsTotal } from "../../utils/exchange";
 import { formatTaka } from "../../utils/money";
 import { roundTaka } from "../../utils/number";
 import { paymentLinesTotal, toPaymentItems } from "../../utils/paymentLines";
-import { addToCart, cartError, cartLineQuantity, cartSubTotal, toSaleItems } from "../../utils/sale";
+import { addToCart, cartError, cartLineQuantity, cartSubTotal, toggleInCart, toSaleItems } from "../../utils/sale";
 
 // New Exchange: sell new items and take the customer's old devices in, on one invoice.
 // Without new items it is a buyback: we only buy the old device from the customer.
@@ -40,6 +42,20 @@ const CreateExchange = () => {
 
   // call exchange api
   const { data: methods = [] } = usePaymentMethodOptionsData();
+  const { data: serviceOptions = [] } = useServiceOptionsData();
+
+  // "Create new service" from a cart line: the form opens here; an active new service is picked on that line
+  const [serviceFor, setServiceFor] = useState(null); // product id of that line
+  const canCreateService = hasPermission(user, "service.create");
+  const handleServiceCreated = (saved) => {
+    if (saved?.status === "active") {
+      const picked = { _id: saved._id, name: saved.name, pricePercent: saved.pricePercent, incentivePercent: saved.incentivePercent };
+      setLines((prev) =>
+        prev.map((line) => (line.stock.product._id === serviceFor ? { ...line, services: [...(line.services ?? []), picked] } : line)),
+      );
+    }
+    setServiceFor(null);
+  };
   const createExchange = useCreateExchange();
   const findSerial = useFindSerial();
   usePrintWhenReady(printSale, useCallback(() => setPrintSale(null), []));
@@ -131,11 +147,17 @@ const CreateExchange = () => {
         )}
 
         <div className="grid gap-4 xl:grid-cols-[3fr_2fr] [&>*]:min-w-0">
-          <PosProductGrid
-            onAdd={(stock) => addStock(stock)}
-            onScan={handleScan}
-            inCart={(stock) => lines.some((line) => line.stock.product._id === stock.product._id)}
-          />
+          {/* Wide screens: the products stay put while the cart side scrolls; a long list scrolls on its own */}
+          <div className="xl:sticky xl:top-0 xl:-m-1 xl:max-h-[calc(100dvh-8rem)] xl:self-start xl:overflow-y-auto xl:overscroll-contain xl:p-1 xl:[scrollbar-width:thin]">
+            <PosProductGrid
+              onAdd={(stock) => {
+                setError("");
+                setLines((prev) => toggleInCart(prev, stock));
+              }}
+              onScan={handleScan}
+              inCart={(stock) => lines.some((line) => line.stock.product._id === stock.product._id)}
+            />
+          </div>
 
           <div className="space-y-4">
             <PosCustomerPanel
@@ -146,7 +168,13 @@ const CreateExchange = () => {
               canCreateCustomer={hasPermission(user, "customer.create")}
               customerLabel="Customer (required)"
             />
-            <PosCart lines={lines} onChange={changeLine} onRemove={removeLine} />
+            <PosCart
+              lines={lines}
+              onChange={changeLine}
+              onRemove={removeLine}
+              serviceOptions={serviceOptions}
+              onCreateService={canCreateService ? (index) => setServiceFor(lines[index].stock.product._id) : undefined}
+            />
             <TradeInPanel lines={tradeIns} onChange={setTradeIns} />
             <Alert>{error}</Alert>
             <ExchangeSummary
@@ -169,6 +197,7 @@ const CreateExchange = () => {
         </div>
       </div>
 
+      {serviceFor && <ServiceFormModal service={null} onClose={() => setServiceFor(null)} onSaved={handleServiceCreated} />}
       {printSale && <SaleInvoicePrint sale={printSale} />}
     </div>
   );
