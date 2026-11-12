@@ -1,22 +1,30 @@
-// Phone helpers for PhoneInput (+880 prefix). The backend normalizes too
-// (src/helper/utils/phone.js); these only shape what the form shows and sends.
+import { isValidPhoneNumber, parsePhoneNumberFromString } from "libphonenumber-js/max";
 
-// "1712345678" or "01712345678" → "+8801712345678"
-export const toE164 = (local) => {
-  const digits = String(local || "").replace(/\D/g, "").replace(/^0/, "");
-  return digits ? `+880${digits}` : "";
+// Phone helpers for PhoneInput. Numbers travel and are stored in E.164 ("+8801712345678", "+966501234567");
+// the backend normalizes and validates too (src/helper/utils/phone.js).
+
+export const DEFAULT_COUNTRY = "BD";
+
+// PhoneInput already gives E.164; this only trims what it sends ("" when empty)
+export const toE164 = (value) => String(value || "").trim();
+
+// A stored number for PhoneInput to edit
+export const fromE164 = (phone) => phone || "";
+
+// The country and the number within it, for PhoneInput ({ country: "SA", national: "501234567" })
+export const splitPhone = (phone) => {
+  const parsed = parsePhoneNumberFromString(phone || "");
+  return parsed?.country ? { country: parsed.country, national: parsed.nationalNumber } : { country: DEFAULT_COUNTRY, national: "" };
 };
 
-// "+8801712345678" → "1712345678" for editing in PhoneInput
-export const fromE164 = (phone) => (phone || "").replace(/^\+880/, "");
-
-// "+8801712345678" → "01712-345678" for tables
+// Bangladesh as "01712-345678" (how it's dialled here); other countries "+966 50 123 4567"
 export const formatPhone = (phone) => {
-  const match = /^\+880(1\d{3})(\d{6})$/.exec(phone || "");
-  return match ? `0${match[1]}-${match[2]}` : phone || "—";
+  const parsed = parsePhoneNumberFromString(phone || "");
+  if (!parsed) return phone || "—";
+  return parsed.country === DEFAULT_COUNTRY ? parsed.formatNational() : parsed.formatInternational();
 };
 
-export const validateBdMobile = (local) => {
-  if (!local) return "Phone is required";
-  return /^0?1[3-9]\d{8}$/.test(local) ? "" : "Enter a valid mobile number, e.g. 1712 345678";
+export const validatePhone = (phone) => {
+  if (!phone) return "Phone is required";
+  return isValidPhoneNumber(phone) ? "" : "Enter a valid phone number for the selected country";
 };

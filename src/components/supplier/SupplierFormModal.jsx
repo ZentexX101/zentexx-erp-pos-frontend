@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { BALANCE_TYPE, SUPPLIER_STATUS } from "../../constants/supplier";
 import { useCreateSupplier, useUpdateSupplier } from "../../hooks/useSupplierApi";
-import { fromE164, toE164, validateBdMobile } from "../../utils/phone";
+import { fromE164, toE164, validatePhone } from "../../utils/phone";
 import { isValid } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
 import Button from "../common/buttons/Button";
@@ -39,7 +39,7 @@ const toForm = (supplier) => ({
 
 const validate = (form) => ({
   name: form.name.trim().length >= 2 ? "" : "Name must be at least 2 characters",
-  phone: validateBdMobile(form.phone),
+  phone: validatePhone(form.phone),
   address: form.address.trim() ? "" : "Address is required",
   initialBalance: form.initialBalance === "" || Number(form.initialBalance) >= 0 ? "" : "Enter an amount of 0 or more",
 });

@@ -3,7 +3,7 @@ import { BRANCH_STATUS } from "../../constants/branch";
 import { getAssignableRoles, isBranchRole, ROLE_LABELS, ROLES, WEEK_DAYS } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
 import { useCreateStaff, useUpdateStaff } from "../../hooks/useStaffApi";
-import { fromE164, toE164, validateBdMobile } from "../../utils/phone";
+import { fromE164, toE164, validatePhone } from "../../utils/phone";
 import { isValid, validateConfirmPassword, validateEmail, validateNewPassword } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
 import Button from "../common/buttons/Button";
@@ -52,7 +52,7 @@ const validate = (form, isEdit) => {
   return {
     name: form.name.trim().length >= 2 ? "" : "Name must be at least 2 characters",
     role: form.role ? "" : "Select a role",
-    phone: validateBdMobile(form.phone),
+    phone: validatePhone(form.phone),
     email: form.email.trim() ? validateEmail(form.email) : "",
     password: passwordGiven ? validateNewPassword(form.password) : "",
     confirmPassword: passwordGiven ? validateConfirmPassword(form.password, form.confirmPassword) : "",

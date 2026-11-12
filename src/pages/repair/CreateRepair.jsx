@@ -13,7 +13,7 @@ import { usePaymentMethodOptionsData } from "../../hooks/usePaymentMethodApi";
 import { useCreateRepair, useRepairDevice, useRepairOptions } from "../../hooks/useRepairApi";
 import { formatTaka } from "../../utils/money";
 import { newPaymentLine, paymentLinesError, paymentLinesTotal, toPaymentItems } from "../../utils/paymentLines";
-import { toE164, validateBdMobile } from "../../utils/phone";
+import { toE164, validatePhone } from "../../utils/phone";
 import { roundTaka } from "../../utils/number";
 import { jobFormError, toJobPayload } from "../../utils/repair";
 
@@ -73,7 +73,7 @@ const CreateRepair = () => {
     const problem =
       (saved && !customer && "Pick the customer.") ||
       (!saved && !form.customerName.trim() && "Enter the customer's name.") ||
-      (!saved && validateBdMobile(form.customerPhone)) ||
+      (!saved && validatePhone(form.customerPhone)) ||
       jobFormError(form) ||
       (filled.length > 0 && paymentLinesError(filled));
     if (problem) return setError(problem);
