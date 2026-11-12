@@ -54,6 +54,20 @@ export const formatDateTime = (value) => {
   return valid(date) ? `${formatDate(date)}, ${formatTime(date)}` : "—";
 };
 
+// How long ago: "Just now", "5 min ago", "3 h ago", "Yesterday, 4:10 PM", then "8th Nov-2026, 12:12 PM"
+export const formatTimeAgo = (value, now = new Date()) => {
+  const date = toDate(value);
+  if (!valid(date)) return "—";
+  const minutes = Math.floor((now - date) / 60000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 6 * 60) return `${Math.floor(minutes / 60)} h ago`;
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (date >= startOfToday) return `Today, ${formatTime(date)}`;
+  if (date >= new Date(startOfToday.getTime() - 86400000)) return `Yesterday, ${formatTime(date)}`;
+  return formatDateTime(date);
+};
+
 // Wednesday, 5th Nov-2026 · short: "Wed, 5th Nov" (no year)
 export const formatWeekdayDate = (value, { short = false } = {}) => {
   const date = toDate(value);

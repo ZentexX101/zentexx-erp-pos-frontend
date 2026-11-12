@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { PANELS } from "../../routes/panels";
 import { canAccess } from "../../utils/access";
 import BrandLogo from "../common/brand/BrandLogo";
+import NotificationBell from "../notification/NotificationBell";
 import BackToAdminButton from "./BackToAdminButton";
 import UserMenu from "./UserMenu";
 
@@ -76,6 +77,7 @@ const DashboardNav = ({ mode, setSidebarOpen }) => {
         >
           {fullscreen ? <LuMinimize className="size-4.5" aria-hidden="true" /> : <LuMaximize className="size-4.5" aria-hidden="true" />}
         </button>
+        <NotificationBell mode={mode} />
         <span className="hidden h-6 w-px bg-slate-200 sm:block" aria-hidden="true" />
         <UserMenu mode={mode} />
       </div>

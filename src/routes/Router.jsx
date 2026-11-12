@@ -11,6 +11,7 @@ import NotFound from "../pages/NotFound";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
 import Settings from "../pages/settings/Settings";
+import Notifications from "../pages/notification/Notifications";
 import AccessRoute from "./AccessRoute";
 import BranchRoute from "./BranchRoute";
 import GuestRoute from "./GuestRoute";
@@ -64,6 +65,7 @@ const Router = () => {
           <Route path={ROUTES.DASHBOARD} element={<DashboardLayout mode="main" />}>
             {renderPanelPages(MAIN_PANEL)}
             <Route path={ROUTES.SETTINGS} element={<Settings />} />
+            <Route path={ROUTES.NOTIFICATIONS} element={<Notifications mode="main" />} />
           </Route>
         </Route>
 
@@ -72,6 +74,7 @@ const Router = () => {
           <Route path={ROUTES.BRANCH_HOME} element={<DashboardLayout mode="branch" />}>
             {renderPanelPages(BRANCH_PANEL)}
             <Route path={ROUTES.BRANCH_SETTINGS} element={<Settings />} />
+            <Route path={ROUTES.BRANCH_NOTIFICATIONS} element={<Notifications mode="branch" />} />
           </Route>
         </Route>
       </Route>

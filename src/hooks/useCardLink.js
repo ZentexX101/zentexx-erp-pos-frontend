@@ -5,8 +5,9 @@ import { hasPermission } from "../utils/access";
 import { useAuth } from "./useAuth";
 import { useBranch } from "./useBranch";
 
-// Where each dashboard card leads: the branch page, the main-panel page (all branches), and the permission it needs
-const CARD_PAGES = {
+// Where each dashboard card (and notification) leads: the branch page, the main-panel page (all branches),
+// and the permission it needs
+export const CARD_PAGES = {
   sales: { branch: ROUTES.BRANCH_SALES, permission: "sales.view" },
   posReturns: { branch: ROUTES.BRANCH_POS_RETURNS, permission: "return.view" },
   exchanges: { branch: ROUTES.BRANCH_EXCHANGES, permission: "return.view" },
@@ -25,6 +26,8 @@ const CARD_PAGES = {
   suppliers: { main: ROUTES.SUPPLIERS, permission: "supplier.view" },
   customers: { main: ROUTES.CUSTOMERS, permission: "customer.view" },
   products: { main: ROUTES.PRODUCTS, permission: "product.view" },
+  leaves: { branch: ROUTES.BRANCH_HR_LEAVES, permission: "hr.view" },
+  attendance: { branch: ROUTES.BRANCH_HR_ATTENDANCE, permission: "hr.view" },
   branches: { main: ROUTES.BRANCHES },
   staff: { main: ROUTES.STAFF },
 };

@@ -28,6 +28,7 @@ export const ROUTES = {
   REPORT_DAILY: "/dashboard/reports/daily-statement",
   REPORT_PROFIT: "/dashboard/reports/profit-loss",
   SETTINGS: "/dashboard/settings",
+  NOTIFICATIONS: "/dashboard/notifications",
 
   // Branch panel (a branch's own staff, or a main admin who entered the branch)
   BRANCH_HOME: "/branch",
@@ -71,6 +72,7 @@ export const ROUTES = {
   BRANCH_HR_INCREMENTS: "/branch/hr/increments",
   BRANCH_HR_ADVANCES: "/branch/hr/advances",
   BRANCH_SETTINGS: "/branch/settings",
+  BRANCH_NOTIFICATIONS: "/branch/notifications",
 
   NOT_FOUND: "*",
 };

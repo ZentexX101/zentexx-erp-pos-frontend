@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router";
 import PageHeader from "../../components/common/layout/PageHeader";
 import AccountDetails from "../../components/settings/AccountDetails";
 import ChangePasswordForm from "../../components/settings/ChangePasswordForm";
+import NotificationSettings from "../../components/settings/NotificationSettings";
 import SessionsCard from "../../components/settings/SessionsCard";
 import SettingsNav from "../../components/settings/SettingsNav";
 import { SETTINGS_TABS } from "../../constants/settings";
@@ -17,7 +18,7 @@ const Settings = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Settings" subtitle="Manage your account and how you sign in." />
+      <PageHeader title="Settings" subtitle="Manage your account, how you sign in and your notifications." />
 
       <div className="grid items-start gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <SettingsNav active={tab} onChange={(key) => setParams({ tab: key }, { replace: true })} />
@@ -30,6 +31,7 @@ const Settings = () => {
               <SessionsCard />
             </>
           )}
+          {tab === "notifications" && <NotificationSettings />}
         </div>
       </div>
     </div>
