@@ -41,7 +41,7 @@ const CategoryDonut = ({ rows, total }) => {
               >
                 {rows.map((row, index) => (
                   <Cell
-                    key={row.name}
+                    key={`${row.name}-${index}`}
                     fill={colorOf(row, index)}
                     fillOpacity={faded(index) ? 0.25 : 1}
                     className="cursor-pointer transition-[fill-opacity] duration-200"
@@ -69,7 +69,7 @@ const CategoryDonut = ({ rows, total }) => {
             const share = percentOf(row.amount, total);
             return (
               <li
-                key={row.name}
+                key={`${row.name}-${index}`}
                 onMouseEnter={() => setActive(index)}
                 className={`rounded-xl px-3 py-2 transition ${active === index ? "bg-slate-50 ring-1 ring-slate-200" : ""} ${faded(index) ? "opacity-50" : ""}`}
               >
