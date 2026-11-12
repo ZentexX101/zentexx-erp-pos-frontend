@@ -1,7 +1,6 @@
 import { LEDGER_TYPE_LABELS } from "../../constants/customer";
-import { todayInputValue } from "../../utils/formatDate";
+import DateRangeFilter from "../common/forms/DateRangeFilter";
 import FilterBar from "../common/forms/FilterBar";
-import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
 
 const TYPE_OPTIONS = Object.entries(LEDGER_TYPE_LABELS).map(([value, { label }]) => ({ value, label }));
@@ -13,22 +12,13 @@ const CustomerLedgerFilters = ({ filters, onFilter, onReset }) => {
   return (
     <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
       <FilterBar onClear={hasFilters ? onReset : undefined}>
-        <Input
-          variant="filter"
-          label="From"
-          type="date"
-          value={filters.from}
-          max={filters.to || todayInputValue()}
-          onChange={(e) => onFilter("from", e.target.value)}
-        />
-        <Input
-          variant="filter"
-          label="To"
-          type="date"
-          value={filters.to}
-          min={filters.from || undefined}
-          max={todayInputValue()}
-          onChange={(e) => onFilter("to", e.target.value)}
+        <DateRangeFilter
+          value={filters}
+          onChange={({ from, to }) => {
+            onFilter("from", from);
+            onFilter("to", to);
+          }}
+          className="col-span-2 sm:w-80"
         />
         <Select
           variant="filter"

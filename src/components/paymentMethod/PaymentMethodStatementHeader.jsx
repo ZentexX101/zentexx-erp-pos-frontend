@@ -4,9 +4,7 @@ import { BUSINESS_NAME } from "../../constants/app";
 import { ROUTES } from "../../constants/routes";
 import { formatDateTime, todayInputValue } from "../../utils/formatDate";
 import Button from "../common/buttons/Button";
-
-const FIELD_CLASS =
-  "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+import DateRangeFilter from "../common/forms/DateRangeFilter";
 
 // Back link, title, the date range and "Download PDF". When printing, only a statement heading shows.
 const PaymentMethodStatementHeader = ({ name, branchName, filters, onFilter, onPrint, canPrint }) => (
@@ -24,23 +22,13 @@ const PaymentMethodStatementHeader = ({ name, branchName, filters, onFilter, onP
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <input
-            type="date"
-            aria-label="From date"
-            value={filters.from}
-            max={filters.to || todayInputValue()}
-            onChange={(e) => onFilter("from", e.target.value)}
-            className={FIELD_CLASS}
-          />
-          <span className="text-sm text-slate-500">to</span>
-          <input
-            type="date"
-            aria-label="To date"
-            value={filters.to}
-            min={filters.from || undefined}
-            max={todayInputValue()}
-            onChange={(e) => onFilter("to", e.target.value)}
-            className={FIELD_CLASS}
+          <DateRangeFilter
+            value={filters}
+            onChange={({ from, to }) => {
+              onFilter("from", from);
+              onFilter("to", to);
+            }}
+            className="w-full sm:w-80"
           />
           <Button onClick={onPrint} disabled={!canPrint} className="bg-slate-900 hover:bg-slate-800">
             <LuDownload className="h-4 w-4" aria-hidden="true" />

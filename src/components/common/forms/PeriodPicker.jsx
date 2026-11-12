@@ -5,13 +5,27 @@ import { PERIOD_OPTIONS, rangeText } from "../../../utils/period";
 import RangeCalendar from "./RangeCalendar";
 
 const PRESETS = PERIOD_OPTIONS.filter((option) => option.value !== "custom");
+const POPOVER_WIDTH = 544; // 34rem
+const GUTTER = 16;
+
+// Where the popover sits under the button: as wide as fits the screen, kept inside it with a 16px gutter
+const popoverPlacement = (button) => {
+  const rect = button.getBoundingClientRect();
+  const screen = document.documentElement.clientWidth;
+  const width = Math.min(POPOVER_WIDTH, screen - GUTTER * 2);
+  // Prefer lining up the left edges; a button near the right edge lines up the right edges instead
+  const preferred = rect.left + width > screen - GUTTER ? rect.right - width : rect.left;
+  const left = Math.min(Math.max(preferred, GUTTER), screen - GUTTER - width);
+  return { left: left - rect.left, width };
+};
 
 // One button with the period and its dates. Its popover: quick periods on the left (chips on phones)
 // and a calendar showing the range. Clicking two days in the calendar applies them as a custom range;
 // nothing is fetched until both days are picked.
 // value: { period, from, to }; range: the { from, to } the period resolves to; onChange(next value)
-const PeriodPicker = ({ value, range, onChange }) => {
+const PeriodPicker = ({ value, range, onChange, className = "" }) => {
   const [open, setOpen] = useState(false);
+  const [placement, setPlacement] = useState(null); // { left, width } worked out when opening
   const [start, setStart] = useState(null); // first day clicked, waiting for the second
   const [hover, setHover] = useState(null); // day under the pointer, previews the range
   const ref = useRef(null);
@@ -43,10 +57,14 @@ const PeriodPicker = ({ value, range, onChange }) => {
   const shown = start ? (start <= end ? { from: start, to: end } : { from: end, to: start }) : range;
 
   return (
-    <div ref={ref} className="relative min-w-0">
+    <div ref={ref} className={`relative min-w-0 ${className}`}>
       <button
         type="button"
-        onClick={() => (open ? close() : setOpen(true))}
+        onClick={(e) => {
+          if (open) return close();
+          setPlacement(popoverPlacement(e.currentTarget));
+          setOpen(true);
+        }}
         aria-haspopup="dialog"
         aria-expanded={open}
         className="flex h-10 w-full min-w-0 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm shadow-xs transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/20"
@@ -61,7 +79,8 @@ const PeriodPicker = ({ value, range, onChange }) => {
         <div
           role="dialog"
           aria-label="Choose a period"
-          className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl sm:left-auto sm:w-[34rem] sm:max-w-[calc(100vw-2rem)]"
+          style={placement ?? undefined}
+          className="absolute top-full z-30 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-xl"
         >
           <div className="flex flex-col sm:flex-row">
             {/* Quick periods: 2-column chips on phones, a list beside the calendar from sm */}

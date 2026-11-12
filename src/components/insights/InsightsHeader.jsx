@@ -1,7 +1,7 @@
 import { LuRefreshCw } from "react-icons/lu";
 import { formatDate, formatTime } from "../../utils/formatDate";
 import Select from "../common/forms/Select";
-import PeriodPicker from "./ui/PeriodPicker";
+import PeriodPicker from "../common/forms/PeriodPicker";
 
 const greeting = () => {
   const hour = new Date().getHours();
