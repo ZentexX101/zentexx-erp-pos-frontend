@@ -1,6 +1,6 @@
-import LazyAnalytics from "../analytics/LazyAnalytics";
+import LazyInsights from "../insights/LazyInsights";
 
-// Main admin dashboard: analytics for the whole business
-const DashboardHome = () => <LazyAnalytics scope="main" />;
+// Main admin dashboard: insights for the whole business
+const DashboardHome = () => <LazyInsights scope="main" />;
 
 export default DashboardHome;

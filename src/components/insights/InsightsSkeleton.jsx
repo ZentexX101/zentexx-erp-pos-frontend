@@ -1,8 +1,8 @@
 const Block = ({ className }) => <div className={`animate-pulse rounded-2xl bg-slate-200/60 ${className}`} />;
 
 // Placeholder in the dashboard's shape while the first load runs, so nothing jumps when it arrives
-const AnalyticsSkeleton = () => (
-  <div className="space-y-5" aria-busy="true" aria-label="Loading analytics">
+const InsightsSkeleton = () => (
+  <div className="space-y-5" aria-busy="true" aria-label="Loading insights">
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {[0, 1, 2, 3].map((i) => (
         <Block key={i} className="h-44" />
@@ -19,4 +19,4 @@ const AnalyticsSkeleton = () => (
   </div>
 );
 
-export default AnalyticsSkeleton;
+export default InsightsSkeleton;

@@ -38,7 +38,7 @@ const useHrMutation = (mutationFn, success, also = []) => {
     onSuccess: () => [HR_KEY, ...also].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
-const MONEY = ["paymentMethods", "reports", "analytics"];
+const MONEY = ["paymentMethods", "reports", "insights"];
 
 export const useCheckIn = () => useHrMutation(api.checkIn, "Checked in.");
 export const useCheckOut = () => useHrMutation(api.checkOut, "Checked out.");

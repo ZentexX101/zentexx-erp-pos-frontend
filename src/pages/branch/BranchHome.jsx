@@ -1,6 +1,6 @@
-import LazyAnalytics from "../analytics/LazyAnalytics";
+import LazyInsights from "../insights/LazyInsights";
 
-// Branch dashboard: analytics for the branch being worked in
-const BranchHome = () => <LazyAnalytics scope="branch" />;
+// Branch dashboard: insights for the branch being worked in
+const BranchHome = () => <LazyInsights scope="branch" />;
 
 export default BranchHome;

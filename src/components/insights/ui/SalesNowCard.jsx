@@ -1,7 +1,7 @@
 import { LuCalendarCheck, LuCalendarDays } from "react-icons/lu";
 import { Link } from "react-router";
 import { SERIES_COLORS } from "../../../constants/chart";
-import { countLabel } from "../../../utils/analytics";
+import { countLabel } from "../../../utils/insights";
 import { formatTaka, takaInWords } from "../../../utils/money";
 
 // One half of the card: an icon, the label and order count, the amount and the amount in words

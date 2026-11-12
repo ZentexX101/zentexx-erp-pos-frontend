@@ -1,25 +1,25 @@
 import { useState } from "react";
-import AnalyticsHeader from "../../components/analytics/AnalyticsHeader";
-import AnalyticsSkeleton from "../../components/analytics/AnalyticsSkeleton";
-import BranchComparisonCard from "../../components/analytics/BranchComparisonCard";
-import BusinessPanel from "../../components/analytics/BusinessPanel";
-import CustomerDuesCard from "../../components/analytics/CustomerDuesCard";
-import ExpenseCategoryCard from "../../components/analytics/ExpenseCategoryCard";
-import LowStockCard from "../../components/analytics/LowStockCard";
-import MoneyFlowPanel from "../../components/analytics/MoneyFlowPanel";
-import PaymentMethodsCard from "../../components/analytics/PaymentMethodsCard";
-import RecentPurchasesCard from "../../components/analytics/RecentPurchasesCard";
-import RecentSalesCard from "../../components/analytics/RecentSalesCard";
-import SalesByCategoryCard from "../../components/analytics/SalesByCategoryCard";
-import SalesDetailsPanel from "../../components/analytics/SalesDetailsPanel";
-import SalesHeroCards from "../../components/analytics/SalesHeroCards";
-import SalesTrendCard from "../../components/analytics/SalesTrendCard";
-import StaffSalesCard from "../../components/analytics/StaffSalesCard";
-import StockPanel from "../../components/analytics/StockPanel";
-import TopProductsCard from "../../components/analytics/TopProductsCard";
+import InsightsHeader from "../../components/insights/InsightsHeader";
+import InsightsSkeleton from "../../components/insights/InsightsSkeleton";
+import BranchComparisonCard from "../../components/insights/BranchComparisonCard";
+import BusinessPanel from "../../components/insights/BusinessPanel";
+import CustomerDuesCard from "../../components/insights/CustomerDuesCard";
+import ExpenseCategoryCard from "../../components/insights/ExpenseCategoryCard";
+import LowStockCard from "../../components/insights/LowStockCard";
+import MoneyFlowPanel from "../../components/insights/MoneyFlowPanel";
+import PaymentMethodsCard from "../../components/insights/PaymentMethodsCard";
+import RecentPurchasesCard from "../../components/insights/RecentPurchasesCard";
+import RecentSalesCard from "../../components/insights/RecentSalesCard";
+import SalesByCategoryCard from "../../components/insights/SalesByCategoryCard";
+import SalesDetailsPanel from "../../components/insights/SalesDetailsPanel";
+import SalesHeroCards from "../../components/insights/SalesHeroCards";
+import SalesTrendCard from "../../components/insights/SalesTrendCard";
+import StaffSalesCard from "../../components/insights/StaffSalesCard";
+import StockPanel from "../../components/insights/StockPanel";
+import TopProductsCard from "../../components/insights/TopProductsCard";
 import Alert from "../../components/common/alerts/Alert";
 import { isMainAdmin } from "../../constants/roles";
-import { useAnalyticsOverviewData, useRefreshAnalytics } from "../../hooks/useAnalyticsApi";
+import { useInsightsOverviewData, useRefreshInsights } from "../../hooks/useInsightsApi";
 import { useAuth } from "../../hooks/useAuth";
 import { useBranch } from "../../hooks/useBranch";
 import { useBranchNamesData } from "../../hooks/useBranchApi";
@@ -30,7 +30,7 @@ import { PERIOD_OPTIONS, periodRange } from "../../utils/period";
 // The dashboard. scope "main": the whole business, with a branch filter and branch comparison.
 // scope "branch": the branch being worked in. One API call feeds every section; each section
 // gets only the slice of data it shows.
-const Analytics = ({ scope = "main" }) => {
+const Insights = ({ scope = "main" }) => {
   const { user } = useAuth();
   const { activeBranch } = useBranch();
   const inBranch = scope === "branch";
@@ -41,11 +41,11 @@ const Analytics = ({ scope = "main" }) => {
   const [period, setPeriod] = useState({ period: "this_month", from: "", to: "" });
   const [branchFilter, setBranchFilter] = useState("");
 
-  // call analytics api (everything is worked out on the backend, cached for a minute)
+  // call insights api (everything is worked out on the backend, cached for a minute)
   const branch = inBranch ? activeBranch?._id : branchFilter;
   const params = { branch: mainAdmin ? branch : undefined, ...periodRange(period.period, period) };
-  const { data, isLoading, isFetching, error, dataUpdatedAt } = useAnalyticsOverviewData(params, { enabled: canView });
-  const refresh = useRefreshAnalytics(params);
+  const { data, isLoading, isFetching, error, dataUpdatedAt } = useInsightsOverviewData(params, { enabled: canView });
+  const refresh = useRefreshInsights(params);
   const { data: branches = [] } = useBranchNamesData();
   // where each card leads (a branch picked on the main dashboard opens that branch's pages)
   const linkTo = useCardLink({ inBranch, branch: branches.find((b) => b._id === branchFilter) });
@@ -58,14 +58,14 @@ const Analytics = ({ scope = "main" }) => {
     return (
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold text-slate-900">Welcome, {user.name}</h1>
-        <p className="text-sm text-slate-500">Ask an admin for the Dashboard permission to see the analytics.</p>
+        <p className="text-sm text-slate-500">Ask an admin for the Dashboard permission to see the insights.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-5">
-      <AnalyticsHeader
+      <InsightsHeader
         user={user}
         subtitle={subtitle}
         period={period}
@@ -82,7 +82,7 @@ const Analytics = ({ scope = "main" }) => {
       <Alert>{error?.message}</Alert>
 
       {isLoading && !data ? (
-        <AnalyticsSkeleton />
+        <InsightsSkeleton />
       ) : (
         data && (
           <>
@@ -158,4 +158,4 @@ const Analytics = ({ scope = "main" }) => {
   );
 };
 
-export default Analytics;
+export default Insights;

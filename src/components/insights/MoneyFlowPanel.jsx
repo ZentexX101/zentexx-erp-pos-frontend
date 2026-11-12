@@ -1,6 +1,6 @@
 import { LuBanknote, LuHandCoins, LuHourglass, LuLandmark, LuUndo2, LuWallet } from "react-icons/lu";
 import { TILE_TINTS } from "../../constants/chart";
-import { countLabel } from "../../utils/analytics";
+import { countLabel } from "../../utils/insights";
 import { formatTaka } from "../../utils/money";
 import StatPanel, { StatTile } from "./ui/StatPanel";
 

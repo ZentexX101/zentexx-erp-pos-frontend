@@ -30,7 +30,7 @@ const useReplacementMutation = (mutationFn, success) => {
     mutationFn,
     meta: { success },
     onSuccess: () =>
-      [REPLACEMENT_KEY, "sales", "serviceSales", STOCK_KEY, "customers", "paymentMethods", "reports", "analytics"].forEach((queryKey) =>
+      [REPLACEMENT_KEY, "sales", "serviceSales", STOCK_KEY, "customers", "paymentMethods", "reports", "insights"].forEach((queryKey) =>
         queryClient.invalidateQueries({ queryKey: [queryKey] }),
       ),
   });

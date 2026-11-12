@@ -27,7 +27,7 @@ const useRepairMutation = (mutationFn, success) => {
   return useMutation({
     mutationFn,
     meta: { success },
-    onSuccess: () => [REPAIR_KEY, "customers", "paymentMethods", "analytics"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
+    onSuccess: () => [REPAIR_KEY, "customers", "paymentMethods", "insights"].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
   });
 };
 

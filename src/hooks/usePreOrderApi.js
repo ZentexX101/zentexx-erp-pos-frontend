@@ -28,7 +28,7 @@ const usePreOrderMutation = (mutationFn, success) => {
     mutationFn,
     meta: { success },
     onSuccess: () =>
-      [PRE_ORDER_KEY, "stock", "sales", "customers", "paymentMethods", "analytics"].forEach((queryKey) =>
+      [PRE_ORDER_KEY, "stock", "sales", "customers", "paymentMethods", "insights"].forEach((queryKey) =>
         queryClient.invalidateQueries({ queryKey: [queryKey] }),
       ),
   });

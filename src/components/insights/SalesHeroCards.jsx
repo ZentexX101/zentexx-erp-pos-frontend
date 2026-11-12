@@ -1,6 +1,6 @@
 import { LuReceipt, LuShoppingBag, LuShoppingCart } from "react-icons/lu";
 import { SERIES_COLORS } from "../../constants/chart";
-import { countLabel, sparkOf } from "../../utils/analytics";
+import { countLabel, sparkOf } from "../../utils/insights";
 import { formatTaka, takaInWords } from "../../utils/money";
 import HeroCard from "./ui/HeroCard";
 import SalesNowCard from "./ui/SalesNowCard";

@@ -1,6 +1,6 @@
 import { LuConciergeBell, LuGift, LuHourglass, LuRepeat, LuShoppingCart, LuTag, LuTruck, LuWrench, LuUndo2, LuWallet } from "react-icons/lu";
 import { TILE_TINTS } from "../../constants/chart";
-import { countLabel } from "../../utils/analytics";
+import { countLabel } from "../../utils/insights";
 import { formatTaka } from "../../utils/money";
 import { roundTaka } from "../../utils/number";
 import StatPanel, { StatTile } from "./ui/StatPanel";

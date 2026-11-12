@@ -12,7 +12,7 @@ const timeOf = (ms) => formatTime(ms);
 
 // Greeting on the left; on the right one compact toolbar: branch (main admin, all-branch view),
 // period with its dates, and Refresh. On phones the toolbar sits under the greeting at full width.
-const AnalyticsHeader = ({ user, subtitle, period, range, onPeriod, branches, branch, onBranch, onRefresh, refreshing, updatedAt }) => (
+const InsightsHeader = ({ user, subtitle, period, range, onPeriod, branches, branch, onBranch, onRefresh, refreshing, updatedAt }) => (
   <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div className="min-w-0">
       <p className="text-sm font-medium text-slate-500">{formatDate(new Date())}</p>
@@ -53,4 +53,4 @@ const AnalyticsHeader = ({ user, subtitle, period, range, onPeriod, branches, br
   </div>
 );
 
-export default AnalyticsHeader;
+export default InsightsHeader;

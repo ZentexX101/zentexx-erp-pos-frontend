@@ -1,5 +1,5 @@
 import { LuPrinter, LuRefreshCw } from "react-icons/lu";
-import PeriodPicker from "../analytics/ui/PeriodPicker";
+import PeriodPicker from "../insights/ui/PeriodPicker";
 import PageHeader from "../common/layout/PageHeader";
 import Select from "../common/forms/Select";
 
