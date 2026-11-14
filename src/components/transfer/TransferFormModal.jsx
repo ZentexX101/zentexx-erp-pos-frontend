@@ -9,15 +9,30 @@ import Textarea from "../common/forms/Textarea";
 import Modal from "../common/modals/Modal";
 import TransferItems from "./TransferItems";
 
-const lineCount = (line) => (line.stock.product.trackSerial ? line.serials.length : Number(line.quantity) || 0);
+const lineCount = (line) =>
+  line.stock.product.trackSerial
+    ? line.serials.length
+    : Number(line.quantity) || 0;
+
+// The first quantity line asking for more than the sending branch has, or undefined
+const overStockLine = (lines) =>
+  lines.find(
+    (line) =>
+      !line.stock.product.trackSerial && lineCount(line) > line.stock.quantity,
+  );
 
 // First problem with the lines, or ""
 const linesError = (lines) => {
   if (!lines.length) return "Add at least one product.";
   const empty = lines.find((line) => lineCount(line) < 1);
-  if (empty) return empty.stock.product.trackSerial ? `Tick the IMEIs of "${empty.stock.product.name}".` : `Enter the quantity of "${empty.stock.product.name}".`;
-  const tooMany = lines.find((line) => !line.stock.product.trackSerial && lineCount(line) > line.stock.quantity);
-  return tooMany ? `Only ${tooMany.stock.quantity} of "${tooMany.stock.product.name}" in the sending branch.` : "";
+  if (empty)
+    return empty.stock.product.trackSerial
+      ? `Tick the IMEIs of "${empty.stock.product.name}".`
+      : `Enter the quantity of "${empty.stock.product.name}".`;
+  const tooMany = overStockLine(lines);
+  return tooMany
+    ? `Only ${tooMany.stock.quantity} of "${tooMany.stock.product.name}" in the sending branch.`
+    : "";
 };
 
 // Move stock between branches. fixedFrom: the branch panel's own branch (the sender can't be changed);
@@ -33,6 +48,7 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
   const createTransfer = useCreateTransfer();
 
   const units = lines.reduce((sum, line) => sum + lineCount(line), 0);
+  const overStock = overStockLine(lines);
   const options = branches.map((b) => ({ value: b._id, label: b.name }));
 
   // A new sender has other stock, so the picked items no longer apply
@@ -44,7 +60,10 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const problem = (!fromBranch && "Select the sending branch.") || (!toBranch && "Select the receiving branch.") || linesError(lines);
+    const problem =
+      (!fromBranch && "Select the sending branch.") ||
+      (!toBranch && "Select the receiving branch.") ||
+      linesError(lines);
     if (problem) return setError(problem);
 
     try {
@@ -52,7 +71,13 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
         fromBranch,
         toBranch,
         items: lines.map((line) =>
-          line.stock.product.trackSerial ? { product: line.stock.product._id, serials: line.serials } : { product: line.stock.product._id, quantity: Number(line.quantity) }
+          line.stock.product.trackSerial
+            ? { product: line.stock.product._id, serials: line.serials }
+            : {
+                product: line.stock.product._id,
+                quantity: Number(line.quantity),
+                productCode: (line.productCode ?? "").trim(),
+              },
         ),
         note: note.trim(),
       });
@@ -71,17 +96,28 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
       size="xl"
       footer={
         <>
-          <span className="w-full self-center text-sm text-slate-500 sm:mr-auto sm:w-auto">
-            {units ? `${lines.length} product${lines.length === 1 ? "" : "s"} · ${units} pcs` : "Select products to begin transfer."}
+          <span
+            className={`w-full self-center text-sm sm:mr-auto sm:w-auto ${overStock ? "text-red-600" : "text-slate-500"}`}
+          >
+            {overStock
+              ? `Only ${overStock.stock.quantity} of "${overStock.stock.product.name}" in stock.`
+              : units
+                ? `${lines.length} product${lines.length === 1 ? "" : "s"} · ${units} pcs`
+                : "Select products to begin transfer."}
           </span>
-          <Button variant="secondary" onClick={onClose} disabled={createTransfer.isPending} className="flex-1 sm:flex-none">
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            disabled={createTransfer.isPending}
+            className="flex-1 sm:flex-none"
+          >
             Cancel
           </Button>
           <Button
             type="submit"
             form={formId}
             loading={createTransfer.isPending}
-            disabled={!units}
+            disabled={!units || Boolean(overStock)}
             className="flex-1 whitespace-nowrap sm:min-w-40 sm:flex-none"
           >
             Create Transfer
@@ -90,14 +126,23 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
         </>
       }
     >
-      <form id={formId} onSubmit={handleSubmit} noValidate className="space-y-5">
+      <form
+        id={formId}
+        onSubmit={handleSubmit}
+        noValidate
+        className="space-y-5"
+      >
         <Alert>{error}</Alert>
 
         <div className="grid items-end gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-[1fr_auto_1fr] sm:p-4">
           {fixedFrom ? (
             <div>
-              <p className="mb-1 text-sm font-medium text-slate-700">From Branch</p>
-              <p className="rounded-md border border-slate-200 bg-white px-3 py-2 font-medium text-slate-900">{fixedFrom.name}</p>
+              <p className="mb-1 text-sm font-medium text-slate-700">
+                From Branch
+              </p>
+              <p className="rounded-md border border-slate-200 bg-white px-3 py-2 font-medium text-slate-900">
+                {fixedFrom.name}
+              </p>
             </div>
           ) : (
             <Select
@@ -109,7 +154,10 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
               onChange={(e) => changeFrom(e.target.value)}
             />
           )}
-          <LuArrowRight className="mx-auto mb-2.5 hidden h-5 w-5 text-slate-400 sm:block" aria-hidden="true" />
+          <LuArrowRight
+            className="mx-auto mb-2.5 hidden h-5 w-5 text-slate-400 sm:block"
+            aria-hidden="true"
+          />
           <Select
             label="To Branch"
             required
@@ -137,7 +185,8 @@ const TransferFormModal = ({ fixedFrom, onClose, onSaved }) => {
           <p className="flex items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
             <LuPackage className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>
-              Select a <span className="font-semibold">From Branch</span> to see its stock and pick products to send.
+              Select a <span className="font-semibold">From Branch</span> to see
+              its stock and pick products to send.
             </span>
           </p>
         )}

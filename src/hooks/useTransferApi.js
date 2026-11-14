@@ -1,6 +1,12 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   createTransfer,
+  fetchTransferLookup,
   fetchTransferSerialsData,
   fetchTransferStockData,
   fetchTransfersData,
@@ -37,12 +43,29 @@ export const useTransferSerialsData = (branch, product) => {
   });
 };
 
+// ✅ Look up a scanned IMEI / product ID in the sending branch (always fresh); returns a function (branch, code) => Promise
+export const useTransferLookup = () => {
+  const queryClient = useQueryClient();
+  return (branch, code) =>
+    queryClient.fetchQuery({
+      queryKey: [STOCK_KEY, "transfer-lookup", branch, code],
+      queryFn: () => fetchTransferLookup(branch, code),
+      staleTime: 0,
+    });
+};
+
 // ✅ A transfer changes both branches' stock
 export const useCreateTransfer = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => createTransfer(data),
-    meta: { success: (t) => `${t?.transferNo ?? "Transfer"}: ${t?.totalQuantity ?? 0} pcs moved from ${t?.fromBranch?.name ?? ""} to ${t?.toBranch?.name ?? ""}.` },
-    onSuccess: () => [TRANSFER_KEY, STOCK_KEY].forEach((queryKey) => queryClient.invalidateQueries({ queryKey: [queryKey] })),
+    meta: {
+      success: (t) =>
+        `${t?.transferNo ?? "Transfer"}: ${t?.totalQuantity ?? 0} pcs moved from ${t?.fromBranch?.name ?? ""} to ${t?.toBranch?.name ?? ""}.`,
+    },
+    onSuccess: () =>
+      [TRANSFER_KEY, STOCK_KEY].forEach((queryKey) =>
+        queryClient.invalidateQueries({ queryKey: [queryKey] }),
+      ),
   });
 };

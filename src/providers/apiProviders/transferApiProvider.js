@@ -22,7 +22,13 @@ export const fetchTransferSerialsData = async (branch, product) => {
   return response.data;
 };
 
-// ✅ Create transfer — data: { fromBranch, toBranch, items: [{ product, quantity | serials }], note }
+// ✅ Fetch Function — a scanned IMEI or product ID in the sending branch -> { serial (null for a product ID), stock }
+export const fetchTransferLookup = async (branch, code) => {
+  const response = await apiRequest(`/transfers/lookup${toQueryString({ branch, code })}`);
+  return response.data;
+};
+
+// ✅ Create transfer — data: { fromBranch, toBranch, items: [{ product, quantity | serials, productCode? }], note }
 export const createTransfer = async (data) => {
   const response = await apiRequest("/transfers", { method: "POST", body: data });
   return response.data;

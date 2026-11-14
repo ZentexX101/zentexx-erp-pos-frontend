@@ -94,7 +94,7 @@ const Transfers = ({ scope = "main" }) => {
       />
 
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <FilterBar search={<SearchInput value={searchInput} onChange={withPageReset(setSearchInput)} placeholder="Transfer no., product or IMEI..." />}>
+        <FilterBar search={<SearchInput value={searchInput} onChange={withPageReset(setSearchInput)} placeholder="Transfer no., product, IMEI or product ID..." />}>
           <PeriodFilter value={period} onChange={withPageReset(setPeriod)} />
           {!inBranch && (
             <Select
