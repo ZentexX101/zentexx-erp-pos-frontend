@@ -78,7 +78,7 @@ const PosOrderSummary = ({
         <span className="text-xl font-bold tabular-nums text-green-400 sm:text-2xl">{formatTaka(grandTotal)}</span>
       </div>
 
-      <CompactPaymentRows title="Payment Methods" lines={payments} onChange={onPayments} methods={methods} />
+      <CompactPaymentRows title="Payment Methods" lines={payments} onChange={onPayments} methods={methods} total={grandTotal} withTxnId />
 
       {/* Paid and due side by side */}
       <div className="grid grid-cols-2 gap-2">

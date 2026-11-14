@@ -41,7 +41,7 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
           <Field label="Sold by">{sale.soldBy?.name ?? "—"}</Field>
           <Field label="Paid with" className="col-span-2 sm:col-span-1">
             {[
-              ...sale.payments.map((line) => `${line.paymentMethod?.name} ${formatTaka(line.amount)}`),
+              ...sale.payments.map((line) => `${line.paymentMethod?.name} ${formatTaka(line.amount)}${line.txnId ? ` (Txn: ${line.txnId})` : ""}`),
               ...(sale.advanceAmount > 0 ? [`Advance ${formatTaka(sale.advanceAmount)} (${sale.preOrderNo})`] : []),
             ].join(", ") || "—"}
           </Field>

@@ -57,6 +57,8 @@ const ExchangeSummary = ({ itemCount, subTotal, discount, onDiscount, exchangeVa
             onChange={onPayments}
             methods={methods}
             tone={weOwe ? "orange" : "green"}
+            total={Math.abs(payable)}
+            withTxnId
           />
           <Row label={weOwe ? "Paid out now:" : "Paid Amount (পরিশোধিত):"}>
             <span className="flex items-center gap-2">

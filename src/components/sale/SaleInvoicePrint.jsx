@@ -129,9 +129,20 @@ const SaleInvoicePrint = ({ sale }) => (
       {sale.payoutAmount > 0 && <TotalRow label="Paid Out" value={sale.payoutAmount} />}
       {sale.advanceAmount > 0 && <TotalRow label={`Advance (${sale.preOrderNo})`} value={sale.advanceAmount} />}
       <TotalRow
-        label={`Paid${sale.payments.length ? ` (${sale.payments.map((p) => p.paymentMethod?.name).join(", ")})` : ""}`}
+        label={`Paid${sale.payments.length === 1 && !sale.payments[0].txnId ? ` (${sale.payments[0].paymentMethod?.name ?? "—"})` : ""}`}
         value={Math.round((sale.paidAmount - (sale.advanceAmount ?? 0)) * 100) / 100}
       />
+      {/* How much came through each method, with its Txn ID (shown when split, or when a Txn ID was given) */}
+      {(sale.payments.length > 1 || sale.payments.some((line) => line.txnId)) &&
+        sale.payments.map((line, index) => (
+          <div key={line._id ?? index} className="flex justify-between gap-2 pl-3 text-[11px] text-slate-600">
+            <span>
+              • {line.paymentMethod?.name ?? "—"}
+              {line.txnId && <span className="font-mono text-[10px]"> (Txn: {line.txnId})</span>}
+            </span>
+            <span>{formatTaka(line.amount)}</span>
+          </div>
+        ))}
       <TotalRow label="Due" value={sale.dueAmount} strong={sale.dueAmount > 0} />
     </div>
 

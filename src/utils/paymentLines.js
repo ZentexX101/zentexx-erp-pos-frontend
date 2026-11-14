@@ -15,6 +15,12 @@ export const paymentLinesError = (lines) => {
   return "";
 };
 
-// Lines ready for the API: [{ paymentMethod, amount }]
+// Lines ready for the API: [{ paymentMethod, amount, txnId? }] (txnId only when one was typed; POS / exchange lines have it)
 export const toPaymentItems = (lines) =>
-  lines.filter((line) => line.paymentMethod || line.amount).map((line) => ({ paymentMethod: line.paymentMethod, amount: Number(line.amount) }));
+  lines
+    .filter((line) => line.paymentMethod || line.amount)
+    .map((line) => ({
+      paymentMethod: line.paymentMethod,
+      amount: Number(line.amount),
+      ...(line.txnId?.trim() ? { txnId: line.txnId.trim() } : {}),
+    }));
