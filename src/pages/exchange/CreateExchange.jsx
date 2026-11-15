@@ -3,23 +3,24 @@ import { LuPrinter } from "react-icons/lu";
 import Alert from "../../components/common/alerts/Alert";
 import Button from "../../components/common/buttons/Button";
 import PageHeader from "../../components/common/layout/PageHeader";
+import ExchangeCustomerPanel from "../../components/exchange/ExchangeCustomerPanel";
 import ExchangeSummary from "../../components/exchange/ExchangeSummary";
 import TradeInPanel from "../../components/exchange/TradeInPanel";
 import PosCart from "../../components/sale/PosCart";
 import ServiceFormModal from "../../components/service/ServiceFormModal";
-import PosCustomerPanel from "../../components/sale/PosCustomerPanel";
 import PosProductGrid from "../../components/sale/PosProductGrid";
 import SaleInvoicePrint from "../../components/sale/SaleInvoicePrint";
 import { useAuth } from "../../hooks/useAuth";
 import { usePaymentMethodOptionsData } from "../../hooks/usePaymentMethodApi";
 import { usePrintWhenReady } from "../../hooks/usePrintWhenReady";
-import { useCreateExchange, useFindSerial } from "../../hooks/useSaleApi";
+import { useCreateExchange, useFindSerial, useQuickExchangeCustomer } from "../../hooks/useSaleApi";
 import { useServiceOptionsData } from "../../hooks/useServiceApi";
 import { hasPermission } from "../../utils/access";
 import { newTradeIn, toTradeIns, tradeInsError, tradeInsTotal } from "../../utils/exchange";
 import { formatTaka } from "../../utils/money";
 import { roundTaka } from "../../utils/number";
 import { paymentLinesTotal, toPaymentItems } from "../../utils/paymentLines";
+import { validatePhone } from "../../utils/phone";
 import { addToCart, cartError, cartLineQuantity, cartSubTotal, toggleInCart, toSaleItems } from "../../utils/sale";
 
 // New Exchange: sell new items and take the customer's old devices in, on one invoice.
@@ -31,6 +32,8 @@ const CreateExchange = () => {
   const [lines, setLines] = useState([]);
   const [tradeIns, setTradeIns] = useState(() => [newTradeIn()]);
   const [customer, setCustomer] = useState(null);
+  // Walk-in: the phone typed (and a name when it's a new number); the customer is made on Complete
+  const [customerDraft, setCustomerDraft] = useState({ phone: "", name: "" });
   const [soldBy, setSoldBy] = useState("");
   const [discount, setDiscount] = useState("");
   // null = settle the whole payable with the default method (follows the totals); a list once edited
@@ -57,6 +60,7 @@ const CreateExchange = () => {
     setServiceFor(null);
   };
   const createExchange = useCreateExchange();
+  const quickCustomer = useQuickExchangeCustomer();
   const findSerial = useFindSerial();
   usePrintWhenReady(printSale, useCallback(() => setPrintSale(null), []));
 
@@ -94,8 +98,11 @@ const CreateExchange = () => {
   const handleSubmit = async () => {
     clearMessages();
     const filled = paymentLines.filter((line) => line.paymentMethod || Number(line.amount) > 0);
+    const draftName = customerDraft.name.trim();
     const problem =
-      (!customer && "Select the customer whose old device you're taking in.") ||
+      (!customer && !customerDraft.phone && "Enter the customer's phone number (or search the customer by name).") ||
+      (!customer && validatePhone(customerDraft.phone)) ||
+      (!customer && draftName.length < 2 && "Enter the new customer's name.") ||
       tradeInsError(tradeIns) ||
       (lines.length > 0 && cartError(lines)) ||
       ((Number(discount) || 0) > subTotal && "Discount can't be more than the new product total.") ||
@@ -104,8 +111,11 @@ const CreateExchange = () => {
     if (problem) return setError(problem);
 
     try {
+      // A new walk-in customer is saved first (or the existing one with that phone is used)
+      const buyer = customer ?? (await quickCustomer.mutateAsync({ name: draftName, phone: customerDraft.phone }));
+      if (!customer) setCustomer(buyer);
       const sale = await createExchange.mutateAsync({
-        customer: customer._id,
+        customer: buyer._id,
         soldBy,
         items: toSaleItems(lines),
         tradeIns: toTradeIns(tradeIns),
@@ -117,6 +127,7 @@ const CreateExchange = () => {
       setLines([]);
       setTradeIns([newTradeIn()]);
       setCustomer(null);
+      setCustomerDraft({ phone: "", name: "" });
       setDiscount("");
       setPayments(null);
     } catch (err) {
@@ -160,13 +171,13 @@ const CreateExchange = () => {
           </div>
 
           <div className="space-y-4">
-            <PosCustomerPanel
+            <ExchangeCustomerPanel
               soldBy={soldBy}
               onSoldBy={setSoldBy}
               customer={customer}
               onCustomer={setCustomer}
-              canCreateCustomer={hasPermission(user, "customer.create")}
-              customerLabel="Customer (required)"
+              draft={customerDraft}
+              onDraft={setCustomerDraft}
             />
             <PosCart
               lines={lines}
@@ -175,7 +186,7 @@ const CreateExchange = () => {
               serviceOptions={serviceOptions}
               onCreateService={canCreateService ? (index) => setServiceFor(lines[index].stock.product._id) : undefined}
             />
-            <TradeInPanel lines={tradeIns} onChange={setTradeIns} />
+            <TradeInPanel lines={tradeIns} onChange={setTradeIns} customer={customer} />
             <Alert>{error}</Alert>
             <ExchangeSummary
               itemCount={lines.reduce((sum, line) => sum + cartLineQuantity(line), 0)}
@@ -191,7 +202,7 @@ const CreateExchange = () => {
               onSettleFull={() => setPayments(null)}
               submitLabel={lines.length ? "Complete Exchange" : "Complete Buyback"}
               onSubmit={handleSubmit}
-              submitting={createExchange.isPending}
+              submitting={createExchange.isPending || quickCustomer.isPending}
             />
           </div>
         </div>

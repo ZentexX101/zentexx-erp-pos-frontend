@@ -3,8 +3,9 @@ import { LuSearch } from "react-icons/lu";
 import Button from "../common/buttons/Button";
 
 // "Search by Order ID or IMEI" + Search button (Enter works too, so a scanner can be used)
-const ReturnOrderSearch = ({ onSearch, searching, placeholder = "Search by Order ID (INV-000001) or IMEI..." }) => {
-  const [value, setValue] = useState("");
+// initialValue: a search handed over in the link (?q=), shown in the box
+const ReturnOrderSearch = ({ onSearch, searching, placeholder = "Search by Order ID (INV-000001) or IMEI...", initialValue = "" }) => {
+  const [value, setValue] = useState(initialValue);
 
   const submit = (e) => {
     e.preventDefault();

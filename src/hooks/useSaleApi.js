@@ -6,6 +6,10 @@ import {
   fetchSaleStaffData,
   fetchSalesData,
   fetchSerialInStock,
+  findExchangeCustomer,
+  lookupExchangeDevice,
+  makePreownedProduct,
+  quickExchangeCustomer,
 } from "../providers/apiProviders/saleApiProvider";
 import { branchStorage } from "../services/branchStorage";
 import { STOCK_KEY } from "./useStockApi";
@@ -62,3 +66,37 @@ const useSaleMutation = (mutationFn, success) => {
 export const useCreateSale = () => useSaleMutation((data) => createSale(data), (sale) => `Sale ${sale?.invoiceNo ?? ""} completed.`);
 
 export const useCreateExchange = () => useSaleMutation((data) => createExchange(data), (sale) => `Exchange ${sale?.invoiceNo ?? ""} completed.`);
+
+// ✅ Exchange form: look up an old device's IMEI (called when it's entered, not as a query)
+export const useLookupExchangeDevice = () => {
+  const queryClient = useQueryClient();
+  return (serial) => queryClient.fetchQuery({ queryKey: [SALE_KEY, "device", serial], queryFn: () => lookupExchangeDevice(serial), staleTime: 0 });
+};
+
+// ✅ Exchange form: the customer with this phone (null = new); only runs for a full number (enabled)
+export const useExchangeCustomerData = (phone, { enabled = true } = {}) => {
+  return useQuery({
+    queryKey: ["customers", "byPhone", phone],
+    queryFn: () => findExchangeCustomer(phone),
+    enabled: Boolean(phone) && enabled,
+    retry: false,
+  });
+};
+
+// ✅ Exchange form: find or make the customer by phone + name
+export const useQuickExchangeCustomer = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: quickExchangeCustomer,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
+  });
+};
+
+// ✅ Exchange form: the preowned listing of a product (found or made)
+export const useMakePreownedProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: makePreownedProduct,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+  });
+};

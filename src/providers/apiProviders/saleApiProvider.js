@@ -41,3 +41,28 @@ export const createExchange = async (data) => {
   const response = await apiRequest("/exchanges", { method: "POST", body: data });
   return response.data;
 };
+
+// ✅ Exchange form: an old device's IMEI -> { serial, inStock: { branch, product } | null,
+//    sale: { invoiceNo, date, daysAgo, branch, customer, unitPrice, product } | null, preowned: product | null }
+export const lookupExchangeDevice = async (serial) => {
+  const response = await apiRequest(`/exchanges/device${toQueryString({ serial })}`);
+  return response.data;
+};
+
+// ✅ Exchange form: the customer with this phone, or null
+export const findExchangeCustomer = async (phone) => {
+  const response = await apiRequest(`/exchanges/customer${toQueryString({ phone })}`);
+  return response.data;
+};
+
+// ✅ Exchange form: the customer with this phone, or a new one — data: { name, phone }
+export const quickExchangeCustomer = async (data) => {
+  const response = await apiRequest("/exchanges/customer", { method: "POST", body: data });
+  return response.data;
+};
+
+// ✅ Exchange form: the "Preowned" listing of a product (found or made) — data: { product, category }
+export const makePreownedProduct = async (data) => {
+  const response = await apiRequest("/exchanges/preowned-product", { method: "POST", body: data });
+  return response.data;
+};

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import PageHeader from "../../components/common/layout/PageHeader";
 import ReturnOrderItems from "../../components/saleReturn/ReturnOrderItems";
@@ -33,6 +33,17 @@ const CreatePosReturn = () => {
   const defaultMethod = methods.find((m) => m.isDefault) ?? methods[0];
   const lines = refundLines ?? [{ ...newPaymentLine(), key: "auto", paymentMethod: defaultMethod?._id ?? "", amount: suggested ? String(suggested) : "" }];
   const refund = paymentLinesTotal(lines);
+
+  // ?q=INV-000001 (e.g. from the exchange form's hint) searches it right away, once
+  const [params] = useSearchParams();
+  const linkedQuery = params.get("q") ?? "";
+  const searchedLink = useRef(false);
+  useEffect(() => {
+    if (!linkedQuery || searchedLink.current) return;
+    searchedLink.current = true;
+    handleSearch(linkedQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkedQuery]);
 
   const handleSearch = async (q) => {
     setError("");
@@ -79,7 +90,7 @@ const CreatePosReturn = () => {
     <div className="space-y-4">
       <PageHeader title="Create POS Return" subtitle="Search for an order and process a return" />
 
-      <ReturnOrderSearch onSearch={handleSearch} searching={searching} />
+      <ReturnOrderSearch onSearch={handleSearch} searching={searching} initialValue={linkedQuery} />
 
       {saved && (
         <Alert type="success">

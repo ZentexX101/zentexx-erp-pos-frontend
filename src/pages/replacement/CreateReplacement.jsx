@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import PageHeader from "../../components/common/layout/PageHeader";
 import ReplacementDevicePicker from "../../components/replacement/ReplacementDevicePicker";
@@ -51,6 +51,17 @@ const CreateReplacement = () => {
     setForm(EMPTY_FORM);
     setPaymentLines(null);
   };
+
+  // ?q=<IMEI or invoice> (e.g. from the exchange form's hint) searches it right away, once
+  const [params] = useSearchParams();
+  const linkedQuery = params.get("q") ?? "";
+  const searchedLink = useRef(false);
+  useEffect(() => {
+    if (!linkedQuery || searchedLink.current) return;
+    searchedLink.current = true;
+    handleSearch(linkedQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkedQuery]);
 
   const handleSearch = async (q) => {
     setError("");
@@ -113,7 +124,7 @@ const CreateReplacement = () => {
     <div className="space-y-4">
       <PageHeader title="Create Replacement" subtitle="Swap a faulty piece for a new one of the same product. For a different model, use Exchange." />
 
-      <ReturnOrderSearch onSearch={handleSearch} searching={searching} placeholder="Invoice no. (INV-000001) or the faulty phone's IMEI..." />
+      <ReturnOrderSearch onSearch={handleSearch} searching={searching} initialValue={linkedQuery} placeholder="Invoice no. (INV-000001) or the faulty phone's IMEI..." />
 
       {saved && (
         <Alert type="success">

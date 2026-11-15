@@ -1,4 +1,5 @@
 import { UNIT_STATUS_INFO } from "../../constants/product";
+import { conditionText } from "../../utils/exchange";
 import { formatDate } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
 import { rowNumber } from "../../utils/pagination";
@@ -11,12 +12,18 @@ const Source = ({ unit }) => {
   const doc = unit.purchase ?? unit.tradeIn;
   return (
     <>
-      <span className="block font-medium text-slate-800">{unit.purchase ? (unit.supplier?.name ?? "—") : "Exchange trade-in"}</span>
+      <span className="block font-medium text-slate-800">
+        {unit.purchase ? (unit.supplier?.name ?? "—") : "Exchange trade-in"}
+        {unit.tradeIn?.source && (
+          <span className="ml-1 text-xs font-normal text-slate-500">({unit.tradeIn.source.kind === "ours" ? "sold by us earlier" : "outside device"})</span>
+        )}
+      </span>
       {doc && (
         <span className="block whitespace-nowrap text-xs text-slate-500">
           {doc.invoiceNo} · {formatDate(doc.date)}
         </span>
       )}
+      {conditionText(unit.tradeIn?.condition) && <span className="block text-xs text-slate-500">{conditionText(unit.tradeIn.condition)}</span>}
     </>
   );
 };

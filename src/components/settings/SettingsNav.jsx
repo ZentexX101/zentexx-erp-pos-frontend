@@ -2,9 +2,10 @@ import { SETTINGS_TABS } from "../../constants/settings";
 
 // Tabs in one card: side by side on small screens, a list from lg.
 // The open tab looks like the sidebar's current page (soft tint + slim bar on the left).
-const SettingsNav = ({ active, onChange }) => (
+// tabs: the ones this user can open
+const SettingsNav = ({ active, onChange, tabs = SETTINGS_TABS }) => (
   <nav className="grid grid-cols-2 gap-1 rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-slate-200/80 lg:grid-cols-1 lg:p-2" aria-label="Settings">
-    {SETTINGS_TABS.map((tab) => {
+    {tabs.map((tab) => {
       const isActive = tab.key === active;
       return (
         <button

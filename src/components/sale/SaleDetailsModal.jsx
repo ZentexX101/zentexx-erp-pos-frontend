@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { LuPrinter } from "react-icons/lu";
+import { conditionText, tradeInSourceText } from "../../utils/exchange";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
 import { formatPhone } from "../../utils/phone";
@@ -146,11 +147,16 @@ const SaleDetailsModal = ({ sale, canSeeProfit, onPrint, onClose }) => (
           <div className="rounded-lg border border-purple-200 bg-purple-50/50 p-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-purple-700">Old devices taken in</p>
             <ul className="space-y-1 text-sm">
-              {sale.tradeIns.map((line) => (
-                <li key={line.product} className="flex justify-between gap-3">
+              {sale.tradeIns.map((line, i) => (
+                <li key={i} className="flex justify-between gap-3">
                   <span>
                     {line.quantity} × {line.name}
                     {line.serials.length > 0 && <span className="ml-1 font-mono text-xs text-slate-500">({line.serials.join(", ")})</span>}
+                    {(line.source || conditionText(line.condition)) && (
+                      <span className="block text-xs text-slate-500">
+                        {[tradeInSourceText(line.source), conditionText(line.condition)].filter(Boolean).join(" · ")}
+                      </span>
+                    )}
                   </span>
                   <span className="font-semibold text-purple-700">{formatTaka(line.total)}</span>
                 </li>
