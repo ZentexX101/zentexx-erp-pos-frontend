@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import Alert from "../../components/common/alerts/Alert";
 import PageHeader from "../../components/common/layout/PageHeader";
 import ProductPicker from "../../components/purchase/ProductPicker";
@@ -7,7 +7,8 @@ import PurchaseItemList from "../../components/purchase/PurchaseItemList";
 import PurchasePaymentCard from "../../components/purchase/PurchasePaymentCard";
 import PurchaseSummaryBar from "../../components/purchase/PurchaseSummaryBar";
 import SupplierPicker from "../../components/purchase/SupplierPicker";
-import { ROUTES } from "../../constants/routes";
+import { productDetailPath, ROUTES } from "../../constants/routes";
+import { isMainAdmin } from "../../constants/roles";
 import { useAuth } from "../../hooks/useAuth";
 import { useCreatePurchase } from "../../hooks/usePurchaseApi";
 import { hasPermission } from "../../utils/access";
@@ -18,13 +19,24 @@ const NO_PAYMENT = { paidAmount: "", paymentMethod: "", note: "" };
 
 const AddPurchase = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  // "Add Stock (Purchase)" on a product's details page opens this with that product already added
+  const startProduct = location.state?.product ?? null;
 
   // all states
   const [supplier, setSupplier] = useState(null);
-  const [lines, setLines] = useState([]);
+  const [lines, setLines] = useState(() => (startProduct ? [newPurchaseLine(startProduct)] : []));
+  const [fromProduct] = useState(startProduct); // for the "Back to product" link
+
   const [payment, setPayment] = useState(NO_PAYMENT);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(null); // the last created purchase, for the success message
+
+  // Drop the handed-over product from the history entry, so a reload doesn't add it again
+  useEffect(() => {
+    if (location.state?.product) navigate(location.pathname, { replace: true, state: null });
+  }, [location, navigate]);
 
   // call purchase api
   const createPurchase = useCreatePurchase();
@@ -85,6 +97,14 @@ const AddPurchase = () => {
           <Link to={ROUTES.BRANCH_PURCHASES} className="font-semibold underline">
             View purchase list
           </Link>
+          {fromProduct && isMainAdmin(user) && (
+            <>
+              {" · "}
+              <Link to={productDetailPath(fromProduct._id)} className="font-semibold underline">
+                Back to {fromProduct.name}
+              </Link>
+            </>
+          )}
         </Alert>
       )}
 

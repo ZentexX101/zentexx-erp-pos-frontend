@@ -1,5 +1,12 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createProduct, deleteProduct, fetchProductsData, updateProduct } from "../providers/apiProviders/productApiProvider";
+import {
+  createProduct,
+  deleteProduct,
+  fetchProductsData,
+  fetchProductStockData,
+  fetchProductUnitsData,
+  updateProduct,
+} from "../providers/apiProviders/productApiProvider";
 
 const PRODUCT_KEY = "products";
 
@@ -9,6 +16,24 @@ export const useProductsData = (params) => {
     queryKey: [PRODUCT_KEY, "list", params],
     queryFn: () => fetchProductsData(params),
     placeholderData: keepPreviousData, // keep the current page on screen while the next one loads
+  });
+};
+
+// ✅ Product details page: counts by status and every branch's quantity
+export const useProductStockData = (id) => {
+  return useQuery({
+    queryKey: [PRODUCT_KEY, "stock", id],
+    queryFn: () => fetchProductStockData(id),
+  });
+};
+
+// ✅ Product details page: one page of IMEIs — params: { search, status, branch, page, limit }
+export const useProductUnitsData = (id, params, { enabled = true } = {}) => {
+  return useQuery({
+    queryKey: [PRODUCT_KEY, "units", id, params],
+    queryFn: () => fetchProductUnitsData(id, params),
+    placeholderData: keepPreviousData,
+    enabled,
   });
 };
 

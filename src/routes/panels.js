@@ -79,6 +79,7 @@ import ProfitLoss from "../pages/report/ProfitLoss";
 import Stock from "../pages/stock/Stock";
 import StockCenter from "../pages/stock/StockCenter";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
+import ProductDetail from "../pages/product/ProductDetail";
 import Suppliers from "../pages/supplier/Suppliers";
 
 // One config per panel. The Router builds its routes from it and the Sidebar shows it as the menu.
@@ -176,6 +177,7 @@ export const MAIN_PANEL = {
     { label: "Staff File", path: ROUTES.HR_STAFF_FILE, page: StaffFile, permission: "hr.view" },
     { label: "Supplier Ledger", path: ROUTES.SUPPLIER_LEDGER, page: SupplierLedger, permission: "supplier.view" },
     { label: "Customer Ledger", path: ROUTES.CUSTOMER_LEDGER, page: CustomerLedger, permission: "customer.view" },
+    { label: "Product Details", path: ROUTES.PRODUCT_DETAIL, page: ProductDetail, permission: "product.view" },
   ],
 };
 

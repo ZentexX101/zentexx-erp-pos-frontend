@@ -21,6 +21,7 @@ export const ROUTES = {
   BRANDS: "/dashboard/brands",
   SERVICES: "/dashboard/services",
   PRODUCTS: "/dashboard/products",
+  PRODUCT_DETAIL: "/dashboard/products/:id",
   TRANSFERS: "/dashboard/transfers",
   STOCK_CENTER: "/dashboard/stock-center",
   HR_STAFF: "/dashboard/hr/staff",
@@ -90,4 +91,5 @@ export const preOrderDetailPath = (id) => ROUTES.BRANCH_PRE_ORDER_DETAIL.replace
 export const repairDetailPath = (id) => ROUTES.BRANCH_REPAIR_DETAIL.replace(":id", id);
 export const staffFilePath = (id, inBranch) => (inBranch ? ROUTES.BRANCH_HR_STAFF_FILE : ROUTES.HR_STAFF_FILE).replace(":id", id);
 export const paymentMethodStatementPath = (methodId) => ROUTES.BRANCH_PAYMENT_METHOD_STATEMENT.replace(":id", methodId);
+export const productDetailPath = (productId) => ROUTES.PRODUCT_DETAIL.replace(":id", productId);
 export const customerLedgerPath = (customerId) => ROUTES.CUSTOMER_LEDGER.replace(":id", customerId);

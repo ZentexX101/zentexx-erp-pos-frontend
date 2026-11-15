@@ -18,6 +18,20 @@ export const fetchProductsData = async (params) => {
   return response;
 };
 
+// ✅ Product details page (main admin) — the product, IMEI counts by status, stock value and every branch's quantity
+// -> { product, counts: { in_stock, sold, ... }, stockValue, branches: [{ _id, name, status, quantity, salePrice }] }
+export const fetchProductStockData = async (id) => {
+  const response = await apiRequest(`/products/${id}/stock`);
+  return response.data;
+};
+
+// ✅ Product details page — one page of the product's IMEI pieces
+// params: { search, status, branch, page, limit } -> { data, meta }
+export const fetchProductUnitsData = async (id, params) => {
+  const response = await apiRequest(`/products/${id}/units${toQueryString(params)}`);
+  return response;
+};
+
 // ✅ Create product — data: { name (the model), category, brand, status, barcode, variant: JSON text of { color, ram, storage, region }, image?: File }
 export const createProduct = async (data) => {
   const response = await apiRequest("/products", { method: "POST", body: toFormData(data) });

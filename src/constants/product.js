@@ -17,5 +17,15 @@ export const VARIANT_CHOICES = {
   },
 };
 
+// Where one IMEI piece is now. Must match the backend (src/modules/stock/stock.constants.js UNIT_STATUS).
+export const UNIT_STATUS_INFO = {
+  in_stock: { label: "In stock", tone: "green" },
+  sold: { label: "Sold", tone: "blue" },
+  returned: { label: "Returned to supplier", tone: "amber" },
+  damaged: { label: "Damaged", tone: "red" },
+  written_off: { label: "Written off", tone: "slate" },
+  transferred: { label: "Transferred", tone: "purple" },
+};
+
 export const IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
 export const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB

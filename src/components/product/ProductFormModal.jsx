@@ -10,6 +10,7 @@ import FormSection from "../common/forms/FormSection";
 import ImageUpload from "../common/forms/ImageUpload";
 import Input from "../common/forms/Input";
 import Select from "../common/forms/Select";
+import ToggleField from "../common/forms/ToggleField";
 import Modal from "../common/modals/Modal";
 import VariantPicker from "./VariantPicker";
 
@@ -25,6 +26,7 @@ const toForm = (product) => ({
   brand: product?.brand?._id || "",
   status: product?.status || PRODUCT_STATUS.ACTIVE,
   barcode: product?.barcode || "",
+  trackSerial: Boolean(product?.trackSerial),
 });
 
 const validate = (form) => ({
@@ -45,6 +47,8 @@ const toOptions = (items, current) => {
 // product: the product to edit, or null to create one. categories / brands: active options for the dropdowns.
 const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => {
   const isEdit = Boolean(product);
+  // The backend refuses switching IMEI tracking once the product has stock history; pieces in stock show it up front
+  const lockedTracking = isEdit && product.stockQuantity > 0;
   const formId = useId();
   const [form, setForm] = useState(() => toForm(product));
   const [variant, setVariant] = useState(() => toVariant(product?.variant));
@@ -62,6 +66,10 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleTrackSerial = (value) => {
+    setForm((prev) => ({ ...prev, trackSerial: value }));
   };
 
   const handleImageChange = (file) => {
@@ -166,6 +174,20 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
               onChange={(e) => handleChange({ target: { name: "barcode", value: e.target.value.replace(/\s/g, "") } })}
               error={errors.barcode}
               className="sm:col-span-2"
+            />
+          </div>
+          {/* On: each piece has its own IMEI, typed / scanned at Purchase and picked at the POS. Can't change once it has stock. */}
+          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <ToggleField
+              label="Track IMEI / Serial number"
+              description={
+                lockedTracking
+                  ? "This product already has stock, so IMEI tracking can't be changed."
+                  : "Turn on for phones / tablets: every piece's IMEI is entered at Purchase and picked at the POS. Off = counted by quantity only (covers, cables)."
+              }
+              checked={form.trackSerial}
+              onChange={handleTrackSerial}
+              disabled={lockedTracking}
             />
           </div>
         </FormSection>

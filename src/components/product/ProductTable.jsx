@@ -1,4 +1,6 @@
+import { Link } from "react-router";
 import { PRODUCT_STATUS } from "../../constants/product";
+import { productDetailPath } from "../../constants/routes";
 import { formatShortDate } from "../../utils/formatDate";
 import { rowNumber } from "../../utils/pagination";
 import IconButton from "../common/buttons/IconButton";
@@ -17,7 +19,7 @@ const ProductImage = ({ product }) =>
     </span>
   );
 
-// Product list with pagination. The Action column shows only for users who can edit or delete.
+// Product list with pagination. The name and stock open the product's details page (IMEIs per branch). The Action column shows only for users who can edit or delete.
 const ProductTable = ({ products, meta, isLoading, hasFilters, canEdit, canDelete, onEdit, onDelete, onPageChange, onLimitChange }) => {
   const columns = [
     { key: "index", header: "#", className: "text-slate-500", render: (_, i) => rowNumber(meta, i) },
@@ -28,9 +30,21 @@ const ProductTable = ({ products, meta, isLoading, hasFilters, canEdit, canDelet
       className: "min-w-56",
       render: (p) => (
         <>
-          <span className="block font-medium text-slate-900">{p.name}</span>
+          <Link to={productDetailPath(p._id)} className="block font-medium text-slate-900 hover:text-brand hover:underline">
+            {p.name}
+          </Link>
           {p.barcode && <span className="mt-0.5 block font-mono text-xs text-slate-500">{p.barcode}</span>}
         </>
+      ),
+    },
+    {
+      key: "stock",
+      header: "Stock",
+      className: "whitespace-nowrap tabular-nums",
+      render: (p) => (
+        <Link to={productDetailPath(p._id)} className={`font-semibold hover:underline ${p.stockQuantity ? "text-slate-900" : "text-slate-400"}`}>
+          {(p.stockQuantity ?? 0).toLocaleString("en-IN")} pcs
+        </Link>
       ),
     },
     { key: "category", header: "Category", className: "text-slate-600", render: (p) => p.category?.name ?? "—" },
