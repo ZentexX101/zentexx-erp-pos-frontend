@@ -77,6 +77,7 @@ import Replacements from "../pages/replacement/Replacements";
 import DailyStatement from "../pages/report/DailyStatement";
 import ProfitLoss from "../pages/report/ProfitLoss";
 import Stock from "../pages/stock/Stock";
+import BarcodeLabels from "../pages/barcode/BarcodeLabels";
 import StockCenter from "../pages/stock/StockCenter";
 import SupplierLedger from "../pages/supplier/SupplierLedger";
 import ProductDetail from "../pages/product/ProductDetail";
@@ -201,7 +202,15 @@ export const BRANCH_PANEL = {
           ],
         },
         { label: "Payment Method", icon: LuCreditCard, path: ROUTES.BRANCH_PAYMENT_METHODS, page: PaymentMethods, permission: "payment_method.view" },
-        { label: "Stock", icon: LuBoxes, path: ROUTES.BRANCH_STOCK, page: Stock, permission: "stock.view" },
+        {
+          label: "Stock",
+          icon: LuBoxes,
+          permission: "stock.view",
+          children: [
+            { label: "Stock List", path: ROUTES.BRANCH_STOCK, page: Stock },
+            { label: "Barcode Labels", path: ROUTES.BRANCH_BARCODE_LABELS, page: BarcodeLabels },
+          ],
+        },
         {
           label: "Purchase",
           icon: LuShoppingBag,
