@@ -1,7 +1,6 @@
 import { LuInfo, LuPrinter } from "react-icons/lu";
 import { LABEL_SIZES } from "../../utils/barcodeLabels";
 import Button from "../common/buttons/Button";
-import Input from "../common/forms/Input";
 import ToggleField from "../common/forms/ToggleField";
 import { SectionHeading } from "../purchase/PickerCard";
 import BarcodeLabel from "./BarcodeLabel";
@@ -58,10 +57,12 @@ const LabelSettingsCard = ({ settings, onChange, size, previewItem, totalLabels,
       ))}
 
       <div className="space-y-4 border-t border-slate-100 pt-4">
-        <ToggleField label="Shop name on top" checked={settings.showTopText} onChange={(on) => onChange({ showTopText: on })} />
-        {settings.showTopText && (
-          <Input aria-label="Shop name on the label" maxLength={40} value={settings.topText} onChange={(e) => onChange({ topText: e.target.value })} />
-        )}
+        <ToggleField
+          label="Business name on top"
+          description="The name from Settings > Shop."
+          checked={settings.showTopText}
+          onChange={(on) => onChange({ showTopText: on })}
+        />
         {size.kind === "sheet" && (
           <ToggleField
             label="Cut lines"

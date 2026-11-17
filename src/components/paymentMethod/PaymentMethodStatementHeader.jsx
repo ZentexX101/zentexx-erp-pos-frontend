@@ -1,6 +1,6 @@
 import { LuArrowLeft, LuDownload } from "react-icons/lu";
 import { Link } from "react-router";
-import { BUSINESS_NAME } from "../../constants/app";
+import { BusinessName } from "../common/brand/BrandLogo";
 import { ROUTES } from "../../constants/routes";
 import { formatDateTime, todayInputValue } from "../../utils/formatDate";
 import Button from "../common/buttons/Button";
@@ -40,7 +40,7 @@ const PaymentMethodStatementHeader = ({ name, branchName, filters, onFilter, onP
 
     {/* Print only */}
     <header className="hidden border-b-2 border-slate-800 pb-3 print:block">
-      <h1 className="text-xl font-bold">{BUSINESS_NAME}</h1>
+      <h1 className="text-xl font-bold"><BusinessName /></h1>
       <p className="text-sm font-semibold text-slate-600">Payment Method Statement{branchName && ` · Branch: ${branchName}`}</p>
       <p className="mt-1 text-xs text-slate-500">
         Period: {filters.from || "Start"} to {filters.to || todayInputValue()} · Printed {formatDateTime(new Date())}

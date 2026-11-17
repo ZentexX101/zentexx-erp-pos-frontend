@@ -41,7 +41,6 @@ export const labelSize = (id) => LABEL_SIZES.find((size) => size.id === id) ?? L
 export const DEFAULT_LABEL_SETTINGS = {
   size: "a4x65", // a normal printer is the common case; label-printer owners pick their roll size once
   cutLines: true,
-  topText: "Decent Electronics",
   showTopText: true,
   showPrice: true,
 };

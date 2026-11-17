@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { BUSINESS_NAME } from "../../constants/app";
+import { BusinessName } from "../common/brand/BrandLogo";
 import { conditionText, tradeInSourceText } from "../../utils/exchange";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
@@ -26,7 +26,7 @@ const SaleInvoicePrint = ({ sale }) => {
   <div className="hidden text-[11px] text-slate-800 print:block">
     <header className="flex items-start justify-between border-b-2 border-slate-800 pb-3">
       <div>
-        <h1 className="text-xl font-bold">{BUSINESS_NAME}</h1>
+        <h1 className="text-xl font-bold"><BusinessName /></h1>
         {sale.branch && (
           <p className="text-slate-600">
             {sale.branch.name} · {sale.branch.address} · {formatPhone(sale.branch.phone)}
@@ -186,7 +186,7 @@ const SaleInvoicePrint = ({ sale }) => {
 
     <footer className="mt-10 flex justify-between text-slate-500">
       <span className="border-t border-slate-400 pt-1">{tradeIns.length > 0 ? "Customer / seller signature" : "Customer signature"}</span>
-      <span>Thank you for shopping with {BUSINESS_NAME}</span>
+      <span>Thank you for shopping with <BusinessName /></span>
       <span className="border-t border-slate-400 pt-1">Authorized signature</span>
     </footer>
   </div>

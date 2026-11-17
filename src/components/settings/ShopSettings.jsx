@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useShopSettingsData, useUpdateShopSettings } from "../../hooks/useSettingApi";
+import { splitBusinessName } from "../../utils/businessName";
 import { toIntegerInput } from "../../utils/number";
+import Input from "../common/forms/Input";
 import Alert from "../common/alerts/Alert";
 import Button from "../common/buttons/Button";
 import ToggleField from "../common/forms/ToggleField";
@@ -54,6 +56,53 @@ const ShopSettingsForm = ({ saved }) => {
   );
 };
 
+// The business name: the logo in the sidebar / login page, and the heading of every invoice, slip, report and label
+const BusinessNameForm = ({ saved }) => {
+  const update = useUpdateShopSettings();
+  const [name, setName] = useState(saved.businessName ?? "");
+  const trimmed = name.trim().replace(/\s+/g, " ");
+  const invalid = trimmed.length < 2;
+  const { main, rest } = splitBusinessName(trimmed || "Your Business");
+
+  return (
+    <SettingsCard
+      title="Business"
+      description="Your business name is shown as the logo (sidebar, login page) and on every invoice, slip, report and barcode label."
+      footer={
+        <Button onClick={() => update.mutate({ businessName: trimmed })} loading={update.isPending} disabled={invalid || trimmed === saved.businessName}>
+          Save
+        </Button>
+      }
+    >
+      <div className="space-y-4">
+        <Alert>{update.error?.message}</Alert>
+        <Input
+          label="Business name"
+          required
+          maxLength={60}
+          placeholder="e.g. Zentexx Electronics"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={invalid && name ? "Enter at least 2 characters" : ""}
+        />
+        <div>
+          <p className="mb-1.5 text-xs font-medium text-slate-500">Preview · the first word is the big part of the logo</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex min-w-0 max-w-full flex-col rounded-lg bg-white px-5 py-4 leading-none ring-1 ring-slate-200">
+              <span className="truncate font-serif text-[22px] font-black uppercase tracking-tight text-slate-950">{main}</span>
+              {rest && <span className="mt-[3px] truncate text-[8px] font-semibold uppercase tracking-[0.18em] text-slate-500">{rest}</span>}
+            </div>
+            <div className="flex min-w-0 max-w-full flex-col rounded-lg bg-neutral-950 px-5 py-4 leading-none">
+              <span className="truncate font-serif text-[22px] font-black uppercase tracking-tight text-white">{main}</span>
+              {rest && <span className="mt-[3px] truncate text-[8px] font-semibold uppercase tracking-[0.18em] text-white/60">{rest}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </SettingsCard>
+  );
+};
+
 // Settings > Shop (main admins): shop-wide rules
 const ShopSettings = () => {
   const { data, isLoading, error } = useShopSettingsData();
@@ -65,7 +114,12 @@ const ShopSettings = () => {
     );
   }
   if (error) return <Alert>{error.message}</Alert>;
-  return <ShopSettingsForm key={data.updatedAt} saved={data} />;
+  return (
+    <div className="space-y-4">
+      <BusinessNameForm key={`name-${data.updatedAt}`} saved={data} />
+      <ShopSettingsForm key={data.updatedAt} saved={data} />
+    </div>
+  );
 };
 
 export default ShopSettings;

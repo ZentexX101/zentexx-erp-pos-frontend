@@ -86,7 +86,7 @@ const Sidebar = ({ mode, sidebarOpen, setSidebarOpen, collapsed, setCollapsed })
         {/* LOGO */}
         <div className={`flex h-16 shrink-0 items-center border-b border-slate-200 ${iconOnly ? "justify-center" : "justify-between pl-5 pr-3"}`}>
           <Link to={PANELS[mode].home} onClick={closeSidebar} aria-label="Dashboard home">
-            {iconOnly ? <BrandMark /> : <BrandLogo className="h-7" />}
+            {iconOnly ? <BrandMark /> : <BrandLogo size="md" />}
           </Link>
           {!iconOnly && (
             <button

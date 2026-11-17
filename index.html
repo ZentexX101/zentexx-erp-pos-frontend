@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Decent Electronics & Exchange Center</title>
+    <title>Zentexx Electronics</title>
     <!-- Splash: shown before the app's JS loads, and reused by FullPageLoader, so a reload shows one loader -->
     <style>
       .splash {
@@ -19,10 +19,31 @@
         font-family: ui-sans-serif, system-ui, sans-serif;
         z-index: 100;
       }
+      /* The business name as the wordmark (Settings > Shop): first word big, the rest small under it */
       .splash-logo {
-        height: 44px;
-        width: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 90vw;
+        line-height: 1;
+        text-align: center;
         animation: splash-breathe 2.4s ease-in-out infinite;
+      }
+      .splash-main {
+        font-family: ui-serif, Georgia, "Times New Roman", serif;
+        font-size: 40px;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        color: #020617;
+      }
+      .splash-rest {
+        margin-top: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #64748b;
       }
       .splash-track {
         position: relative;
@@ -64,11 +85,23 @@
   <body>
     <div id="root">
       <div class="splash" role="status" aria-label="Loading">
-        <img class="splash-logo" src="/src/assets/decent-logo-dark.png" alt="Decent" />
+        <div class="splash-logo"><span class="splash-main" id="splash-main">Zentexx</span><span class="splash-rest" id="splash-rest">Electronics</span></div>
         <div class="splash-track"><div class="splash-bar"></div></div>
         <p class="splash-text">Loading your workspace</p>
       </div>
     </div>
+    <script>
+      // The last business name seen (saved by the app), so the splash and the tab title match it at once
+      try {
+        var name = localStorage.getItem("zentexx.businessName");
+        if (name) {
+          var words = name.trim().split(/\s+/);
+          document.getElementById("splash-main").textContent = words[0];
+          document.getElementById("splash-rest").textContent = words.slice(1).join(" ");
+          document.title = name;
+        }
+      } catch (e) {}
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

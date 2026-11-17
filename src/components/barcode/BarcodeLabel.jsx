@@ -1,3 +1,4 @@
+import { getBusinessName } from "../../utils/businessName";
 import BarcodeSvg from "./BarcodeSvg";
 
 // "৳1,250" (no paisa when it's a whole number, so it fits a small label)
@@ -7,7 +8,7 @@ const labelPrice = (price) => {
 };
 
 // One sticker, drawn at its real size in mm (the same component for the preview and the print).
-// item: { product: { name, barcode }, price }; size: from utils/barcodeLabels; settings: { topText, showTopText, showPrice }
+// item: { product: { name, barcode }, price }; size: from utils/barcodeLabels; settings: { showTopText, showPrice } (the top line is the business name)
 // cutLines: a light dashed edge, for cutting labels out of plain A4 paper
 const BarcodeLabel = ({ item, size, settings, cutLines = false, className = "" }) => {
   // Font sizes follow the label height (25 mm is the base), so small A4 stickers stay readable
@@ -26,9 +27,9 @@ const BarcodeLabel = ({ item, size, settings, cutLines = false, className = "" }
         outlineOffset: "-0.1mm",
       }}
     >
-      {settings.showTopText && settings.topText && (
+      {settings.showTopText && (
         <p className="truncate text-center font-bold uppercase leading-none" style={{ fontSize: pt(5.5), letterSpacing: "0.06em" }}>
-          {settings.topText}
+          {getBusinessName()}
         </p>
       )}
       <p

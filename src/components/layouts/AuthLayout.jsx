@@ -1,17 +1,20 @@
 import { Link, Outlet } from "react-router";
 import { ROUTES } from "../../constants/routes";
+import { useBusinessName } from "../../hooks/useSettingApi";
+import { splitBusinessName } from "../../utils/businessName";
 import BrandLogo from "../common/brand/BrandLogo";
 
 // Large screens: black brand panel on the left, form on the right.
 // Smaller screens: black header with the form in a bottom sheet.
 const AuthLayout = () => {
   const year = new Date().getFullYear();
+  const businessName = useBusinessName();
 
   return (
     <div className="flex min-h-dvh flex-col bg-neutral-950 lg:flex-row lg:bg-white">
       <aside className="hidden w-[42%] max-w-[620px] flex-col justify-between bg-neutral-950 px-14 py-12 lg:flex xl:px-16">
         <Link to={ROUTES.HOME} className="self-start">
-          <BrandLogo tone="light" className="h-11" />
+          <BrandLogo tone="light" size="xl" />
         </Link>
 
         <div>
@@ -21,11 +24,11 @@ const AuthLayout = () => {
             Exchange.
           </p>
           <p className="mt-6 max-w-sm text-[15px] leading-relaxed text-neutral-400">
-            The back office behind every Decent counter — sales, stock and exchanges for all branches.
+            The back office behind every {splitBusinessName(businessName).main} counter — sales, stock and exchanges for all branches.
           </p>
 
           <div className="mt-14 flex items-center justify-between border-t border-white/10 pt-5 text-xs text-neutral-500">
-            <span>© {year} Decent Electronics & Exchange Center</span>
+            <span>© {year} {businessName}</span>
             <span>Staff portal</span>
           </div>
         </div>
@@ -34,7 +37,7 @@ const AuthLayout = () => {
       {/* Mobile / tablet header */}
       <header className="px-6 pb-12 pt-safe-9 lg:hidden">
         <Link to={ROUTES.HOME} className="mx-auto block w-fit">
-          <BrandLogo tone="light" className="h-9" />
+          <BrandLogo tone="light" size="lg" />
         </Link>
       </header>
 
@@ -46,7 +49,7 @@ const AuthLayout = () => {
         </div>
 
         <footer className="flex justify-center gap-1 px-6 pb-safe-5 text-xs text-neutral-400 lg:justify-end lg:pb-6">
-          <span className="lg:hidden">© {year} Decent ·</span>
+          <span className="lg:hidden">© {year} {splitBusinessName(businessName).main} ·</span>
           <span>Powered by Zentexx ERP</span>
         </footer>
       </main>
