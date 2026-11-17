@@ -4,6 +4,7 @@ import { LuUserCheck, LuUserPlus, LuUserRound } from "react-icons/lu";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useExchangeCustomerData, useSaleStaffData } from "../../hooks/useSaleApi";
 import { customerBalanceMeaning } from "../../utils/customer";
+import { getInitials } from "../../utils/initials";
 import { formatPhone } from "../../utils/phone";
 import Input from "../common/forms/Input";
 import PhoneInput from "../common/forms/PhoneInput";
@@ -11,6 +12,7 @@ import Select from "../common/forms/Select";
 import Spinner from "../common/loaders/Spinner";
 import CustomerBalance from "../customer/CustomerBalance";
 import CustomerSelect from "../customer/CustomerSelect";
+import ExchangePanel from "./ExchangePanel";
 
 // "Sold By" staff and the customer, phone first. A known phone picks that customer; a new one asks for a
 // name and the customer is made when the exchange is completed (draft: { phone, name }).
@@ -39,7 +41,7 @@ const ExchangeCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, draft, 
   };
 
   return (
-    <section className="space-y-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+    <ExchangePanel icon={LuUserRound} title="Customer & Staff" bn="(গ্রাহক)">
       <Select
         label={
           <span className="inline-flex items-center gap-1.5">
@@ -54,9 +56,9 @@ const ExchangeCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, draft, 
       />
 
       {customer ? (
-        <div className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 ring-1 ring-slate-200">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-slate-500 ring-1 ring-slate-200" aria-hidden="true">
-            <LuUserRound className="size-5" />
+        <div className="flex items-center gap-3 rounded-lg bg-indigo-50/60 p-3 ring-1 ring-indigo-100">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white" aria-hidden="true">
+            {getInitials(customer.name ?? "?")}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-slate-900">
@@ -69,7 +71,11 @@ const ExchangeCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, draft, 
               <span className="text-slate-500">({customerBalanceMeaning(customer.balance ?? 0)})</span>
             </p>
           </div>
-          <button type="button" onClick={clearCustomer} className="shrink-0 text-xs font-semibold text-indigo-600 hover:underline">
+          <button
+            type="button"
+            onClick={clearCustomer}
+            className="shrink-0 rounded-md bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 transition hover:bg-slate-50"
+          >
             Change
           </button>
         </div>
@@ -120,7 +126,7 @@ const ExchangeCustomerPanel = ({ soldBy, onSoldBy, customer, onCustomer, draft, 
           )}
         </div>
       )}
-    </section>
+    </ExchangePanel>
   );
 };
 

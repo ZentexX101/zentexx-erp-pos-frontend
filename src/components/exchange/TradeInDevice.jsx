@@ -59,10 +59,23 @@ const TradeInDevice = ({ index, line, onChange, onRemove, customer, hint, branch
       ? lookup.sale.product
       : null;
 
+  // A small pill next to the title once the IMEI was checked
+  const status = !lookup
+    ? null
+    : lookup.inStock
+      ? { label: "In stock", className: "bg-red-50 text-red-700 ring-red-200" }
+      : lookup.sale
+        ? { label: "Sold by us", className: "bg-blue-50 text-blue-700 ring-blue-200" }
+        : { label: "Outside device", className: "bg-slate-100 text-slate-600 ring-slate-200" };
+
   return (
-    <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/70 p-3 sm:p-4">
+    <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/60 p-3 sm:p-4">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-semibold text-slate-800">Device {index + 1}</p>
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-brand text-[11px] font-semibold text-white">{index + 1}</span>
+          <p className="text-sm font-semibold text-slate-800">Device {index + 1}</p>
+          {status && <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset ${status.className}`}>{status.label}</span>}
+        </div>
         {onRemove && (
           <button
             type="button"
@@ -131,7 +144,7 @@ const TradeInDevice = ({ index, line, onChange, onRemove, customer, hint, branch
                 value={line.value}
                 onChange={(e) => onChange({ value: toDecimalInput(e.target.value) })}
                 placeholder="Amount in BDT"
-                className={`${inputClass} border-green-300 bg-green-50`}
+                className={`${inputClass} border-emerald-300 bg-emerald-50/60 font-semibold text-emerald-800 focus:border-emerald-400 focus:ring-emerald-100`}
               />
             </Field>
             <Field label="Resale Price (৳)" hint="Optional: its selling price in stock">
@@ -148,7 +161,7 @@ const TradeInDevice = ({ index, line, onChange, onRemove, customer, hint, branch
           <ConditionPicker value={line.condition} onChange={(condition) => onChange({ condition })} />
 
           {tradeInQuantity(line) > 0 && Number(line.value) > 0 && (
-            <p className="rounded-md bg-white px-3 py-2 text-xs text-slate-600 ring-1 ring-slate-200">
+            <p className="rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-900 ring-1 ring-emerald-200">
               Goes into stock: {tradeInQuantity(line)} × <span className="font-medium text-slate-800">{line.product.name}</span> at{" "}
               {formatTaka(Number(line.value))} each.
             </p>

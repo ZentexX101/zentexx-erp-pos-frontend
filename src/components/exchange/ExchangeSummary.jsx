@@ -1,16 +1,22 @@
+import { LuReceipt } from "react-icons/lu";
 import { formatTaka } from "../../utils/money";
 import { toDecimalInput } from "../../utils/number";
 import Button from "../common/buttons/Button";
 import CompactPaymentRows from "../sale/CompactPaymentRows";
+import ExchangePanel from "./ExchangePanel";
 
-const Row = ({ label, children }) => (
-  <div className="flex items-center justify-between gap-3">
-    <span className="text-sm font-semibold text-slate-700">{label}</span>
+// One line of the bill: English label, Bangla under it, the amount on the right
+const Row = ({ label, bn, children }) => (
+  <div className="flex items-center justify-between gap-3 py-2.5">
+    <span className="min-w-0">
+      <span className="block text-sm font-medium text-slate-700">{label}</span>
+      {bn && <span className="block text-[11px] text-slate-400">{bn}</span>}
+    </span>
     {children}
   </div>
 );
 
-const box = "w-36 rounded-md px-3 py-2 text-right text-sm font-bold";
+const amount = "text-right text-sm font-semibold tabular-nums";
 
 // New items total − discount − old device value = payable. When the old devices are worth more,
 // the difference is paid out to the customer (or left on their balance).
@@ -19,34 +25,44 @@ const ExchangeSummary = ({ itemCount, subTotal, discount, onDiscount, exchangeVa
   const left = Math.round((Math.abs(payable) - settled) * 100) / 100;
 
   return (
-    <section className="space-y-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-      <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-slate-900">
-          Exchange Summary <span className="text-xs font-normal text-indigo-500">(এক্সচেঞ্জ হিসাব)</span>
-        </h2>
-        <span className="text-xs font-semibold text-slate-500">New Items: {itemCount}</span>
+    <ExchangePanel
+      icon={LuReceipt}
+      title="Exchange Summary"
+      bn="(এক্সচেঞ্জ হিসাব)"
+      aside={<span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">New items: {itemCount}</span>}
+    >
+      <div className="divide-y divide-slate-100">
+        <Row label="New Product Total" bn="মোট">
+          <span className={`${amount} text-slate-900`}>{formatTaka(subTotal)}</span>
+        </Row>
+        <Row label="Discount on New" bn="ছাড়">
+          <span className="relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">− ৳</span>
+            <input
+              inputMode="decimal"
+              aria-label="Discount"
+              value={discount}
+              onChange={(e) => onDiscount(toDecimalInput(e.target.value))}
+              placeholder="0"
+              className="w-36 rounded-md border border-slate-300 bg-white py-1.5 pl-9 pr-3 text-right text-sm font-semibold tabular-nums outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-brand/10"
+            />
+          </span>
+        </Row>
+        <Row label="Exchange Value" bn="বাইব্যাক মান (old devices)">
+          <span className={`${amount} text-emerald-600`}>− {formatTaka(exchangeValue)}</span>
+        </Row>
       </div>
 
-      <Row label="New Product Total (মোট):">
-        <span className={`${box} bg-slate-50 text-slate-900`}>{formatTaka(subTotal)}</span>
-      </Row>
-      <Row label="Discount on New (ছাড়):">
-        <input
-          inputMode="decimal"
-          aria-label="Discount"
-          value={discount}
-          onChange={(e) => onDiscount(toDecimalInput(e.target.value))}
-          placeholder="0"
-          className={`${box} border border-slate-300 bg-white font-semibold outline-none focus:ring-2 focus:ring-brand/10`}
-        />
-      </Row>
-      <Row label="− Exchange Value (বাইব্যাক মান):">
-        <span className={`${box} bg-green-50 text-green-700`}>{formatTaka(exchangeValue)}</span>
-      </Row>
-
-      <div className={`flex items-center justify-between rounded-xl px-4 py-3 text-white ${weOwe ? "bg-orange-600" : "bg-slate-900"}`}>
-        <span className="font-bold">{weOwe ? "WE PAY CUSTOMER (ফেরত দিতে হবে):" : "PAYABLE AMOUNT (পরিশোধযোগ্য):"}</span>
-        <span className="text-xl font-bold">{formatTaka(Math.abs(payable))}</span>
+      <div
+        className={`flex items-center justify-between gap-3 rounded-xl px-4 py-3.5 text-white shadow-sm ${
+          weOwe ? "bg-gradient-to-r from-orange-600 to-orange-500" : "bg-gradient-to-r from-slate-900 to-slate-700"
+        }`}
+      >
+        <span className="min-w-0">
+          <span className="block text-xs font-semibold uppercase tracking-wider">{weOwe ? "We pay customer" : "Payable amount"}</span>
+          <span className="block text-[11px] text-white/70">{weOwe ? "ফেরত দিতে হবে" : "পরিশোধযোগ্য"}</span>
+        </span>
+        <span className="text-2xl font-bold tabular-nums">{formatTaka(Math.abs(payable))}</span>
       </div>
 
       {payable !== 0 && (
@@ -60,26 +76,30 @@ const ExchangeSummary = ({ itemCount, subTotal, discount, onDiscount, exchangeVa
             total={Math.abs(payable)}
             withTxnId
           />
-          <Row label={weOwe ? "Paid out now:" : "Paid Amount (পরিশোধিত):"}>
-            <span className="flex items-center gap-2">
-              {settled !== Math.abs(payable) && (
-                <button type="button" onClick={onSettleFull} className="text-xs font-semibold text-indigo-600 hover:underline">
-                  Full
-                </button>
-              )}
-              <span className={`${box} ${weOwe ? "bg-orange-50 text-orange-700" : "bg-green-50 text-green-700"}`}>{formatTaka(settled)}</span>
-            </span>
-          </Row>
-          <Row label={weOwe ? "Left on customer's balance:" : "Due Amount (বকেয়া):"}>
-            <span className={`${box} ${left > 0 && !weOwe ? "bg-red-50 text-red-600" : "bg-slate-50 text-slate-900"}`}>{formatTaka(left)}</span>
-          </Row>
+          <div className="grid grid-cols-2 gap-2">
+            <div className={`rounded-lg px-3 py-2 ring-1 ring-inset ${weOwe ? "bg-orange-50 ring-orange-200" : "bg-emerald-50 ring-emerald-200"}`}>
+              <p className="flex items-center justify-between gap-2 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                {weOwe ? "Paid out now" : "Paid · পরিশোধিত"}
+                {settled !== Math.abs(payable) && (
+                  <button type="button" onClick={onSettleFull} className="normal-case tracking-normal font-semibold text-indigo-600 hover:underline">
+                    Full
+                  </button>
+                )}
+              </p>
+              <p className={`mt-0.5 text-base font-bold tabular-nums ${weOwe ? "text-orange-700" : "text-emerald-700"}`}>{formatTaka(settled)}</p>
+            </div>
+            <div className={`rounded-lg px-3 py-2 ring-1 ring-inset ${left > 0 && !weOwe ? "bg-red-50 ring-red-200" : "bg-slate-50 ring-slate-200"}`}>
+              <p className="truncate text-[11px] font-medium uppercase tracking-wide text-slate-500">{weOwe ? "Left on balance" : "Due · বকেয়া"}</p>
+              <p className={`mt-0.5 text-base font-bold tabular-nums ${left > 0 && !weOwe ? "text-red-600" : "text-slate-900"}`}>{formatTaka(left)}</p>
+            </div>
+          </div>
         </>
       )}
 
       <Button onClick={onSubmit} loading={submitting} className="w-full py-3 text-base">
         {submitLabel}
       </Button>
-    </section>
+    </ExchangePanel>
   );
 };
 

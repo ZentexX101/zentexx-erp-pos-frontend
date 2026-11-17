@@ -13,7 +13,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useCreatePurchase } from "../../hooks/usePurchaseApi";
 import { hasPermission } from "../../utils/access";
 import { roundTaka } from "../../utils/number";
-import { linesTotal, newPurchaseLine, purchaseLinesError, toPurchaseItems } from "../../utils/purchase";
+import { lineQuantity, linesTotal, newPurchaseLine, purchaseLinesError, toPurchaseItems } from "../../utils/purchase";
 
 const NO_PAYMENT = { paidAmount: "", paymentMethod: "", note: "" };
 
@@ -109,13 +109,13 @@ const AddPurchase = () => {
       )}
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] [&>*]:min-w-0">
-        <SupplierPicker selected={supplier} onSelect={setSupplier} canCreate={hasPermission(user, "supplier.create")} />
-        <ProductPicker addedIds={new Set(lines.map((line) => line.product._id))} onAdd={addLine} canCreate={hasPermission(user, "product.create")} />
+        <SupplierPicker step="1" selected={supplier} onSelect={setSupplier} canCreate={hasPermission(user, "supplier.create")} />
+        <ProductPicker step="2" addedIds={new Set(lines.map((line) => line.product._id))} onAdd={addLine} canCreate={hasPermission(user, "product.create")} />
       </div>
 
       <PurchaseItemList lines={lines} onChange={changeLine} onRemove={removeLine} />
 
-      <PurchasePaymentCard total={total} payment={payment} onChange={changePayment} />
+      <PurchasePaymentCard step="3" total={total} payment={payment} onChange={changePayment} />
 
       <Alert>{error}</Alert>
 
@@ -125,6 +125,7 @@ const AddPurchase = () => {
           { label: "Paid", value: paid, className: "text-green-600" },
           { label: "Due (supplier)", value: due, className: due > 0 ? "text-red-600" : "text-slate-900" },
         ]}
+        info={lines.length ? `${lines.length} product${lines.length === 1 ? "" : "s"} · ${lines.reduce((sum, line) => sum + lineQuantity(line), 0)} pcs` : "No products yet"}
         submitLabel="Create Purchase"
         onSubmit={handleSubmit}
         submitting={createPurchase.isPending}
