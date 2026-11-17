@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between bg-gray-800 text-white p-4">
       <Link to={ROUTES.HOME}>
-        <BrandLogo tone="light" className="h-8" />
+        <BrandLogo tone="light" size="lg" />
       </Link>
       {!loading && (
         <Link

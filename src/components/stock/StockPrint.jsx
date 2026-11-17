@@ -1,4 +1,4 @@
-import { BUSINESS_NAME } from "../../constants/app";
+import { BusinessName } from "../common/brand/BrandLogo";
 import { formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
 
@@ -9,7 +9,7 @@ const StockPrint = ({ rows, summary, total, branchName }) => (
   <div className="hidden text-[11px] text-slate-800 print:block">
     <header className="flex items-start justify-between border-b-2 border-slate-800 pb-3">
       <div>
-        <h1 className="text-xl font-bold">{BUSINESS_NAME}</h1>
+        <h1 className="text-xl font-bold"><BusinessName /></h1>
         <p className="text-sm font-semibold text-slate-600">Stock Report{branchName && ` · Branch: ${branchName}`}</p>
       </div>
       <div className="text-right">

@@ -137,7 +137,7 @@ const Transfers = ({ scope = "main" }) => {
         onLimitChange={withPageReset(setLimit)}
       />
 
-      <TransferDetailsModal transfer={viewing} showCost={isMainAdmin(user)} onClose={() => setViewing(null)} />
+      <TransferDetailsModal transfer={viewing} showCost={isMainAdmin(user)} ownBranch={inBranch ? branch : undefined} onClose={() => setViewing(null)} />
 
       {creating && <TransferFormModal fixedFrom={inBranch ? activeBranch : null} onClose={() => setCreating(false)} onSaved={handleSaved} />}
     </div>

@@ -38,6 +38,7 @@ export const ROUTES = {
   BRANCH_PAYMENT_METHODS: "/branch/payment-methods",
   BRANCH_PAYMENT_METHOD_STATEMENT: "/branch/payment-methods/:id/statement",
   BRANCH_STOCK: "/branch/stock",
+  BRANCH_BARCODE_LABELS: "/branch/stock/labels",
   BRANCH_PURCHASE_NEW: "/branch/purchases/new",
   BRANCH_PURCHASES: "/branch/purchases",
   BRANCH_PURCHASE_RETURN_NEW: "/branch/purchase-returns/new",

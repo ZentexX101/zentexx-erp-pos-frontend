@@ -1,5 +1,4 @@
-import darkLogo from "../../assets/decent-logo-dark.png";
-import { BUSINESS_NAME } from "../../constants/app";
+import BrandLogo from "../common/brand/BrandLogo";
 import { formatDateTime } from "../../utils/formatDate";
 import { rangeText } from "../../utils/period";
 
@@ -31,8 +30,7 @@ const ReportPrintShell = ({ title, branchName, range, children }) => (
           <td className="px-[14mm]">
             <header className="flex items-start justify-between gap-6 border-b-2 border-slate-800 pb-3">
               <div>
-                <img src={darkLogo} alt={BUSINESS_NAME} className="h-8 w-auto" />
-                <p className="mt-1.5 text-xs font-semibold">{BUSINESS_NAME}</p>
+                <BrandLogo size="md" />
               </div>
               <div className="text-right">
                 <h1 className="text-lg font-bold">{title}</h1>

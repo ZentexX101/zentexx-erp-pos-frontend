@@ -1,5 +1,4 @@
-import darkLogo from "../../assets/decent-logo-dark.png";
-import { BUSINESS_NAME } from "../../constants/app";
+import BrandLogo from "../common/brand/BrandLogo";
 import { REPAIR_STATUS } from "../../constants/repair";
 import { formatDate, formatDateTime } from "../../utils/formatDate";
 import { formatTaka } from "../../utils/money";
@@ -27,7 +26,7 @@ const RepairSlip = ({ job }) => {
       <style>{"@media print { @page { size: A5; margin: 10mm; } html, body { background: #fff; } }"}</style>
       <header className="flex items-start justify-between gap-4 border-b-2 border-slate-800 pb-2">
         <div>
-          <img src={darkLogo} alt={BUSINESS_NAME} className="h-7 w-auto" />
+          <BrandLogo size="sm" />
           <p className="mt-1 font-semibold">{job.branch?.name}</p>
           {job.branch?.address && <p>{job.branch.address}</p>}
           {job.branch?.phone && <p>{formatPhone(job.branch.phone)}</p>}

@@ -22,7 +22,7 @@ const SupplierLedgerPrint = ({ supplier, summary, entries, total, filters }) => 
       <header className="flex items-start justify-between border-b-2 border-slate-800 pb-3">
         <div>
           <h1>
-            <BrandLogo className="h-10" />
+            <BrandLogo size="lg" />
           </h1>
           <p className="text-sm font-semibold text-slate-600">Supplier Ledger Report</p>
           <p className="mt-1 text-slate-500">

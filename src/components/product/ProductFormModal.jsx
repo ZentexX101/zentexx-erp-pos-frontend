@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
-import { LuTag } from "react-icons/lu";
+import { LuBarcode, LuTag } from "react-icons/lu";
 import { PRODUCT_STATUS } from "../../constants/product";
-import { useCreateProduct, useUpdateProduct } from "../../hooks/useProductApi";
+import { useCreateProduct, useNextBarcode, useUpdateProduct } from "../../hooks/useProductApi";
 import { toVariant, variantName } from "../../utils/productVariant";
 import { isValid } from "../../utils/validators";
 import Alert from "../common/alerts/Alert";
@@ -60,6 +60,17 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
   const [serverError, setServerError] = useState("");
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
+  const nextBarcode = useNextBarcode();
+
+  // "Generate": our own EAN-13 code (for covers, glass… that have no barcode on the box)
+  const handleGenerateBarcode = async () => {
+    try {
+      const barcode = await nextBarcode.mutateAsync();
+      handleChange({ target: { name: "barcode", value: barcode } });
+    } catch (err) {
+      setErrors((prev) => ({ ...prev, barcode: err.message }));
+    }
+  };
   const submitting = createProduct.isPending || updateProduct.isPending;
 
   const handleChange = (e) => {
@@ -174,6 +185,19 @@ const ProductFormModal = ({ product, categories, brands, onClose, onSaved }) => 
               onChange={(e) => handleChange({ target: { name: "barcode", value: e.target.value.replace(/\s/g, "") } })}
               error={errors.barcode}
               className="sm:col-span-2"
+              labelAside={
+                !form.barcode && (
+                  <button
+                    type="button"
+                    onClick={handleGenerateBarcode}
+                    disabled={nextBarcode.isPending}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:underline disabled:opacity-50"
+                  >
+                    <LuBarcode className="h-3.5 w-3.5" aria-hidden="true" />
+                    {nextBarcode.isPending ? "Generating…" : "Generate barcode"}
+                  </button>
+                )
+              }
             />
           </div>
           {/* On: each piece has its own IMEI, typed / scanned at Purchase and picked at the POS. Can't change once it has stock. */}

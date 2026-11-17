@@ -2,6 +2,7 @@ import { LuPlus, LuSmartphone } from "react-icons/lu";
 import { useBranch } from "../../hooks/useBranch";
 import { useShopSettingsData } from "../../hooks/useSettingApi";
 import { newTradeIn } from "../../utils/exchange";
+import ExchangePanel from "./ExchangePanel";
 import TradeInDevice from "./TradeInDevice";
 
 // "Old Device Details": the customer's devices taken in, one row each. Each goes into stock at its exchange value.
@@ -13,22 +14,23 @@ const TradeInPanel = ({ lines, onChange, customer }) => {
   const setLine = (key, patch) => onChange((prev) => prev.map((line) => (line.key === key ? { ...line, ...patch } : line)));
 
   return (
-    <section className="space-y-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 font-semibold text-slate-900">
-          <LuSmartphone className="h-4 w-4" aria-hidden="true" />
-          Old Device Details <span className="text-xs font-normal text-indigo-500">(পুরাতন ডিভাইস)</span>
-        </h2>
+    <ExchangePanel
+      icon={LuSmartphone}
+      title="Old Device Details"
+      bn="(পুরাতন ডিভাইস)"
+      bodyClassName="space-y-3"
+      aside={
         <button
           type="button"
           onClick={() => onChange((prev) => [...prev, newTradeIn()])}
           disabled={lines.length >= 20}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:underline disabled:opacity-40"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 transition hover:bg-slate-50 disabled:opacity-40"
         >
           <LuPlus className="h-3.5 w-3.5" aria-hidden="true" />
-          Add another device
+          Add device
         </button>
-      </div>
+      }
+    >
 
       {lines.map((line, index) => (
         <TradeInDevice
@@ -42,7 +44,7 @@ const TradeInPanel = ({ lines, onChange, customer }) => {
           branchId={activeBranch?._id}
         />
       ))}
-    </section>
+    </ExchangePanel>
   );
 };
 

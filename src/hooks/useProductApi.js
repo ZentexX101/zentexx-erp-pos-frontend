@@ -4,7 +4,9 @@ import {
   deleteProduct,
   fetchProductsData,
   fetchProductStockData,
+  fetchNextBarcode,
   fetchProductUnitsData,
+  generateBarcodes,
   updateProduct,
 } from "../providers/apiProviders/productApiProvider";
 
@@ -50,5 +52,14 @@ const useProductMutation = (mutationFn, success) => {
 export const useCreateProduct = () => useProductMutation((data) => createProduct(data), (saved) => `"${saved?.name ?? "Product"}" created.`);
 
 export const useUpdateProduct = () => useProductMutation(({ id, data }) => updateProduct(id, data), (saved) => `"${saved?.name ?? "Product"}" updated.`);
+
+// ✅ "Generate" in the product form: a fresh code, kept only if the product is saved
+export const useNextBarcode = () => useMutation({ mutationFn: fetchNextBarcode });
+
+// ✅ Barcode labels: codes for the products that have none
+export const useGenerateBarcodes = () =>
+  useProductMutation(generateBarcodes, (result) =>
+    result?.generated ? `${result.generated} barcode${result.generated === 1 ? "" : "s"} generated.` : "Every product already has a barcode.",
+  );
 
 export const useDeleteProduct = () => useProductMutation((id) => deleteProduct(id), "Product deleted.");

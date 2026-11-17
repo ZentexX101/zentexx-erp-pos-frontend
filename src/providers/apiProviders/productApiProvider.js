@@ -44,6 +44,19 @@ export const updateProduct = async (id, data) => {
   return response.data;
 };
 
+// ✅ A fresh barcode of our own for the product form -> "2000000000017" (saved with the product)
+export const fetchNextBarcode = async () => {
+  const response = await apiRequest("/products/barcodes/next", { method: "POST" });
+  return response.data.barcode;
+};
+
+// ✅ Barcode labels: give these products our own barcode (ones that already have one keep it)
+// -> { generated, products: [{ _id, name, barcode }] }
+export const generateBarcodes = async (productIds) => {
+  const response = await apiRequest("/products/barcodes", { method: "POST", body: { products: productIds } });
+  return response.data;
+};
+
 // ✅ Delete product
 export const deleteProduct = async (id) => {
   const response = await apiRequest(`/products/${id}`, { method: "DELETE" });

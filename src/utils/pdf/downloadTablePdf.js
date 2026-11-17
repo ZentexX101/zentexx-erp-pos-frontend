@@ -1,5 +1,4 @@
-import logo from "../../assets/decent-logo-dark.png";
-import { BUSINESS_NAME } from "../../constants/app";
+import { getBusinessName, splitBusinessName } from "../businessName";
 import { formatDateTime } from "../formatDate";
 
 // A4 at 96 dpi
@@ -223,8 +222,18 @@ const firstHeader = ({ title, scope, periodLabel, notes, summary }) =>
       },
       [
         el("div", { minWidth: "0" }, [
-          Object.assign(el("img", { height: "32px", width: "auto", display: "block" }), { src: logo, alt: "" }),
-          el("div", { marginTop: "8px", fontSize: "11px", color: COLOR.muted }, BUSINESS_NAME),
+          // The business name as the wordmark: first word big, the rest small under it (like the sidebar logo)
+          el(
+            "div",
+            { fontFamily: "Georgia, 'Times New Roman', serif", fontSize: "26px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "-0.01em", color: COLOR.ink, lineHeight: "1" },
+            splitBusinessName(getBusinessName()).main,
+          ),
+          splitBusinessName(getBusinessName()).rest &&
+            el(
+              "div",
+              { marginTop: "4px", fontSize: "9px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.18em", color: COLOR.muted },
+              splitBusinessName(getBusinessName()).rest,
+            ),
           scope && el("div", { marginTop: "1px", fontSize: "12px", fontWeight: "600", color: COLOR.text, overflowWrap: "anywhere" }, scope),
         ]),
         el("div", { textAlign: "right", flexShrink: "0" }, [
@@ -286,7 +295,7 @@ const pageFooter = (printedAt, number, total, rowCount) =>
     },
     [
       el("span", {}, `Generated ${printedAt}`),
-      el("span", {}, number === total ? `End of report · ${rowCount.toLocaleString("en-IN")} ${rowCount === 1 ? "row" : "rows"}` : BUSINESS_NAME),
+      el("span", {}, number === total ? `End of report · ${rowCount.toLocaleString("en-IN")} ${rowCount === 1 ? "row" : "rows"}` : getBusinessName()),
       el("span", { fontWeight: "600" }, `Page ${number} of ${total}`),
     ],
   );
@@ -352,7 +361,7 @@ export const downloadTablePdf = async ({ title, fileName, scope, periodLabel, no
     const printedAt = formatDateTime(new Date());
     const landscape = size === LANDSCAPE;
     const pdf = new jsPDF({ orientation: landscape ? "landscape" : "portrait", unit: "mm", format: "a4", compress: true });
-    pdf.setProperties({ title: `${title} - ${periodLabel}`, subject: `${rows.length} rows`, creator: BUSINESS_NAME });
+    pdf.setProperties({ title: `${title} - ${periodLabel}`, subject: `${rows.length} rows`, creator: getBusinessName() });
     const { scale, quality } = pages.length > LONG_FILE_PAGES ? LONG_FILE : SHARP;
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();

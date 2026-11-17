@@ -48,7 +48,7 @@ const DashboardNav = ({ mode, setSidebarOpen }) => {
         <LuMenu className="size-5" aria-hidden="true" />
       </button>
       <Link to={panel.home} className="lg:hidden" aria-label="Dashboard home">
-        <BrandLogo className="h-6" />
+        <BrandLogo size="sm" />
       </Link>
 
       {/* Shortcuts (icons only until there's room for labels) */}

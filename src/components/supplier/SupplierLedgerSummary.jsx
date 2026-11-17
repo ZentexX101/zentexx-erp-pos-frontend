@@ -1,5 +1,5 @@
 import { LuArrowDownLeft, LuArrowUpRight, LuFlag, LuScale } from "react-icons/lu";
-import { BUSINESS_NAME } from "../../constants/app";
+import { BusinessName } from "../common/brand/BrandLogo";
 import { formatPhone } from "../../utils/phone";
 import { formatTaka } from "../../utils/money";
 import { supplierBalanceMeaning } from "../../utils/supplier";
@@ -28,7 +28,7 @@ const SupplierLedgerSummary = ({ supplier, summary, hasPeriod }) => (
   <div className="space-y-4">
     <div className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:p-5">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">{BUSINESS_NAME}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500"><BusinessName /></p>
         <h2 className="mt-1 text-xl font-bold text-slate-900">{supplier.name}</h2>
         <p className="mt-0.5 text-sm text-slate-500">
           {formatPhone(supplier.phone)} · {supplier.address}
